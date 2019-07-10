@@ -1,4 +1,5 @@
 
+extern void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...);
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1332,7 +1333,7 @@ sDummyFunc aDummyFunc[] = {
 
 
 void fPrintWho(int _nID){
-printf("Out of table: %s  :  %s \n", aDummyFunc[_nID].DLL,  aDummyFunc[_nID].Who );
+_EXE_LOADER_DEBUG(3, "Hors de la table: %s : %s()", "Out of table: %s : %s()", aDummyFunc[_nID].DLL,  aDummyFunc[_nID].Who );
 
 }
 
