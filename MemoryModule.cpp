@@ -46,6 +46,7 @@
 #include <stdio.h>
 #endif
 
+#include <time.h>
 
 #include "FuncTable.h"
 #include "DummyTable.h"

@@ -555,7 +555,31 @@ sFunc aTableFunc[] = {
 {"vfprintf"  ,(FUNC_) vfprintf },
 {"strcmp"  ,(FUNC_) strcmp },
 {"stricmp"  ,(FUNC_) stricmp },
+{"_stricmp"  ,(FUNC_) stricmp },
 {"memcmp"  ,(FUNC_) memcmp },
+{"memmove"  ,(FUNC_) memmove },
+{"fgets"  ,(FUNC_) fgets },
+{"fputs"  ,(FUNC_) fputs },
+/* {"_write"  ,(FUNC_) _write },*/
+/* {"_snwprintf"  ,(FUNC_) _snwprintf }, */
+{"rand"  ,(FUNC_) rand },
+{"setbuf"  ,(FUNC_) setbuf },
+{"fseek"  ,(FUNC_) fseek },
+{"ftell"  ,(FUNC_) ftell },
+{"fflush"  ,(FUNC_) fflush },
+{"fprintf"  ,(FUNC_) fprintf },
+{"sprintf"  ,(FUNC_) sprintf },
+{"strcat"  ,(FUNC_) strcat },
+{"strchr"  ,(FUNC_) strchr },
+{"strcpy"  ,(FUNC_) strcpy },
+{"strncmp"  ,(FUNC_) strncmp },
+{"strtok"  ,(FUNC_) strtok },
+{"strtol"  ,(FUNC_) strtol },
+{"time"  ,(FUNC_) time },
+/* {"wcscpy"  ,(FUNC_) wcscpy }, */
+{"strrchr"  ,(FUNC_) strrchr },
+{"srand"  ,(FUNC_) srand },
+{"strrchr"  ,(FUNC_) strrchr },
 
 
 {"kbhit"  ,(FUNC_) kbhit_CPC },
