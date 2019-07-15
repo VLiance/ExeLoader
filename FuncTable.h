@@ -44,11 +44,49 @@ extern "C" int __kbhit(void);
 
 extern  FARPROC MyMemoryDefaultGetProcAddress(HCUSTOMMODULE module, LPCSTR name, void *userdata);
 
-/*
-void EnterCriticalSection(){
-    _EXE_LOADER_DEBUG(3, "", "EnterCriticalSection not implemented!\n");
+int my_memcmp(const void *p1, const void *p2, size_t n)
+{
+	// Demande par Maeiky
+    size_t i;
+
+    if (p1 == p2)
+    {
+        return 0;
+    }
+
+    // Boucle pour comparer les deux buffers
+    for (i = 0; (i < n) && (*(uint8_t *)p1 == *(uint8_t *)p2);
+        i++, p1 = 1 + (uint8_t *)p1, p2 = 1 + (uint8_t *)p2);
+
+    // Si ça retourne 1 c'est que c'est <
+    return (i == n) ? 0 : (*(uint8_t *)p1 - *(uint8_t *)p2);
 }
-*/
+
+char * substr(char *chaineSource,int pos,int len) { 
+	char * dest=NULL;                        
+	if (len>0) {                  
+		/* allocation et mise à zéro */          
+		dest = (char *)calloc(len+1, 1);      
+		/* vérification de la réussite de l'allocation*/  
+		if(NULL != dest) {
+			strncat(dest,chaineSource+pos,len);            
+		}
+	}                                       
+	return dest;                            
+}
+ 
+char * mid(char *chaineSource, int pos) {
+	return (pos>strlen(chaineSource))? chaineSource : substr(chaineSource, pos, strlen(chaineSource));
+}
+ 
+char * left(char *chaineSource, int len){
+	return (len>=strlen(chaineSource))? chaineSource : substr(chaineSource, 0, len);
+}
+ 
+char * right(char *chaineSource, int len){
+	return (len>=strlen(chaineSource))? chaineSource : substr(chaineSource, strlen(chaineSource)-len, len);
+}
+
 
 LPTSTR  My_GetCommandLineA(){
     _EXE_LOADER_DEBUG(3, "GetCommandLineA non implemente!", "GetCommandLineA not implemented!\n");
@@ -319,6 +357,9 @@ void STDCALL StdNothing(){
 }
 
 
+
+
+
 char* sEnviron[] = {(char*)"aaaabbbvvv", (char*)"aaaaa"};
 char*** cEnviron;
 
@@ -513,6 +554,9 @@ sFunc aTableFunc[] = {
 {"Sleep", 	(FUNC_) sleep_CPC },
 {"vfprintf"  ,(FUNC_) vfprintf },
 {"strcmp"  ,(FUNC_) strcmp },
+{"stricmp"  ,(FUNC_) stricmp },
+{"memcmp"  ,(FUNC_) memcmp },
+
 
 {"kbhit"  ,(FUNC_) kbhit_CPC },
 {"_kbhit"  ,(FUNC_) kbhit_CPC },

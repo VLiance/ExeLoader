@@ -13,31 +13,6 @@
 #include <stdlib.h>
 
 
-char * substr(char *chaineSource,int pos,int len) { 
-	char * dest=NULL;                        
-	if (len>0) {                  
-		/* allocation et mise à zéro */          
-		dest = (char *)calloc(len+1, 1);      
-		/* vérification de la réussite de l'allocation*/  
-		if(NULL != dest) {
-			strncat(dest,chaineSource+pos,len);            
-		}
-	}                                       
-	return dest;                            
-}
- 
-char * mid(char *chaineSource, int pos) {
-	return (pos>strlen(chaineSource))? chaineSource : substr(chaineSource, pos, strlen(chaineSource));
-}
- 
-char * left(char *chaineSource, int len){
-	return (len>=strlen(chaineSource))? chaineSource : substr(chaineSource, 0, len);
-}
- 
-char * right(char *chaineSource, int len){
-	return (len>=strlen(chaineSource))? chaineSource : substr(chaineSource, strlen(chaineSource)-len, len);
-}
-
 
 
 extern "C" bool fStartExeLoader(const char* Source_File);
