@@ -27,14 +27,14 @@
 	
 		Creation le 25 avril 2016
 							
-		Mise a jour le 28 octobre 2016
+		Mise a jour le 16 JUILLET 2019
 
 */
 
 extern bool bOnCpcDos;
 extern int nCpcVerMajor;
 extern int nCpcVerMinor;
-extern "C" void 			cpc_Set_Version				(int _nCpcVerMajor, int _nCpcVerMinor);
+extern "C" void 			cpc_Set_Version					(int _nCpcVerMajor, int _nCpcVerMinor);
 
 
 #ifdef InCpcDosCore
@@ -59,6 +59,15 @@ extern "C" void 			cpc_Set_Version				(int _nCpcVerMajor, int _nCpcVerMinor);
 	extern "C" void			cpc_cpinti_sleep_sec			(unsigned int temp_sec);
 
 	extern "C" double 		cpc_cpinti_Obtenir_Temps_ms		(double Temps_av);
+	
+	extern "C" unsigned int cpc_Thread_En_Cours				();
+	extern "C" bool		 	cpc_supprimer_Thread			(unsigned int TID, bool force);
+	extern "C" bool		 	cpc_doevents					(int temps);
+	
+	extern "C" void			cpc_EntrerSectionCritique 		();
+	extern "C" void			cpc_SortirSectionCritique 		();
+	
+	
 #else
 
 	//Dynmaic loaded CpcDos (like external .exe)
@@ -100,7 +109,14 @@ extern "C" void 			cpc_Set_Version				(int _nCpcVerMajor, int _nCpcVerMinor);
 	typedef 	void			(*FUNC_cpc_cpinti_sleep_ms)				(unsigned int temp_ms); 							extern FUNC_cpc_cpinti_sleep_ms 			cpc_cpinti_sleep_ms;
 	typedef 	void			(*FUNC_cpc_cpinti_sleep_sec)			(unsigned int temp_sec); 							extern FUNC_cpc_cpinti_sleep_sec 			cpc_cpinti_sleep_sec;
 	typedef 	double			(*FUNC_cpc_cpinti_Obtenir_Temps_ms)		(double Temps_av); 									extern FUNC_cpc_cpinti_Obtenir_Temps_ms 	cpc_cpinti_Obtenir_Temps_ms;
-#endif
+	
+	typedef 	unsigned int	(*FUNC_cpc_Thread_En_Cours)				(); 												extern FUNC_cpc_Thread_En_Cours 			cpc_Thread_En_Cours;
+	typedef 	unsigned int	(*FUNC_cpc_supprimer_Thread)			(); 												extern FUNC_cpc_supprimer_Thread 			cpc_supprimer_Thread;
+	typedef 	unsigned int	(*FUNC_cpc_doevents)					(); 												extern FUNC_cpc_doevents 					cpc_doevents;
+	
+	typedef 	unsigned int	(*FUNC_cpc_ENTRER_SectionCritique)		(); 												extern FUNC_cpc_ENTRER_SectionCritique 		cpc_ENTRER_SectionCritique;
+	typedef 	unsigned int	(*FUNC_cpc_SORTIR_SectionCritique)		(); 												extern FUNC_cpc_SORTIR_SectionCritique 		cpc_SORTIR_SectionCritique;
+#endif	
 
 
 #include "stdio.h"
@@ -134,16 +150,23 @@ extern "C" void 			cpc_Set_Version				(int _nCpcVerMajor, int _nCpcVerMinor);
 													int DisplDate, int Parameters, 
 													const char* File); 					// Debug normal
 		
+		int			 	File_exist				(char* path);							// Renvoie 1 OK 0 FAUX
 		int			 	File_exist				(const char* path);						// Renvoie 1 OK 0 FAUX
+		unsigned int 	File_size				(char* path);							// Obtenir la taille d'un fichier
 		unsigned int 	File_size				(const char* path);						// Obtenir la taille d'un fichier
 		int 			File_read_all			(const char* path, const char* mode, 
 													char *data);						// Lire TOUT le contenu d'un fichier
-		
+		int 			File_read_all			(char* path, char* mode, 
+													char *data);
 		
 		void			usleep					(unsigned int microseconds);			// Pause en micro secondes
 		void			sleep					(unsigned int milliseconds);			// Pause en milli secondes
 		void			ssleep					(unsigned int seconds);					// Pause en secondes
 		double 			get_time_ms				(double Temps_av);						// Obtenir le temps actuel en millisecondes
+		
+		unsigned int	get_CurrentThread		();										// Obtenir le numero du thread ID en cours
+		bool			stop_Thread				(unsigned int TID, bool force);			// Arreter un thread
+		void			doevents				(int temps);							// Release CPU
 		
 	};
 	
@@ -211,20 +234,34 @@ extern "C" void 			cpc_Set_Version				(int _nCpcVerMajor, int _nCpcVerMinor);
 		cpc_cpinti_debug_plus_cpinticore(texte, Ecran, Log, Alerte, RetourPLGN, CR_LF, DisplDate, Signature, File);
 	}
 	
+		// ---
+	inline int CpcdosOSx_CPintiCore::File_exist(char* path)
+	{
+		return cpc_cpinti_Fichier_Existe((const char*) path);
+	}
 	inline int CpcdosOSx_CPintiCore::File_exist(const char* path)
 	{
 		return cpc_cpinti_Fichier_Existe(path);
 	}
-	
+	// ---
+	inline unsigned int CpcdosOSx_CPintiCore::File_size(char* path)
+	{
+		return cpc_cpinti_Taille_Fichier((const char*) path);
+	}
 	inline unsigned int CpcdosOSx_CPintiCore::File_size(const char* path)
 	{
 		return cpc_cpinti_Taille_Fichier(path);
 	}
-	
+	// ---
 	inline int CpcdosOSx_CPintiCore::File_read_all(const char* path, const char* mode, char* data)
 	{
 		return (int) cpc_cpinti_Lire_Fichier_complet(path, mode, data);
 	}
+	inline int CpcdosOSx_CPintiCore::File_read_all(char* path, char* mode, char* data)
+	{
+		return (int) cpc_cpinti_Lire_Fichier_complet((const char*) path, (const char*) mode, data);
+	}
+	// ---
 	
 	// Time
 	inline void CpcdosOSx_CPintiCore::usleep(unsigned int microseconds)
@@ -244,6 +281,33 @@ extern "C" void 			cpc_Set_Version				(int _nCpcVerMajor, int _nCpcVerMinor);
 	{
 		return cpc_cpinti_Obtenir_Temps_ms(Temps_av);
 	}
+	
+	//////////////////// Thread manager  ////////////////////
+	inline unsigned int CpcdosOSx_CPintiCore::get_CurrentThread()
+	{
+		return cpc_Thread_En_Cours();
+	}
+	
+	inline bool CpcdosOSx_CPintiCore::stop_Thread(unsigned int TID, bool force)
+	{
+		return cpc_supprimer_Thread(TID, force);
+	}
+	
+	inline void CpcdosOSx_CPintiCore::doevents(int temps)
+	{
+		cpc_doevents(temps);
+	}
+	
+	inline void Enter_CriticalSection()
+	{
+		cpc_EntrerSectionCritique();
+	}
+	
+	inline void Exit_CriticalSection()
+	{
+		cpc_EntrerSectionCritique();
+	}
+ 
 	
 	//////////////////// For  ////////////////////
 	//////////////////// For  ////////////////////

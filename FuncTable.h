@@ -247,27 +247,24 @@ int WINAPI printf_CPC(const char* format, ...)
 }
 
 void WINAPI  My_EnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
-    _EXE_LOADER_DEBUG(3, "EnterCriticalSection non implemente!", "EnterCriticalSection not implemented!\n");
+    cpc_EntrerSectionCritique();
 }
 
 void WINAPI  My_LeaveCriticalSection(){
-    _EXE_LOADER_DEBUG(3, "LeaveCriticalSection non implemente!", "LeaveCriticalSection not implemented!\n");
+    cpc_SortirSectionCritique();
 }
 void WINAPI  My_DeleteCriticalSection(){
-    _EXE_LOADER_DEBUG(3, "DeleteCriticalSection non implemente!", "DeleteCriticalSection not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "Impossible de supprimer, section critique initialise par le noyau", "Unable to delete, critical section initialised by kernel\n");
 }
-void My_ExitProcess( UINT uExitCode){
-    _EXE_LOADER_DEBUG(3, "ExitProcess non implemente!", "ExitProcess not implemented! %d \n", uExitCode);
-    throw;
-}
+
 void WINAPI  My_GetModuleHandleA( LPCTSTR lpModuleName ){
     _EXE_LOADER_DEBUG(3, "GetModuleHandleA non implemente!", "GetModuleHandleA not implemented! Modulename: %s\n" , lpModuleName);
 }
 void WINAPI  My_InitializeCriticalSection(){
-    _EXE_LOADER_DEBUG(3, "InitializeCriticalSection non implemente!", "InitializeCriticalSection not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "Section critique deja initialise par le noyau", "Critical section already initialised by kernel\n");
 }
 BOOL  WINAPI  My_InitializeCriticalSectionEx( LPCRITICAL_SECTION lpCriticalSection, DWORD              dwSpinCount, DWORD              Flags){
-    _EXE_LOADER_DEBUG(3, "InitializeCriticalSectionEx non implemente!", "InitializeCriticalSectionEx not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "Section critique deja initialise par le noyau", "Critical section already initialised by kernel\n");
     return false;
 }
 
@@ -308,9 +305,21 @@ void   My_set_app_type(int at){
 void My__signal(){
     _EXE_LOADER_DEBUG(3, "signal non implemente!", "signal not implemented!\n");
 }
+int My_setmode( int fd, int mode ){
+    _EXE_LOADER_DEBUG(3, "_setmode non implemente --> %d : %d \n", "_setmode not implemented! : %d : %d \n", fd, mode);
+    return  0x0004; //O_BINARY
+}
 
 void exited(){
 	_EXE_LOADER_DEBUG(0, "\n-- Exited --\n", "\n-- Exited --\n");
+}
+
+void My_ExitProcess( UINT uExitCode){
+    // _EXE_LOADER_DEBUG(3, "ExitProcess non implemente!", "ExitProcess not implemented! %d \n", uExitCode);
+	// cpc_Thread_En_Cours();
+	cpc_supprimer_Thread(cpc_Thread_En_Cours(), true);
+	cpc_doevents(0);
+    throw;
 }
 
 int My_atexit(void (*func)(void)){
@@ -318,17 +327,27 @@ int My_atexit(void (*func)(void)){
     _EXE_LOADER_DEBUG(3, "atexit non implemente!", "atexit not implemented!\n");
     return 0;
 }
-int My_setmode( int fd, int mode ){
-    _EXE_LOADER_DEBUG(3, "_setmode non implemente --> %d : %d \n", "_setmode not implemented! : %d : %d \n", fd, mode);
-    return  0x0004; //O_BINARY
-}
+
 void My_cexit(){
-    _EXE_LOADER_DEBUG(3, "_cexit non implemente!", "_cexit not implemented!\n");
+    cpc_doevents(10000);
+	cpc_supprimer_Thread(cpc_Thread_En_Cours(), true);
+	cpc_doevents(0);
     throw;
 }
 
-void My_Onexit(){
-    _EXE_LOADER_DEBUG(3, "_onexit non implemente!", "_onexit not implemented!\n");
+void My_Onexit(void (*func)(int status, void *arg)){
+	// func = exited;
+	cpc_doevents(10000);
+    // _EXE_LOADER_DEBUG(3, "_onexit partiellement implemente!", "_onexit partially implemented!\n");
+	cpc_supprimer_Thread(cpc_Thread_En_Cours(), true);
+	cpc_doevents(0);
+}
+
+void My_exit(int status){
+	cpc_doevents(10000);
+    cpc_supprimer_Thread(cpc_Thread_En_Cours(), true);
+	_EXE_LOADER_DEBUG(3, "Le programme s'est arrete avec le code %d\n", "Program has stopped with %d code\n", status);
+	cpc_doevents(0);
 }
 void iob(){
     _EXE_LOADER_DEBUG(3, "_iob non implemente!", "_iob not implemented!\n");
@@ -528,6 +547,7 @@ sFunc aTableFunc[] = {
 {"atexit" ,(FUNC_) My_atexit },
 {"_cexit" ,(FUNC_) My_cexit },
 {"_onexit" ,(FUNC_) My_Onexit },
+{"exit" ,(FUNC_) My_exit },
 {"GetStartupInfo" ,(FUNC_) My_GetStartupInfo },
 
 {"GetCommandLineA"  ,(FUNC_) My_GetCommandLineA },

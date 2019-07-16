@@ -20,7 +20,7 @@
  * The Initial Developer of the Original Code is Joachim Bauch.
  * 
  * --> Adaptation for Cpcdos OSx by Michael BANVILLE and Sebastien FAVIER
- *      Updated: 31/10/2016
+ *      Updated: 16 JUILLET 2019
  *
  * Portions created by Joachim Bauch are Copyright (C) 2004-2015
  * Joachim Bauch. All Rights Reserved.
@@ -28,7 +28,7 @@
  */
 #include <stdio.h>
 #include "MemoryModule.h"
-
+ 
 #ifdef CpcDos
 #define CustomLoader
 #else
