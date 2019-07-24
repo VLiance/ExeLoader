@@ -142,7 +142,7 @@ class MemoryModule
 	 * Get a pointer to the contents of the resource.
 	 */
 	LPVOID MemoryLoadResource(HMEMORYMODULE, HMEMORYRSRC);
-
+ 
 	/**
 	 * Load a string resource.
 	 */

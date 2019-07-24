@@ -41,7 +41,9 @@ extern "C" void 			cpc_Set_Version					(int _nCpcVerMajor, int _nCpcVerMinor);
 	extern "C" int 			cpc_Creer_Contexte				(int TAILLEX, int TAILLEYn);
 	extern "C" void* 		cpc_Obtenir_Zone_Contexte		(int ID);
 	extern "C" int 			cpc_Blitter						(int ID);
+	
 	extern "C" void 		cpc_CCP_Exec_Commande			(const char* COMMANDE, int ID);
+	extern "C" char*		cpc_CCP_Lire_Variable			(const char* NomVariable, int Niveau);
 	extern "C" int 			cpc_CCP_Exec_Thread_cpc			(const char* chemin, int Thread_Priorite);
 
 	extern "C" char*		cpc_Exec_en_cours				(int ARG);
@@ -93,6 +95,7 @@ extern "C" void 			cpc_Set_Version					(int _nCpcVerMajor, int _nCpcVerMinor);
 	typedef 	void* 			(*FUNC_cpc_Obtenir_Zone_Contexte)		(int ID); 											extern FUNC_cpc_Obtenir_Zone_Contexte 		cpc_Obtenir_Zone_Contexte;
 	typedef 	int 			(*FUNC_cpc_Blitter)						(int ID); 											extern FUNC_cpc_Blitter 					cpc_Blitter;
 	typedef 	void 			(*FUNC_cpc_CCP_Exec_Commande)			(const char* COMMANDE, int ID); 					extern FUNC_cpc_CCP_Exec_Commande 			cpc_CCP_Exec_Commande;
+	typedef 	char* 			(*FUNC_cpc_CCP_Lire_Variable)			(const char* NomVariable, int Niveau); 				extern FUNC_cpc_CCP_Lire_Variable 			cpc_CCP_Lire_Variable;
 	typedef 	int 			(*FUNC_cpc_CCP_Exec_Thread_cpc)			(const char* chemin, int Thread_Priorite); 			extern FUNC_cpc_CCP_Exec_Thread_cpc 		cpc_CCP_Exec_Thread_cpc;
 	
 	typedef 	char*			(*FUNC_cpc_cpinti_debug_cpinticore)		(const char* texte, int alerte);					extern FUNC_cpc_cpinti_debug_cpinticore 	cpc_cpinti_debug_cpinticore;
@@ -136,7 +139,8 @@ extern "C" void 			cpc_Set_Version					(int _nCpcVerMajor, int _nCpcVerMinor);
 		
 		
 		// ***************** CpcdosC+ Engine *****************
-		void 			Shell_CCP				(const char* COMMAND, int LEVEL);		// Executer une commande CpcdosC+<
+		void 			Shell_CCP				(const char* COMMAND, int LEVEL);		// Executer une commande CpcdosC+
+		char*			Shell_ReadVariable		(const char* VariableName, int LEVEL);	// Lire une variable CpcdosC+
 		int 			Shell_FILE				(const char* FILE, int THREAD_PRIORITY); // Executer un fichier CpcdosC+ multithreadé ou pas
 		
 		// ******************** Cpcdos OSx ********************
@@ -191,6 +195,11 @@ extern "C" void 			cpc_Set_Version					(int _nCpcVerMajor, int _nCpcVerMinor);
 	inline void CpcdosOSx_CPintiCore::Shell_CCP(const char* COMMAND, int LEVEL)
 	{
 		cpc_CCP_Exec_Commande(COMMAND, LEVEL);
+	}
+	
+	inline char* CpcdosOSx_CPintiCore::Shell_ReadVariable(const char* VariableName, int LEVEL)
+	{
+		return cpc_CCP_Lire_Variable(VariableName, LEVEL);
 	}
 	
 	inline int CpcdosOSx_CPintiCore::Shell_FILE(const char* FILE, int Thread_Priority)

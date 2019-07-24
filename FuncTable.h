@@ -22,6 +22,7 @@
 //#include <internal.h>
 #include <cassert>
 #include <cstdarg>
+#include <setjmp.h>
 
 
 
@@ -43,6 +44,25 @@ extern "C" int __kbhit(void);
 //void __fastcall foo(int a, int b); ----------------------->    @foo@8
 
 extern  FARPROC MyMemoryDefaultGetProcAddress(HCUSTOMMODULE module, LPCSTR name, void *userdata);
+
+
+char * cpc_fgets ( char * texte, int num, FILE * stream )
+{
+	// if (stream == stdin)
+	// {
+		cpc_CCP_Exec_Commande("fix/ /q _exe_QUESTION", 4);
+		char * retour = cpc_CCP_Lire_Variable("_exe_QUESTION", 4);
+		for(int b = 0; b <= num; b++)
+		{
+			texte[b] = retour[b];
+		}
+		texte[num-1] = '\n';
+		texte[num] = '\0';
+		return texte;
+	// }
+	// else
+		// return fgets(texte, num, stream);
+}
 
 int my_memcmp(const void *p1, const void *p2, size_t n)
 {
@@ -317,6 +337,7 @@ void exited(){
 void My_ExitProcess( UINT uExitCode){
     // _EXE_LOADER_DEBUG(3, "ExitProcess non implemente!", "ExitProcess not implemented! %d \n", uExitCode);
 	// cpc_Thread_En_Cours();
+	_EXE_LOADER_DEBUG(3, "Le programme s'est arrete avec le code %d\n", "Program has stopped with %d code\n", uExitCode);
 	cpc_supprimer_Thread(cpc_Thread_En_Cours(), true);
 	cpc_doevents(0);
     throw;
@@ -336,7 +357,6 @@ void My_cexit(){
 }
 
 void My_Onexit(void (*func)(int status, void *arg)){
-	// func = exited;
 	cpc_doevents(10000);
     // _EXE_LOADER_DEBUG(3, "_onexit partiellement implemente!", "_onexit partially implemented!\n");
 	cpc_supprimer_Thread(cpc_Thread_En_Cours(), true);
@@ -344,9 +364,10 @@ void My_Onexit(void (*func)(int status, void *arg)){
 }
 
 void My_exit(int status){
+	// return;
 	cpc_doevents(10000);
-    cpc_supprimer_Thread(cpc_Thread_En_Cours(), true);
-	_EXE_LOADER_DEBUG(3, "Le programme s'est arrete avec le code %d\n", "Program has stopped with %d code\n", status);
+    _EXE_LOADER_DEBUG(3, "Le programme s'est arrete avec le code %d\n", "Program has stopped with %d code\n", status);
+	cpc_supprimer_Thread(cpc_Thread_En_Cours(), true);
 	cpc_doevents(0);
 }
 void iob(){
@@ -578,8 +599,10 @@ sFunc aTableFunc[] = {
 {"_stricmp"  ,(FUNC_) stricmp },
 {"memcmp"  ,(FUNC_) memcmp },
 {"memmove"  ,(FUNC_) memmove },
-{"fgets"  ,(FUNC_) fgets },
+{"fgets"  ,(FUNC_) cpc_fgets },
 {"fputs"  ,(FUNC_) fputs },
+{"_fgets"  ,(FUNC_) cpc_fgets },
+{"_fputs"  ,(FUNC_) fputs },
 /* {"_write"  ,(FUNC_) _write },*/
 /* {"_snwprintf"  ,(FUNC_) _snwprintf }, */
 {"rand"  ,(FUNC_) rand },
@@ -615,7 +638,15 @@ sFunc aTableFunc[] = {
 
 {"fopen"  ,(FUNC_) fopen },
 {"fclose"  ,(FUNC_) fclose },
+{"setjmp"  ,(FUNC_) setjmp },
+{"_setjmp"  ,(FUNC_) setjmp },
+{"sigsetjmp"  ,(FUNC_) sigsetjmp },
+{"_sigsetjmp"  ,(FUNC_) sigsetjmp },
 
+{"longjmp"  ,(FUNC_) longjmp },
+{"_longjmp"  ,(FUNC_) longjmp },
+{"siglongjmp"  ,(FUNC_) siglongjmp },
+{"_siglongjmp"  ,(FUNC_) siglongjmp },
 
 //{"localeconv"  ,(FUNC_) My_localeconv },
 //{"localeconv"  ,(FUNC_) localeconv },
