@@ -16,7 +16,4 @@ before_install:
   - build/setup_linux.sh
 
 script:
-  - dosemu -dumb -quiet -E "build\\build.bat" > log.txt
-  # We have to cheat since dosemu always return "0"
-  - grep -Fq "Error" log.txt && cat log.txt && exit 1
-
+  - build/build.sh
