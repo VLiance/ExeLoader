@@ -1,12 +1,12 @@
 CXX			= gpp
 RM			= del
 
-CXXFLAGS	+= -O0 -march=i686 -DNDEBUG -m32 -fpermissive -DCpcDos -I .
+CXXFLAGS	+= -O0 -march=i686 -DNDEBUG -m32 -fpermissive -DCpcDos -I include -I .
 
 
 all: ExeLoader.obj MemoryModule.obj
 
-%.obj: %.cpp
+%.obj: src/%.cpp
 	$(CXX) $(CXXFLAGS) -c $^ -o $@
 
 clean:
