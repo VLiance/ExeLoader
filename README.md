@@ -1,6 +1,6 @@
 # ExeLoader
 
-Load .exe file direclty from memory. Also add the possibility to remap externals functions with a table.
+Load & run .exe file direclty from memory. Also add the possibility to remap externals functions with a table.
 
 Created for the [CpcDos](https://cpcdos.net ) project.
 
