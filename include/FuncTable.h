@@ -45,7 +45,7 @@ extern "C" int __kbhit(void);
 
 extern  FARPROC MyMemoryDefaultGetProcAddress(HCUSTOMMODULE module, LPCSTR name, void *userdata);
 
-
+#ifndef UseWinFunc
 char * cpc_fgets ( char * texte, int num, FILE * stream )
 {
 	// if (stream == stdin)
@@ -106,7 +106,7 @@ char * left(char *chaineSource, int len){
 char * right(char *chaineSource, int len){
 	return (len>=strlen(chaineSource))? chaineSource : substr(chaineSource, strlen(chaineSource)-len, len);
 }
-
+#endif
 
 LPTSTR  My_GetCommandLineA(){
     _EXE_LOADER_DEBUG(3, "GetCommandLineA non implemente!", "GetCommandLineA not implemented!\n");
@@ -230,6 +230,7 @@ int WINAPI abs_CPC(int nombre)
     return ret [nombre<0];
 }
 
+#ifndef UseWinFunc
 void WINAPI sleep_CPC(unsigned int millisecondes)
 {
 	// Cette fonction permet d'utiliser le "sleep" de Cpcdos
@@ -265,13 +266,18 @@ int WINAPI printf_CPC(const char* format, ...)
 	
 	return Retour;
 }
+#endif
 
 void WINAPI  My_EnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
+	#ifndef UseWinFunc
     cpc_EntrerSectionCritique();
+	#endif
 }
 
 void WINAPI  My_LeaveCriticalSection(){
+	#ifndef UseWinFunc
     cpc_SortirSectionCritique();
+	#endif
 }
 void WINAPI  My_DeleteCriticalSection(){
     _EXE_LOADER_DEBUG(3, "Impossible de supprimer, section critique initialise par le noyau", "Unable to delete, critical section initialised by kernel\n");
@@ -335,12 +341,14 @@ void exited(){
 }
 
 void My_ExitProcess( UINT uExitCode){
+#ifndef UseWinFunc
     // _EXE_LOADER_DEBUG(3, "ExitProcess non implemente!", "ExitProcess not implemented! %d \n", uExitCode);
 	// cpc_Thread_En_Cours();
 	_EXE_LOADER_DEBUG(3, "Le programme s'est arrete avec le code %d\n", "Program has stopped with %d code\n", uExitCode);
 	cpc_supprimer_Thread(cpc_Thread_En_Cours(), true);
 	cpc_doevents(0);
     throw;
+#endif
 }
 
 int My_atexit(void (*func)(void)){
@@ -350,25 +358,31 @@ int My_atexit(void (*func)(void)){
 }
 
 void My_cexit(){
+	#ifndef UseWinFunc
     cpc_doevents(10000);
 	cpc_supprimer_Thread(cpc_Thread_En_Cours(), true);
 	cpc_doevents(0);
     throw;
+	#endif
 }
 
 void My_Onexit(void (*func)(int status, void *arg)){
+	#ifndef UseWinFunc
 	cpc_doevents(10000);
     // _EXE_LOADER_DEBUG(3, "_onexit partiellement implemente!", "_onexit partially implemented!\n");
 	cpc_supprimer_Thread(cpc_Thread_En_Cours(), true);
 	cpc_doevents(0);
+	#endif
 }
 
 void My_exit(int status){
+	#ifndef UseWinFunc
 	// return;
 	cpc_doevents(10000);
     _EXE_LOADER_DEBUG(3, "Le programme s'est arrete avec le code %d\n", "Program has stopped with %d code\n", status);
 	cpc_supprimer_Thread(cpc_Thread_En_Cours(), true);
 	cpc_doevents(0);
+	#endif
 }
 void iob(){
     _EXE_LOADER_DEBUG(3, "_iob non implemente!", "_iob not implemented!\n");
@@ -589,19 +603,15 @@ sFunc aTableFunc[] = {
 {"abort"  ,(FUNC_) abort },
 {"scanf"  ,(FUNC_) scanf },
 {"fwrite"  ,(FUNC_) fwrite },
-{"printf"  ,(FUNC_) printf_CPC },
-{"usleep", 	(FUNC_) usleep_CPC },
-{"msleep", 	(FUNC_) sleep_CPC }, // idem que Sleep
-{"Sleep", 	(FUNC_) sleep_CPC },
+
+
 {"vfprintf"  ,(FUNC_) vfprintf },
 {"strcmp"  ,(FUNC_) strcmp },
 {"stricmp"  ,(FUNC_) stricmp },
 {"_stricmp"  ,(FUNC_) stricmp },
 {"memcmp"  ,(FUNC_) memcmp },
 {"memmove"  ,(FUNC_) memmove },
-{"fgets"  ,(FUNC_) cpc_fgets },
 {"fputs"  ,(FUNC_) fputs },
-{"_fgets"  ,(FUNC_) cpc_fgets },
 {"_fputs"  ,(FUNC_) fputs },
 /* {"_write"  ,(FUNC_) _write },*/
 /* {"_snwprintf"  ,(FUNC_) _snwprintf }, */
@@ -625,8 +635,7 @@ sFunc aTableFunc[] = {
 {"strrchr"  ,(FUNC_) strrchr },
 
 
-{"kbhit"  ,(FUNC_) kbhit_CPC },
-{"_kbhit"  ,(FUNC_) kbhit_CPC },
+
 {"getc"  ,(FUNC_) getc },
 {"fgetc"  ,(FUNC_) fgetc },
 {"putc"  ,(FUNC_) putc },
@@ -638,6 +647,14 @@ sFunc aTableFunc[] = {
 
 {"fopen"  ,(FUNC_) fopen },
 {"fclose"  ,(FUNC_) fclose },
+
+#ifndef UseWinFunc
+{"kbhit"  ,(FUNC_) kbhit_CPC },
+{"_kbhit"  ,(FUNC_) kbhit_CPC },
+{"usleep", 	(FUNC_) usleep_CPC },
+{"msleep", 	(FUNC_) sleep_CPC }, // idem que Sleep
+{"Sleep", 	(FUNC_) sleep_CPC },
+{"printf"  ,(FUNC_) printf_CPC },
 {"setjmp"  ,(FUNC_) setjmp },
 {"_setjmp"  ,(FUNC_) setjmp },
 {"sigsetjmp"  ,(FUNC_) sigsetjmp },
@@ -647,7 +664,10 @@ sFunc aTableFunc[] = {
 {"_longjmp"  ,(FUNC_) longjmp },
 {"siglongjmp"  ,(FUNC_) siglongjmp },
 {"_siglongjmp"  ,(FUNC_) siglongjmp },
-
+#else
+{"printf"  ,(FUNC_) printf },
+{"Sleep", 	(FUNC_) Sleep },
+#endif
 //{"localeconv"  ,(FUNC_) My_localeconv },
 //{"localeconv"  ,(FUNC_) localeconv },
 
@@ -733,6 +753,8 @@ sFunc aTableFunc[] = {
 
 #else  //OnCpcDOs
 
+	{"fgets"  ,(FUNC_) cpc_fgets },
+	{"_fgets"  ,(FUNC_) cpc_fgets },
 
 	{"GetStdHandle"  ,(FUNC_) My_GetStdHandle },
 	{"GetConsoleWindow"  ,(FUNC_) My_GetConsoleWindow },

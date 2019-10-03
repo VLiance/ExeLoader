@@ -104,10 +104,21 @@ long nExeFileSize;
 	}
 #else /* !!! No Cpcdos !!! */
 
+
+
+
 	//   #define UNICODE
 	//   #define _UNICODE
 	//    #include <windows.h>
 	#include "win.h"
+	
+	void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...)
+	{
+		printf("\n%d: %s",alert, format_FR);
+	}
+
+	
+	
 	/*
 	DWORD WINAPI GetModuleFileName(
 	_In_opt_ HMODULE hModule,
@@ -151,7 +162,7 @@ long nExeFileSize;
 			fread(_aData, 1, _nSize, f);
 
 			nExeFileSize = _nSize;
-			aExeFileData = _aData;
+			aExeFileData = (char*)_aData;
 
 			// _oRc->fSetDynamicMemData(_aData, _nSize); //Will be auto free
 			// Lib_GZ::Sys::pDebug::fConsole(gzStrL("---File Open!-- ") + _sFullPath);
