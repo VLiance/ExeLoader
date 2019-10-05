@@ -109,32 +109,32 @@ char * right(char *chaineSource, int len){
 #endif
 
 LPTSTR  My_GetCommandLineA(){
-    _EXE_LOADER_DEBUG(3, "GetCommandLineA non implemente!", "GetCommandLineA not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "GetCommandLineA non implemente!", "GetCommandLineA not implemented!");
     return (LPTSTR)"TestCmdLine";
 }
 DWORD   My_GetCurrentThreadId(){
-    _EXE_LOADER_DEBUG(3, "GetCurrentThreadId non implemente!", "GetCurrentThreadId not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "GetCurrentThreadId non implemente!", "GetCurrentThreadId not implemented!");
     return 55;
 }
 
 HANDLE   My_CreateMutexA(LPSECURITY_ATTRIBUTES lpMutexAttributes, BOOL      bInitialOwner, LPCTSTR               lpName){
-    _EXE_LOADER_DEBUG(3, "CreateMutexA non implemente!", "CreateMutexA not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "CreateMutexA non implemente!", "CreateMutexA not implemented!");
     return 0;
 }
 DWORD    My_WaitForSingleObject( HANDLE hHandle, DWORD  dwMilliseconds){
-    _EXE_LOADER_DEBUG(3, "WaitForSingleObject non implemente!", "WaitForSingleObject not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "WaitForSingleObject non implemente!", "WaitForSingleObject not implemented!");
     return 0;
 }
 ATOM    My_FindAtomA( LPCTSTR lpString){
-    _EXE_LOADER_DEBUG(3, "FindAtomA non implemente!", "FindAtomA not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "FindAtomA non implemente!", "FindAtomA not implemented!");
     return 0;
 }
 UINT     My_GetAtomNameA(  ATOM   nAtom,  LPTSTR lpBuffer,  int    nSize){
-    _EXE_LOADER_DEBUG(3, "GetAtomNameA non implemente!", "GetAtomNameA not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "GetAtomNameA non implemente!", "GetAtomNameA not implemented!");
     return 0;
 }
 ATOM      My_AddAtomA(  LPCTSTR lpString){
-    _EXE_LOADER_DEBUG(3, "AddAtomA non implemente!", "AddAtomA not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "AddAtomA non implemente!", "AddAtomA not implemented!");
     return 0;
 }
 
@@ -146,18 +146,18 @@ BOOL   My_ReleaseMutex( HANDLE hMutex){
 }
 
 void WINAPI My_SetLastError(_In_ DWORD dwErrCode){
-    _EXE_LOADER_DEBUG(3, "", "SetLastError not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "", "SetLastError not implemented!");
 }
 
 
 /*
 void My_GetStartupInfoA(LPSTARTUPINFO lpStartupInfo){
-    _EXE_LOADER_DEBUG(3, "", "GetStartupInfoA not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "", "GetStartupInfoA not implemented!");
 }*/
 
 
 void fNotImplemented(){
-    _EXE_LOADER_DEBUG(3, "Fonction non implemente!", "Function not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "Fonction non implemente!", "Function not implemented!");
 }
 
 LONG  My_InterlockedDecrement( LONG volatile *Addend){
@@ -179,17 +179,28 @@ char * My_getenv(const char *varname ){
    errno = EINVAL;
     return (char*)"10";
 }
+
+//int printf ( const char * format, ... );
+int My_printf( const char * format, ... ){
+	printf("\nPrintfCallled!\n\n\n\n");
+    return 0;
+
+}
+
+
+
+
 int My_fputc(int character, FILE * stream){
     _EXE_LOADER_DEBUG(0, "%c", "%c", character);
 	return character;
 }
 
 void My_localeconv(){
-    _EXE_LOADER_DEBUG(0, "localeconv fonction non implemente", "localeconv Function not implemented!\n");
+    _EXE_LOADER_DEBUG(0, "localeconv fonction non implemente", "localeconv Function not implemented!");
 }
 
 void My_GetStartupInfo( LPSTARTUPINFO lpStartupInfo){
-    _EXE_LOADER_DEBUG(0, "MyGetStartupInfo non implemente! -- Remise a zero", "MyGetStartupInfo Function not implemented! -- Reset info\n");
+    _EXE_LOADER_DEBUG(0, "MyGetStartupInfo non implemente! -- Remise a zero", "MyGetStartupInfo Function not implemented! -- Reset info");
 	lpStartupInfo->cb = sizeof(LPSTARTUPINFO);
 	lpStartupInfo->lpDesktop = (LPTSTR)L"";
 	lpStartupInfo->lpTitle = (LPTSTR)"";
@@ -280,44 +291,50 @@ void WINAPI  My_LeaveCriticalSection(){
 	#endif
 }
 void WINAPI  My_DeleteCriticalSection(){
-    _EXE_LOADER_DEBUG(3, "Impossible de supprimer, section critique initialise par le noyau", "Unable to delete, critical section initialised by kernel\n");
+    _EXE_LOADER_DEBUG(3, "Impossible de supprimer, section critique initialise par le noyau", "Unable to delete, critical section initialised by kernel");
 }
 
 void WINAPI  My_GetModuleHandleA( LPCTSTR lpModuleName ){
     _EXE_LOADER_DEBUG(3, "GetModuleHandleA non implemente!", "GetModuleHandleA not implemented! Modulename: %s\n" , lpModuleName);
 }
 void WINAPI  My_InitializeCriticalSection(){
-    _EXE_LOADER_DEBUG(3, "Section critique deja initialise par le noyau", "Critical section already initialised by kernel\n");
+    _EXE_LOADER_DEBUG(3, "Section critique deja initialise par le noyau", "Critical section already initialised by kernel");
 }
 BOOL  WINAPI  My_InitializeCriticalSectionEx( LPCRITICAL_SECTION lpCriticalSection, DWORD              dwSpinCount, DWORD              Flags){
-    _EXE_LOADER_DEBUG(3, "Section critique deja initialise par le noyau", "Critical section already initialised by kernel\n");
+    _EXE_LOADER_DEBUG(3, "Section critique deja initialise par le noyau", "Critical section already initialised by kernel");
     return false;
 }
 
 LPTOP_LEVEL_EXCEPTION_FILTER  My_SetUnhandledExceptionFilter( LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter){
-    _EXE_LOADER_DEBUG(3, "SetUnhandledExceptionFilter non implemente!", "SetUnhandledExceptionFilter not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "SetUnhandledExceptionFilter non implemente!", "SetUnhandledExceptionFilter not implemented!");
     return 0;
 }
 
 
 DWORD WINAPI My_TlsAlloc(void){
-    _EXE_LOADER_DEBUG(3, "TlsAlloc non implemente!", "TlsAlloc not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "TlsAlloc non implemente!", "TlsAlloc not implemented!");
 	return 0;
 }
 LPVOID WINAPI My_TlsGetValue(  DWORD dwTlsIndex){
-    _EXE_LOADER_DEBUG(3, "TlsGetValue non implemente!", "TlsGetValue not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "TlsGetValue non implemente!", "TlsGetValue not implemented!");
     return (LPVOID)0;
 }
 BOOL  WINAPI My_TlsSetValue(  DWORD dwTlsIndex, _In_opt_ LPVOID lpTlsValue){
-    _EXE_LOADER_DEBUG(3, "TlsSetValue non implemente!", "TlsSetValue not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "TlsSetValue non implemente!", "TlsSetValue not implemented!");
     return false;
 }
 
+int  My_lock( ){
+    return 0;
+}
+
+
+
 void My_VirtualProtect(){
-    _EXE_LOADER_DEBUG(3, "VirtualProtect non implemente!", "VirtualProtect not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "VirtualProtect non implemente!", "VirtualProtect not implemented!");
 }
 void My_VirtualQuery(){
-    _EXE_LOADER_DEBUG(3, "VirtualQuery non implemente!", "VirtualQuery not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "VirtualQuery non implemente!", "VirtualQuery not implemented!");
 }
 int My_getmainargs( int * _Argc, char *** _Argv,  char *** _Env, int _DoWildCard,void * _StartInfo){
     _EXE_LOADER_DEBUG(3, "__getmainargs%d\n", "__getmainargs: %d\n", *_Argc);
@@ -329,7 +346,7 @@ void   My_set_app_type(int at){
 }
 
 void My__signal(){
-    _EXE_LOADER_DEBUG(3, "signal non implemente!", "signal not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "signal non implemente!", "signal not implemented!");
 }
 int My_setmode( int fd, int mode ){
     _EXE_LOADER_DEBUG(3, "_setmode non implemente --> %d : %d \n", "_setmode not implemented! : %d : %d \n", fd, mode);
@@ -337,7 +354,7 @@ int My_setmode( int fd, int mode ){
 }
 
 void exited(){
-	_EXE_LOADER_DEBUG(0, "\n-- Exited --\n", "\n-- Exited --\n");
+	_EXE_LOADER_DEBUG(0, "-- Exited --\n", "\n-- Exited --");
 }
 
 void My_ExitProcess( UINT uExitCode){
@@ -353,7 +370,7 @@ void My_ExitProcess( UINT uExitCode){
 
 int My_atexit(void (*func)(void)){
     func = exited;
-    _EXE_LOADER_DEBUG(3, "atexit non implemente!", "atexit not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "atexit non implemente!", "atexit not implemented!");
     return 0;
 }
 
@@ -369,7 +386,7 @@ void My_cexit(){
 void My_Onexit(void (*func)(int status, void *arg)){
 	#ifndef UseWinFunc
 	cpc_doevents(10000);
-    // _EXE_LOADER_DEBUG(3, "_onexit partiellement implemente!", "_onexit partially implemented!\n");
+    // _EXE_LOADER_DEBUG(3, "_onexit partiellement implemente!", "_onexit partially implemented!");
 	cpc_supprimer_Thread(cpc_Thread_En_Cours(), true);
 	cpc_doevents(0);
 	#endif
@@ -385,7 +402,7 @@ void My_exit(int status){
 	#endif
 }
 void iob(){
-    _EXE_LOADER_DEBUG(3, "_iob non implemente!", "_iob not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "_iob non implemente!", "_iob not implemented!");
 }
 
 BOOL WINAPI My_IsProcessorFeaturePresent(_In_ DWORD ProcessorFeature){
@@ -394,7 +411,7 @@ BOOL WINAPI My_IsProcessorFeaturePresent(_In_ DWORD ProcessorFeature){
 }
 
 DWORD  WINAPI My_GetCurrentProcessId(void){
-    _EXE_LOADER_DEBUG(3, "GetCurrentProcessId non implemente!", "GetCurrentProcessId not implemented!\n");
+    _EXE_LOADER_DEBUG(3, "GetCurrentProcessId non implemente!", "GetCurrentProcessId not implemented!");
     return 0;
 }
 
@@ -420,16 +437,23 @@ char*** cEnviron;
 char ***  My_penviron()
 {
 	cEnviron = (char***) &sEnviron;
-	_EXE_LOADER_DEBUG(3, "__p__environ non implemente!", "__p__environ not implemented!\n");
+	_EXE_LOADER_DEBUG(3, "__p__environ non implemente!", "__p__environ not implemented!");
 	return cEnviron;
 }
 
 int fmode =  0x0004; //O_BINARY; //???????
 
 int* My_pfmode(){
-    _EXE_LOADER_DEBUG(0, "__p__fmode non implemente!", "__p__fmode not implemented!\n");
+    _EXE_LOADER_DEBUG(0, "__p__fmode non implemente!", "__p__fmode not implemented!");
     return &fmode; //Pointer to the _fmode global variable.
 }
+
+
+UINT  My__lc_codepage_func(){
+	return 0;
+}
+
+
 
 HANDLE  STDCALL  My_CreateSemaphore( //Must have  __stdcall
  _In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,
@@ -438,7 +462,7 @@ HANDLE  STDCALL  My_CreateSemaphore( //Must have  __stdcall
   _In_opt_ LPCTSTR               lpName
 )
 {
-   _EXE_LOADER_DEBUG(3, "CreateSemaphore non implemente!", "CreateSemaphore not implemented!\n");
+   _EXE_LOADER_DEBUG(3, "CreateSemaphore non implemente!", "CreateSemaphore not implemented!");
 	return 0;
 }
 
@@ -561,8 +585,8 @@ sFunc aTableFunc[] = {
 
    // {"CreateSemaphoreW"  ,(FUNC_) My_CreateSemaphore },
     {"CreateSemaphoreW"  ,(FUNC_) My_CreateSemaphore },
+    {"___lc_codepage_func"  ,(FUNC_) My__lc_codepage_func },
     {"GetLastError"  ,(FUNC_) My_GetLastError },
-
 
 
 
@@ -604,8 +628,10 @@ sFunc aTableFunc[] = {
 {"scanf"  ,(FUNC_) scanf },
 {"fwrite"  ,(FUNC_) fwrite },
 
-
+{"_strnicmp"  ,(FUNC_) _strnicmp },
+{"fwprintf"  ,(FUNC_) fwprintf },
 {"vfprintf"  ,(FUNC_) vfprintf },
+{"_vsnprintf"  ,(FUNC_) _vsnprintf },
 {"strcmp"  ,(FUNC_) strcmp },
 {"stricmp"  ,(FUNC_) stricmp },
 {"_stricmp"  ,(FUNC_) stricmp },
@@ -616,9 +642,17 @@ sFunc aTableFunc[] = {
 /* {"_write"  ,(FUNC_) _write },*/
 /* {"_snwprintf"  ,(FUNC_) _snwprintf }, */
 {"rand"  ,(FUNC_) rand },
-{"setbuf"  ,(FUNC_) setbuf },
+
+
+
+{"fopen"  ,(FUNC_) fopen },
+{"fclose"  ,(FUNC_) fclose },
+
+//{"setbuf"  ,(FUNC_) setbuf }, //!!!! Not WORK -> CRASH! (Only on windows?)
 {"fseek"  ,(FUNC_) fseek },
 {"ftell"  ,(FUNC_) ftell },
+{"rewind"  ,(FUNC_) rewind },
+
 {"fflush"  ,(FUNC_) fflush },
 {"fprintf"  ,(FUNC_) fprintf },
 {"sprintf"  ,(FUNC_) sprintf },
@@ -640,13 +674,13 @@ sFunc aTableFunc[] = {
 {"fgetc"  ,(FUNC_) fgetc },
 {"putc"  ,(FUNC_) putc },
 {"fputc"  ,(FUNC_) fputc },
+{"fputwc"  ,(FUNC_) fputwc },
+{"putwc"  ,(FUNC_) putwc },
+{"getwc"  ,(FUNC_) getwc },
 {"putchar"  ,(FUNC_) putchar },
 {"getchar"  ,(FUNC_) getchar },
 {"getch"  ,(FUNC_) getch },
 {"_getch"  ,(FUNC_) getch },
-
-{"fopen"  ,(FUNC_) fopen },
-{"fclose"  ,(FUNC_) fclose },
 
 #ifndef UseWinFunc
 {"kbhit"  ,(FUNC_) kbhit_CPC },
@@ -665,6 +699,7 @@ sFunc aTableFunc[] = {
 {"siglongjmp"  ,(FUNC_) siglongjmp },
 {"_siglongjmp"  ,(FUNC_) siglongjmp },
 #else
+//{"printf"  ,(FUNC_) My_printf },
 {"printf"  ,(FUNC_) printf },
 {"Sleep", 	(FUNC_) Sleep },
 #endif
@@ -687,6 +722,7 @@ sFunc aTableFunc[] = {
 {"TlsAlloc"  ,(FUNC_) My_TlsAlloc },
 {"TlsGetValue"  ,(FUNC_) My_TlsGetValue },
 {"TlsSetValue"  ,(FUNC_) My_TlsSetValue },
+{"_lock"  ,(FUNC_) My_lock },
 ///////////////////////////////////////
 
 
@@ -750,6 +786,7 @@ sFunc aTableFunc[] = {
 	{"LoadIconW"  ,(FUNC_) LoadIconW },
 	{"MessageBoxW"  ,(FUNC_) MessageBoxW },
 
+	{"fgets"  ,(FUNC_) fgets },
 
 #else  //OnCpcDOs
 

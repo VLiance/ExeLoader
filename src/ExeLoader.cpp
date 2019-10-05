@@ -12,7 +12,68 @@
 
 #include <stdlib.h>
 
+//////////  Segfault catch //////////
+#include <csignal>
 
+void signalHandler( int signum ) {
+   printf("\n Interrupt signal received: ");
+
+   // cleanup and close up stuff here  
+   
+   switch(signum){
+case SIGTERM:
+printf("SIGTERM, termination request, sent to the program ");
+break;
+case SIGSEGV:
+printf("SIGSEGV, invalid memory access (segmentation fault) ");
+break;
+case SIGINT:
+printf("SIGINT, external interrupt, usually initiated by the user ");
+break;
+case SIGILL:
+printf("SIGILL, invalid program image, such as invalid instruction ");
+break;
+case SIGABRT:
+printf("SIGABRT, abnormal termination condition, as is e.g. initiated by std::abort()");
+break;
+case SIGFPE:
+printf("SIGFPE, erroneous arithmetic operation such as divide by zero");
+break;
+default:
+printf("UNKNOW");
+break;
+   }
+   
+   exit(signum);  
+}
+
+/*
+void segfault_sigaction(int signal, void* si, void *arg)
+{
+   printf("Caught segfault at address %p\n", si->si_addr);
+    exit(0);
+}*/
+
+void registerSignal(  ) {
+/* //No sigaction on Windows
+int *foo = NULL;
+    struct sigaction sa;
+    memset(&sa, 0, sizeof(struct sigaction));
+    sigemptyset(&sa.sa_mask);
+    sa.sa_sigaction = segfault_sigaction;
+    sa.sa_flags   = SA_SIGINFO;
+    sigaction(SIGSEGV, NULL, NULL);
+*/
+
+signal(SIGTERM, signalHandler);  //termination request, sent to the program
+signal(SIGSEGV, signalHandler);  //invalid memory access (segmentation fault)
+signal(SIGINT, signalHandler);  //external interrupt, usually initiated by the user
+signal(SIGILL, signalHandler);  //invalid program image, such as invalid instruction
+signal(SIGABRT, signalHandler);  //abnormal termination condition, as is e.g. initiated by std::abort()
+signal(10, signalHandler); //SIGBUS
+
+}
+///////////////////////
  
 
 extern "C" bool fStartExeLoader(const char* Source_File);
@@ -114,7 +175,20 @@ long nExeFileSize;
 	
 	void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...)
 	{
-		printf("\n%d: %s",alert, format_FR);
+		// Cette fonction permet d'utiliser le simuler un sprintf()
+		va_list arg;
+		char BUFFER[1024] = {0};
+		
+		// Faire une condition si l'instance est en Francais ou non
+		
+		va_start (arg, format_EN);
+			vsprintf (BUFFER, format_EN, arg);
+		va_end (arg);
+		
+		printf("%s\n" , BUFFER); 
+		
+	//	BUFFER[0] = '\0';
+	//	printf("\n%d: %s",alert, format_FR);
 	}
 
 	
@@ -220,11 +294,60 @@ int main(int argc, char* argv[]) {
 void fix_relocations(IMAGE_BASE_RELOCATION *base_reloc,DWORD dir_size,	DWORD new_imgbase, DWORD old_imgbase);
 
 
+
+
+mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
+
+	mainFunc2 dMain ;
+	
+	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'cpc_main()'... ", "research 'cpc_main()' entry point... ");
+	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "cpc_main");
+	if(dMain){return dMain;}
+	
+	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'main()'... ", "research 'main()' entry point... ");
+	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "main");
+	if(dMain){return dMain;}
+	
+	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'WinMain@16()'... ", "research 'WinMain@16()' entry point... ");
+	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "WinMain@16");
+	if(dMain){return dMain;}
+	
+	// S'il s'agit d'une version Windows 16 bits
+	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'MAIN_LOOP_WINDOWS()'... ", "research 'MAIN_LOOP_WINDOWS()' entry point... ");
+	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "MAIN_LOOP_WINDOWS");
+	if(dMain){return dMain;}
+	
+	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'MAIN_LOOP()'... ", "research 'MAIN_LOOP()' entry point... ");
+	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "MAIN_LOOP");
+	if(dMain){return dMain;}
+
+	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'QBMAIN_WINDOWS()'... ", "research 'QBMAIN_WINDOWS()' entry point... ");
+	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "QBMAIN_WINDOWS");
+	if(dMain){return dMain;}
+	
+	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'QBMAIN()'... ", "research 'QBMAIN()' entry point... ");
+	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "QBMAIN");
+	if(dMain){return dMain;}
+	
+
+	
+	return NULL;
+}
+
+
+
+
+
+
+
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 HMEMORYMODULE fMainExeLoader(const char* _sPath){
-	
+//	registerSignal();
 	// Instancier MemoryModule
 	shared_ptr<MemoryModule> memory_module_instance(new MemoryModule());
 
@@ -313,71 +436,26 @@ HMEMORYMODULE fMainExeLoader(const char* _sPath){
 
 			int boucle = 0;
 			
+			dMain = fFindMainFunction(memory_module_instance.get(), handle);
 			
-			// Chercher l'emplacement memoire du MAIN()
-			while(boucle <= 6)
-			{
-				boucle++;
-				
-				if(boucle == 1)
-				{
-					_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'main()'... ", "research 'main()' entry point... ");
-					dMain = (mainFunc2)memory_module_instance->MemoryGetProcAddress(handle, "main");
-				}
-				if(boucle == 2)
-				{
-					_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'WinMain@16()'... ", "research 'WinMain@16()' entry point... ");
-					dMain = (mainFunc2)memory_module_instance->MemoryGetProcAddress(handle, "WinMain@16");
-				}
-				if(boucle == 3)
-				{
-					// S'il s'agit d'une version Windows 16 bits
-					_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'MAIN_LOOP_WINDOWS()'... ", "research 'MAIN_LOOP_WINDOWS()' entry point... ");
-					dMain = (mainFunc2)memory_module_instance->MemoryGetProcAddress(handle, "MAIN_LOOP_WINDOWS");
-				}
-				if(boucle == 4)
-				{
-					_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'MAIN_LOOP()'... ", "research 'MAIN_LOOP()' entry point... ");
-					dMain = (mainFunc2)memory_module_instance->MemoryGetProcAddress(handle, "MAIN_LOOP");
-				}
-				if(boucle == 5)
-				{
-					_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'QBMAIN_WINDOWS()'... ", "research 'QBMAIN_WINDOWS()' entry point... ");
-					dMain = (mainFunc2)memory_module_instance->MemoryGetProcAddress(handle, "QBMAIN_WINDOWS");
-				}
-				if(boucle == 6)
-				{
-					_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'QBMAIN()'... ", "research 'QBMAIN()' entry point... ");
-					dMain = (mainFunc2)memory_module_instance->MemoryGetProcAddress(handle, "QBMAIN");
-				}
-				if(dMain != NULL)
-				{
-					// Le point d'entre a ete trouve!
-					_EXE_LOADER_DEBUG(5, "[OK]\n", "[OK]\n");
-					break;
-				}
-				else
-					_EXE_LOADER_DEBUG(3, "[ERREUR]\n", "[ERROR]\n");
-				
-			}
 			
 			// Le point d'entre a ete trouve, maintenant on l'execute
 			if(dMain != NULL)
 			{
-				_EXE_LOADER_DEBUG(5, " Execution du point d'entre...\n", "Point entry execution...\n");
+				_EXE_LOADER_DEBUG(5, " Execution du point d'entre...\n", "Point entry execution...");
 				dMain(1,argument);
-				_EXE_LOADER_DEBUG(5, " Execution du point d'entre TERMINE!\n", "Point entry execution...FINISHED!\n");
+				_EXE_LOADER_DEBUG(5, " Execution du point d'entre TERMINE!\n", "Point entry execution...FINISHED!");
 			}
 			else
 			{
-				_EXE_LOADER_DEBUG(6, "Dernier essai, call Entry\n", "Last try, call Entry.\n");
+				_EXE_LOADER_DEBUG(6, "Dernier essai, call Entry\n", "Last try, call Entry.");
 				memory_module_instance->MemoryCallEntryPoint(handle);
 			}
 		} /*** EXE ***/
 
 	} catch (...) 
 	{
-		_EXE_LOADER_DEBUG(4, "Exception catched !\n", "Catched exception !\n");
+		_EXE_LOADER_DEBUG(4, "Exception catched !\n", "Catched exception !");
 	
 	}
 
