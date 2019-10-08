@@ -179,11 +179,15 @@ char * My_getenv(const char *varname ){
    errno = EINVAL;
     return (char*)"10";
 }
-
+/*
+//int puts(const char *str);
+void My_puts( const char * str ){
+	printf("\n\n");
+}*/
 //int printf ( const char * format, ... );
-int My_printf( const char * format, ... ){
-	printf("\nPrintfCallled!\n\n\n\n");
-    return 0;
+int WINAPI My_printf( const char * format, ... ){
+	printf("\nPrintfCallled!\n");
+    return 1;
 
 }
 
@@ -324,8 +328,8 @@ BOOL  WINAPI My_TlsSetValue(  DWORD dwTlsIndex, _In_opt_ LPVOID lpTlsValue){
     return false;
 }
 
-int  My_lock( ){
-    return 0;
+void __cdecl  My_lock(int locknum ){
+	printf("\nTry to lock");
 }
 
 
@@ -392,6 +396,12 @@ void My_Onexit(void (*func)(int status, void *arg)){
 	#endif
 }
 
+//char gblbuf[1024] = "";
+//void setbuf ( FILE * stream, char * buffer );
+void My_setbuf( FILE * stream, char * buffer){
+	printf("Using setbuf...%s \n", 0);
+	setbuf(stream, 0);
+}
 void My_exit(int status){
 	#ifndef UseWinFunc
 	// return;
@@ -528,6 +538,7 @@ sFunc aTableFunc[] = {
 	{"SetUnhandledExceptionFilter"  ,(FUNC_) SetUnhandledExceptionFilter },
 
 
+	{"CreateThread" ,(FUNC_) CreateThread },
 	{"EnterCriticalSection" ,(FUNC_) EnterCriticalSection },//BUG
     {"LeaveCriticalSection" ,(FUNC_) LeaveCriticalSection }, //BUG
     {"DeleteCriticalSection" ,(FUNC_) DeleteCriticalSection },
@@ -649,6 +660,11 @@ sFunc aTableFunc[] = {
 {"fclose"  ,(FUNC_) fclose },
 
 //{"setbuf"  ,(FUNC_) setbuf }, //!!!! Not WORK -> CRASH! (Only on windows?)
+//{"setbuf"  ,(FUNC_) My_setbuf }, //!!!! Warning Dangerous function!
+
+
+
+
 {"fseek"  ,(FUNC_) fseek },
 {"ftell"  ,(FUNC_) ftell },
 {"rewind"  ,(FUNC_) rewind },
@@ -859,7 +875,9 @@ sFunc aTableFunc[] = {
 
 #include "CpcDosFuncTable.h"
 {"putchar"  ,(FUNC_) putchar },
-{"puts"  ,(FUNC_) puts }
+{"puts"  ,(FUNC_) puts },
+{"wcslen"  ,(FUNC_) wcslen }
+//{"puts"  ,(FUNC_) My_puts }
 
 
 };

@@ -64,14 +64,17 @@ int *foo = NULL;
     sa.sa_flags   = SA_SIGINFO;
     sigaction(SIGSEGV, NULL, NULL);
 */
-
+for(int i = 1; i < 32; i++){
+signal(i, signalHandler);
+}
+/*
 signal(SIGTERM, signalHandler);  //termination request, sent to the program
 signal(SIGSEGV, signalHandler);  //invalid memory access (segmentation fault)
 signal(SIGINT, signalHandler);  //external interrupt, usually initiated by the user
 signal(SIGILL, signalHandler);  //invalid program image, such as invalid instruction
 signal(SIGABRT, signalHandler);  //abnormal termination condition, as is e.g. initiated by std::abort()
 signal(10, signalHandler); //SIGBUS
-
+*/
 }
 ///////////////////////
  
@@ -347,7 +350,7 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 HMEMORYMODULE fMainExeLoader(const char* _sPath){
-//	registerSignal();
+	registerSignal();
 	// Instancier MemoryModule
 	shared_ptr<MemoryModule> memory_module_instance(new MemoryModule());
 
