@@ -720,7 +720,7 @@ sFunc aTableFunc[] = {
 {"Sleep", 	(FUNC_) Sleep },
 #endif
 //{"localeconv"  ,(FUNC_) My_localeconv },
-//{"localeconv"  ,(FUNC_) localeconv },
+{"localeconv"  ,(FUNC_) localeconv },
 
 
 {"strlen"  ,(FUNC_) strlen },
