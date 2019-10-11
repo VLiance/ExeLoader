@@ -382,6 +382,8 @@ sFunc aTableFunc[] = {
 {"getchar"  ,(FUNC_) getchar },
 {"getch"  ,(FUNC_) getch },
 {"strlen"  ,(FUNC_) strlen },
+{"memchr"  ,(FUNC_) memchr },
+{"tolower"  ,(FUNC_) tolower },
 
 //{"_getch"  ,(FUNC_) getch },
 
@@ -399,9 +401,18 @@ sFunc aTableFunc[] = {
 
 
 ///// Thread local Important? ///////
-{"TlsAlloc"  ,(FUNC_) My_TlsAlloc },
-{"TlsGetValue"  ,(FUNC_) My_TlsGetValue },
-{"TlsSetValue"  ,(FUNC_) My_TlsSetValue },
+//{"TlsAlloc"  ,(FUNC_) My_TlsAlloc },
+//{"TlsGetValue"  ,(FUNC_) My_TlsGetValue },
+//{"TlsSetValue"  ,(FUNC_) My_TlsSetValue },
+{"TlsAlloc"  ,(FUNC_) TlsAlloc },
+{"TlsGetValue"  ,(FUNC_) TlsGetValue },
+{"TlsSetValue"  ,(FUNC_) TlsSetValue },
+{"isdigit"  ,(FUNC_) isdigit },
+{"_stricmp"  ,(FUNC_) _stricmp },
+{"strstr"  ,(FUNC_) strstr },
+{"GetFileAttributesW"  ,(FUNC_) GetFileAttributesW },
+{"atoi"  ,(FUNC_) atoi },
+
 {"_lock"  ,(FUNC_) My_lock },
 ///////////////////////////////////////
 
