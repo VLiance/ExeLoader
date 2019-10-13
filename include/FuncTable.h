@@ -27,10 +27,9 @@
 
 
 #include "FuncTableRemap_Common.h"
-
-#ifdef UseWinFunc
-	#include "FuncTableRemap_Windows.h"
-#else
+#include "FuncTableRemap_Windows.h"
+	
+#ifndef UseWinFunc
 	//onCpcDos
 	#include "FuncTableRemap_CpcDos.h"
 #endif
@@ -47,7 +46,6 @@
 //void __fastcall foo(int a);        ----------------------->    @foo@4
 //void __fastcall foo(int a, int b); ----------------------->    @foo@8
 
-extern "C" int __kbhit(void);
 
 
 typedef void* (*FUNC_)();
@@ -382,6 +380,8 @@ sFunc aTableFunc[] = {
 {"getchar"  ,(FUNC_) getchar },
 {"getch"  ,(FUNC_) getch },
 {"strlen"  ,(FUNC_) strlen },
+{"memchr"  ,(FUNC_) memchr },
+{"tolower"  ,(FUNC_) tolower },
 
 //{"_getch"  ,(FUNC_) getch },
 
@@ -399,31 +399,23 @@ sFunc aTableFunc[] = {
 
 
 ///// Thread local Important? ///////
-{"TlsAlloc"  ,(FUNC_) My_TlsAlloc },
-{"TlsGetValue"  ,(FUNC_) My_TlsGetValue },
-{"TlsSetValue"  ,(FUNC_) My_TlsSetValue },
+//{"TlsAlloc"  ,(FUNC_) My_TlsAlloc },
+//{"TlsGetValue"  ,(FUNC_) My_TlsGetValue },
+//{"TlsSetValue"  ,(FUNC_) My_TlsSetValue },
+{"TlsAlloc"  ,(FUNC_) TlsAlloc },
+{"TlsGetValue"  ,(FUNC_) TlsGetValue },
+{"TlsSetValue"  ,(FUNC_) TlsSetValue },
+{"isdigit"  ,(FUNC_) isdigit },
+{"_stricmp"  ,(FUNC_) _stricmp },
+{"strstr"  ,(FUNC_) strstr },
+{"GetFileAttributesW"  ,(FUNC_) GetFileAttributesW },
+{"atoi"  ,(FUNC_) atoi },
+
 {"_lock"  ,(FUNC_) My_lock },
-///////////////////////////////////////
 
-
-
-///////////////// ///////////////// /////////////////
-///////////////// Windows  func //////////////////
-#ifdef UseWinFunc
-
-	
-
-#else  /////////// OnCpcDos //////////
-
-
-
-#endif // UseWinFunc
-
-////////////////////////////////////////////////////
-
-
+////////// CPC DOS ///////////////////
 #include "CpcDosFuncTable.h"
-
+//////////////////////////////////////
 
 {"wcslen"  ,(FUNC_) wcslen },
 {"putchar"  ,(FUNC_) putchar },

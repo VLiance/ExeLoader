@@ -70,14 +70,17 @@ int My_wprintf (const wchar_t* format, ...){
 		  return result;
 		}
 	  }else{
-	      return "None";
+	      return "";
 	  }
 	  return std::string();
 	}
 #endif
 DWORD My_GetLastError(){
 	#ifdef WinLastError
-		_EXE_LOADER_DEBUG(3, "GetLastError: %s \n", "GetLastError: %s \n", GetLastErrorStdStr().c_str());
+		std::string _sErr = GetLastErrorStdStr();
+		if(_sErr.length() > 0){
+			_EXE_LOADER_DEBUG(3, "GetLastError: %s \n", "GetLastError: %s \n", GetLastErrorStdStr().c_str());
+		}
 	#else
 		_EXE_LOADER_DEBUG(3, "GetLastError non implemente!\n", "GetLastError Function not implemented!");
 	#endif

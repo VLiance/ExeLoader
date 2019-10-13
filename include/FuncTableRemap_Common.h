@@ -49,7 +49,7 @@ BOOL  WINAPI My_TlsSetValue(  DWORD dwTlsIndex, _In_opt_ LPVOID lpTlsValue){
     return false;
 }
 
-void __cdecl  My_lock(int locknum ){
+void  My_lock(int locknum ){
 	printf("\nTry to lock");
 }
 
