@@ -27,10 +27,9 @@
 
 
 #include "FuncTableRemap_Common.h"
-
-#ifdef UseWinFunc
-	#include "FuncTableRemap_Windows.h"
-#else
+#include "FuncTableRemap_Windows.h"
+	
+#ifndef UseWinFunc
 	//onCpcDos
 	#include "FuncTableRemap_CpcDos.h"
 #endif
@@ -47,7 +46,6 @@
 //void __fastcall foo(int a);        ----------------------->    @foo@4
 //void __fastcall foo(int a, int b); ----------------------->    @foo@8
 
-extern "C" int __kbhit(void);
 
 
 typedef void* (*FUNC_)();
@@ -414,27 +412,10 @@ sFunc aTableFunc[] = {
 {"atoi"  ,(FUNC_) atoi },
 
 {"_lock"  ,(FUNC_) My_lock },
-///////////////////////////////////////
 
-
-
-///////////////// ///////////////// /////////////////
-///////////////// Windows  func //////////////////
-#ifdef UseWinFunc
-
-	
-
-#else  /////////// OnCpcDos //////////
-
-
-
-#endif // UseWinFunc
-
-////////////////////////////////////////////////////
-
-
+////////// CPC DOS ///////////////////
 #include "CpcDosFuncTable.h"
-
+//////////////////////////////////////
 
 {"wcslen"  ,(FUNC_) wcslen },
 {"putchar"  ,(FUNC_) putchar },

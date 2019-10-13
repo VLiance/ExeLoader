@@ -1,3 +1,6 @@
+extern "C" int __kbhit(void);
+
+
 	char * cpc_fgets ( char * texte, int num, FILE * stream )
 	{
 		// if (stream == stdin)
