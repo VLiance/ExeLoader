@@ -1,5 +1,5 @@
 // Mickael BANVILLE & Sebastien FAVIER
-//  ExeLoader pour Cpcdos
+// ExeLoader pour Cpcdos
 // Update v1 13/01/2016
 // Update v2 19 AVR 2019
 // Update v3 10 OCT 2019
@@ -21,10 +21,10 @@
     #include "Lib_GZ/SysUtils/CpcDosHeader.h"
 #endif
 #include "MemoryModule.h"
+#include "ExeLoader.h"
 
 void signalHandler(int signum) {
     printf("\n Interrupt signal received: ");
-
     // cleanup and close up stuff here
     switch (signum) {
     case SIGTERM:
@@ -49,7 +49,6 @@ void signalHandler(int signum) {
         printf("UNKNOW");
         break;
     }
-
     exit(signum);
 }
 
@@ -82,20 +81,10 @@ signal(SIGABRT, signalHandler);  //abnormal termination condition, as is e.g. in
 signal(10, signalHandler); //SIGBUS
 */
 }
-///////////////////////
-
-extern "C" bool fStartExeLoader(const char* Source_File);
-
 
 char * DLL_LOADED[512] = {0};
 void * DLL_HANDLE[512] = {0};
 int nTotalDLL = 0;
-
-typedef int (*addNumberProc)(int, int);
-typedef void (*testFunc)();
-typedef int (*mainFunc)();
-typedef int (*mainFunc2)(int argc, char* argv[]);
-typedef void (*FUNC_Version)(int _nMajor, int _nMinor);
 
 char* aExeFileData;
 long nExeFileSize;
@@ -109,7 +98,7 @@ long nExeFileSize;
         va_list arg;
         char BUFFER[1024] = {0};
 
-        // Faire une condition si l'instance est en Francais ou non
+        // TODO: Faire une condition si l'instance est en Francais ou non
 
         va_start(arg, format_EN);
             vsprintf(BUFFER, format_FR, arg);
@@ -160,6 +149,7 @@ long nExeFileSize;
     }
 #else /* !!! No Cpcdos !!! */
 
+<<<<<<< HEAD
 	//   #define UNICODE
 	//   #define _UNICODE
 	//    #include <windows.h>
@@ -243,11 +233,87 @@ long nExeFileSize;
 		fclose(f);
 		return false;
 	}
+=======
+    //   #define UNICODE
+    //   #define _UNICODE
+    //    #include <windows.h>
+
+    void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...) {
+        // Cette fonction permet d'utiliser le simuler un sprintf()
+        va_list arg;
+        char BUFFER[1024] = {0};
+
+        // TODO: Faire une condition si l'instance est en Francais ou non
+
+        va_start(arg, format_EN);
+            vsprintf(BUFFER, format_EN, arg);
+        va_end(arg);
+
+        printf("%s\n" , BUFFER);
+
+        // BUFFER[0] = '\0';
+        // printf("\n%d: %s",alert, format_FR);
+    }
+
+    /*
+    DWORD WINAPI GetModuleFileName(
+    _In_opt_ HMODULE hModule,
+    _Out_    char*  lpFilename,
+    _In_     DWORD   nSize
+    );
+    */
+    // #define MAX_PATH 255
+    gzBool fExeCpcDosLoadFile(const char* _sFullPath) {
+        if (_sFullPath == 0) {
+            printf("\n Error: No file to load. \n ");
+            return false;
+        }
+
+        // char buffer[MAX_PATH];
+        // GetModuleFileName(0, (char*)buffer, MAX_PATH );
+
+        //  gzUTF16 _wcFile(gzStrC(_sFullPath));
+        //   FILE*  f = _wfopen((wchar_t*)(gzUInt16*)_wcFile, L"rb+");
+        FILE*  f = fopen((char*)(gzUInt8*)_sFullPath, "rb+");
+        unsigned char *result;
+
+        if (f != NULL) {
+            WIN32_FILE_ATTRIBUTE_DATA fa;
+            /*
+            if (!GetFileAttributesExW((LPCWSTR)(gzUInt16*)_wcFile, GetFileExInfoStandard, &fa)){
+            // error handling
+            }*/
+            /*
+            if (!GetFileAttributesEx((LPCSTR)(gzUInt8*)_sFullPath, GetFileExInfoStandard, &fa)){
+            // error handling
+            }*/
+            //  int  size = ftell(f);
+            // obtain file size:
+
+            long lSize;
+            fseek(f , 0 , SEEK_END);
+            lSize = ftell(f);
+            rewind(f);
+            // gzUIntX _nSize =   ((gzUInt64)fa.nFileSizeHigh << 32) | fa.nFileSizeLow;
+            gzUIntX _nSize = lSize;
+
+            gzUInt8* _aData = new gzUInt8[_nSize];
+            fread(_aData, 1, _nSize, f);
+
+            nExeFileSize = _nSize;
+            aExeFileData = (char*)_aData;
+
+            // _oRc->fSetDynamicMemData(_aData, _nSize); //Will be auto free
+            // Lib_GZ::Sys::pDebug::fConsole(gzStrL("---File Open!-- ") + _sFullPath);
+            return true;
+        } else {
+            // Lib_GZ::Sys::pDebug::fConsole(gzStrL("Error, can't open file : ") + _sFullPath);
+        }
+        fclose(f);
+        return false;
+    }
+>>>>>>> ExeLoader.cpp: remove useless comment and move define,prototype,typedef in ExeLoader.h
 #endif /* !!! No Cpcdos !!! */
-
-HMEMORYMODULE fMainExeLoader(const char* _sPath = "");
-
-#define Func(_func) (void*)(&_func)
 
 bool fStartExeLoader(const char* _sPath) {
     if (fMainExeLoader(_sPath) == NULL) {
@@ -270,11 +336,6 @@ int main(int argc, char* argv[]) {
     return false;
 }
 #endif
-
-#define DEREF_32(name) *(DWORD *)(name)
-#define BLOCKSIZE 100
-
-void fix_relocations(IMAGE_BASE_RELOCATION *base_reloc, DWORD dir_size, DWORD new_imgbase, DWORD old_imgbase);
 
 mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 	mainFunc2 dMain ;
@@ -444,5 +505,3 @@ HMEMORYMODULE fMainExeLoader(const char* _sPath){
 	return handle;
 
 }
-
-//////////////////////////////// E N D  //////////////////////////////////////
