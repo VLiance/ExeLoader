@@ -107,68 +107,68 @@ long nExeFileSize;
 #ifdef CpcDos /* It's Cpcdos */
 
     gzSp<CpcdosOSx_CPintiCore> oCpc = gzSp<CpcdosOSx_CPintiCore>(new CpcdosOSx_CPintiCore);
-	
-	void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...)
-	{
-		// Cette fonction permet d'utiliser le simuler un sprintf()
-		va_list arg;
-		char BUFFER[1024] = {0};
-		
-		// Faire une condition si l'instance est en Francais ou non
-		
-		va_start (arg, format_EN);
-			vsprintf (BUFFER, format_FR, arg);
-		va_end (arg);
-		
-		oCpc->debug_log_plus((const char*) BUFFER, 1, 1, alert, 0, 0, 0,  1100, NULL); 	
-		
-		BUFFER[0] = '\0';
-	}
-	
+    
+    void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...)
+    {
+        // Cette fonction permet d'utiliser le simuler un sprintf()
+        va_list arg;
+        char BUFFER[1024] = {0};
+        
+        // Faire une condition si l'instance est en Francais ou non
+        
+        va_start (arg, format_EN);
+            vsprintf (BUFFER, format_FR, arg);
+        va_end (arg);
+        
+        oCpc->debug_log_plus((const char*) BUFFER, 1, 1, alert, 0, 0, 0,  1100, NULL); 	
+        
+        BUFFER[0] = '\0';
+    }
+    
 
 
     gzBool fExeCpcDosLoadFile(const char* _sFullPath)
-	{
+    {
 
-		nExeFileSize = 0;
-		aExeFileData = 0;
-		
-		_EXE_LOADER_DEBUG(0, "\nExeLoader: Test de l'existence de '%s'\n", "\nExeLoader: Test existence  '%s'\n", _sFullPath);
-		gzUInt _nExist = oCpc->File_exist((char*) _sFullPath);
-		if(_nExist > 0)
-		{
-			// Recuperer la taille du fichier
-			nExeFileSize =  oCpc->File_size((char*) _sFullPath);
-			
-			// Afficher sur la console Cpcdos
-			_EXE_LOADER_DEBUG(0, "ExeLoader: Lecture de %s (%d octets)...", "ExeLoader: Reading %s (%d bytes)...", _sFullPath, nExeFileSize);
-			
-			// Recuperer TOUT le contenu
-			aExeFileData = (char*) calloc(nExeFileSize + 1, sizeof(char));
-			
-			FILE *fptr;
+        nExeFileSize = 0;
+        aExeFileData = 0;
+        
+        _EXE_LOADER_DEBUG(0, "\nExeLoader: Test de l'existence de '%s'\n", "\nExeLoader: Test existence  '%s'\n", _sFullPath);
+        gzUInt _nExist = oCpc->File_exist((char*) _sFullPath);
+        if(_nExist > 0)
+        {
+            // Recuperer la taille du fichier
+            nExeFileSize =  oCpc->File_size((char*) _sFullPath);
+            
+            // Afficher sur la console Cpcdos
+            _EXE_LOADER_DEBUG(0, "ExeLoader: Lecture de %s (%d octets)...", "ExeLoader: Reading %s (%d bytes)...", _sFullPath, nExeFileSize);
+            
+            // Recuperer TOUT le contenu
+            aExeFileData = (char*) calloc(nExeFileSize + 1, sizeof(char));
+            
+            FILE *fptr;
 
-			if ((fptr = fopen(_sFullPath,"rb")) == NULL){
-				_EXE_LOADER_DEBUG(4, "\nExeLoader: Erreur d'ouverture du fichier %s.\n", "\nExeLoader: Error openning file %s.\n", _sFullPath);
-				return false;
-			}
-			
-			
-			fread(aExeFileData, nExeFileSize, 1, fptr);
-			
-			// oCpc->File_read_all((char*)_sFullPath, (char*)"RB", (char*)aExeFileData);
-			
-			// Caractere de terminaison
-			aExeFileData[nExeFileSize] = '\0';
-		}else{
-			  _EXE_LOADER_DEBUG(4, "\nExeLoader: Fichier non disponible %s.\n", "\nExeLoader: File not avaiable %s.\n", _sFullPath);
-			return false;
-		}
+            if ((fptr = fopen(_sFullPath,"rb")) == NULL){
+                _EXE_LOADER_DEBUG(4, "\nExeLoader: Erreur d'ouverture du fichier %s.\n", "\nExeLoader: Error openning file %s.\n", _sFullPath);
+                return false;
+            }
+            
+            
+            fread(aExeFileData, nExeFileSize, 1, fptr);
+            
+            // oCpc->File_read_all((char*)_sFullPath, (char*)"RB", (char*)aExeFileData);
+            
+            // Caractere de terminaison
+            aExeFileData[nExeFileSize] = '\0';
+        }else{
+              _EXE_LOADER_DEBUG(4, "\nExeLoader: Fichier non disponible %s.\n", "\nExeLoader: File not avaiable %s.\n", _sFullPath);
+            return false;
+        }
 
-		_EXE_LOADER_DEBUG(5, "ExeLoader: %s charge!", "ExeLoader:  %s loaded!\n" , _sFullPath);
+        _EXE_LOADER_DEBUG(5, "ExeLoader: %s charge!", "ExeLoader:  %s loaded!\n" , _sFullPath);
 
-		return true;
-	}
+        return true;
+    }
 #else /* !!! No Cpcdos !!! */
 
 	//   #define UNICODE
@@ -262,12 +262,12 @@ HMEMORYMODULE fMainExeLoader(const char* _sPath = "");
 
 
 bool fStartExeLoader(const char* _sPath){
-	if(fMainExeLoader(_sPath)==NULL){
-		return false;
-	}else{
-		return true;
-	}
-	//MemoryFreeLibrary(handle);
+    if(fMainExeLoader(_sPath)==NULL){
+        return false;
+    }else{
+        return true;
+    }
+    //MemoryFreeLibrary(handle);
 
 }
 

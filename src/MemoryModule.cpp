@@ -425,7 +425,7 @@ BuildImportTable(PMEMORYMODULE module)
 
        // tmp = (HCUSTOMMODULE *) realloc(module->modules, (module->numModules+1)*(sizeof(HCUSTOMMODULE)));
        _EXE_LOADER_DEBUG(1, "\n Module No.%d de %d octets", "\n Module Nb.%d of %d bytes", (module->numModules+1), (module->numModules+1)*(sizeof(HCUSTOMMODULE)));
-	   
+       
         tmp = (HCUSTOMMODULE *) malloc((module->numModules+1)*(sizeof(HCUSTOMMODULE)));
         if (tmp == 0) {
             module->freeLibrary(handle, module->userdata);
@@ -504,9 +504,9 @@ BuildImportTable(PMEMORYMODULE module)
         _oModule->codeBase = (unsigned char*)filename;
 
         //RECURSIVE!!
-		//   _oModule->modules = ( HCUSTOMMODULE *)fMainExeLoader(filename);
+        //   _oModule->modules = ( HCUSTOMMODULE *)fMainExeLoader(filename);
 
-		//  return  fMainExeLoader(filename);
+        //  return  fMainExeLoader(filename);
 
         return (HCUSTOMMODULE*)_oModule; //Temp, TODO
 
@@ -651,7 +651,7 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
     if (!CheckSize(size, sizeof(IMAGE_DOS_HEADER))) {
         return NULL;
     }
-	
+    
     dos_header = (PIMAGE_DOS_HEADER)data;
     if (dos_header->e_magic != IMAGE_DOS_SIGNATURE) {
         SetLastError(ERROR_BAD_EXE_FORMAT);
@@ -968,7 +968,7 @@ HMEMORYRSRC MemoryModule::MemoryFindResource(HMEMORYMODULE module, LPCTSTR name,
 
 
 static PIMAGE_RESOURCE_DIRECTORY_ENTRY _MemorySearchResourceEntry(void *root, PIMAGE_RESOURCE_DIRECTORY resources,
-																	LPCTSTR key)
+                                                                    LPCTSTR key)
 {
     /* TODO
 
