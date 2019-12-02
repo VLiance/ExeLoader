@@ -259,7 +259,6 @@ long nExeFileSize;
 
 
 #include "MemoryModule.h"
-using namespace std;
 
 HMEMORYMODULE fMainExeLoader(const char* _sPath = "");
 
@@ -366,7 +365,7 @@ HMEMORYMODULE fMainExeLoader(const char* _sPath){
 	//#endif
 	
 	// Instancier MemoryModule
-	shared_ptr<MemoryModule> memory_module_instance(new MemoryModule());
+	std::shared_ptr<MemoryModule> memory_module_instance(new MemoryModule());
 
 	void *data;
 	long filesize;
