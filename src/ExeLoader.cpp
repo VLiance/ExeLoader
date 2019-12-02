@@ -5,16 +5,22 @@
 // Update v3 10 OCT 2019
 // Update v4 30 JAN 2020
 // Update v5 12 MAR 2020
-  
-#include <memory>
-#include <iostream>
+
+#include <cstdlib>
 #include <cstdio>
 #include <cstring>
-#include <cstdarg> // Pour les arguments de fdebug_log
-#include <stdlib.h>
-
-//////////  Segfault catch //////////
+#include <cstdarg>  // Pour les arguments de fdebug_log
 #include <csignal>
+
+#include <memory>
+#include <iostream>
+
+#include "win.h"
+#include "Lib_GZ/GZ.h"
+#ifdef CpcDos
+    #include "Lib_GZ/SysUtils/CpcDosHeader.h"
+#endif
+#include "MemoryModule.h"
 
 void signalHandler( int signum ) {
 
@@ -95,16 +101,10 @@ typedef int (*mainFunc)();
 typedef int (*mainFunc2)(int argc, char* argv[]);
 typedef void (*FUNC_Version)(int _nMajor, int _nMinor);
 
-#include "Lib_GZ/GZ.h"
-
 char* aExeFileData;
 long nExeFileSize;
 
 #ifdef CpcDos /* It's Cpcdos */
-
-	#include "win.h"
-	
-    #include "Lib_GZ/SysUtils/CpcDosHeader.h"
 
     gzSp<CpcdosOSx_CPintiCore> oCpc = gzSp<CpcdosOSx_CPintiCore>(new CpcdosOSx_CPintiCore);
 	
@@ -174,7 +174,6 @@ long nExeFileSize;
 	//   #define UNICODE
 	//   #define _UNICODE
 	//    #include <windows.h>
-	#include "win.h"
 	
 	void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...)
 	{
@@ -256,9 +255,6 @@ long nExeFileSize;
 		return false;
 	}
 #endif /* !!! No Cpcdos !!! */
-
-
-#include "MemoryModule.h"
 
 HMEMORYMODULE fMainExeLoader(const char* _sPath = "");
 
