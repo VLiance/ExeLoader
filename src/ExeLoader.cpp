@@ -22,38 +22,35 @@
 #endif
 #include "MemoryModule.h"
 
-void signalHandler( int signum ) {
+void signalHandler(int signum) {
+    printf("\n Interrupt signal received: ");
 
-	
-   printf("\n Interrupt signal received: ");
+    // cleanup and close up stuff here
+    switch (signum) {
+    case SIGTERM:
+        printf("SIGTERM, termination request, sent to the program ");
+        break;
+    case SIGSEGV:
+        printf("SIGSEGV, invalid memory access (segmentation fault) ");
+        break;
+    case SIGINT:
+        printf("SIGINT, external interrupt, usually initiated by the user ");
+        break;
+    case SIGILL:
+        printf("SIGILL, invalid program image, such as invalid instruction ");
+        break;
+    case SIGABRT:
+        printf("SIGABRT, abnormal termination condition, as is e.g. initiated by std::abort()");
+        break;
+    case SIGFPE:
+        printf("SIGFPE, erroneous arithmetic operation such as divide by zero");
+        break;
+    default:
+        printf("UNKNOW");
+        break;
+    }
 
-   // cleanup and close up stuff here  
-   
-switch(signum){
-	case SIGTERM:
-		printf("SIGTERM, termination request, sent to the program ");
-	break;
-	case SIGSEGV:
-		printf("SIGSEGV, invalid memory access (segmentation fault) ");
-	break;
-	case SIGINT:
-		printf("SIGINT, external interrupt, usually initiated by the user ");
-	break;
-	case SIGILL:
-		printf("SIGILL, invalid program image, such as invalid instruction ");
-	break;
-	case SIGABRT:
-		printf("SIGABRT, abnormal termination condition, as is e.g. initiated by std::abort()");
-	break;
-	case SIGFPE:
-		printf("SIGFPE, erroneous arithmetic operation such as divide by zero");
-	break;
-	default:
-		printf("UNKNOW");
-	break;
-   }
-   
-   exit(signum);  
+    exit(signum);
 }
 
 /*
@@ -63,7 +60,7 @@ void segfault_sigaction(int signal, void* si, void *arg)
     exit(0);
 }*/
 
-void registerSignal(  ) {
+void registerSignal() {
 /* //No sigaction on Windows
 int *foo = NULL;
     struct sigaction sa;
@@ -73,9 +70,9 @@ int *foo = NULL;
     sa.sa_flags   = SA_SIGINFO;
     sigaction(SIGSEGV, NULL, NULL);
 */
-for(int i = 1; i < 32; i++){
-signal(i, signalHandler);
-}
+    for (int i = 1; i < 32; i++) {
+        signal(i, signalHandler);
+    }
 /*
 signal(SIGTERM, signalHandler);  //termination request, sent to the program
 signal(SIGSEGV, signalHandler);  //invalid memory access (segmentation fault)
@@ -86,7 +83,6 @@ signal(10, signalHandler); //SIGBUS
 */
 }
 ///////////////////////
- 
 
 extern "C" bool fStartExeLoader(const char* Source_File);
 
@@ -107,60 +103,53 @@ long nExeFileSize;
 #ifdef CpcDos /* It's Cpcdos */
 
     gzSp<CpcdosOSx_CPintiCore> oCpc = gzSp<CpcdosOSx_CPintiCore>(new CpcdosOSx_CPintiCore);
-    
-    void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...)
-    {
+
+    void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...) {
         // Cette fonction permet d'utiliser le simuler un sprintf()
         va_list arg;
         char BUFFER[1024] = {0};
-        
+
         // Faire une condition si l'instance est en Francais ou non
-        
-        va_start (arg, format_EN);
-            vsprintf (BUFFER, format_FR, arg);
-        va_end (arg);
-        
-        oCpc->debug_log_plus((const char*) BUFFER, 1, 1, alert, 0, 0, 0,  1100, NULL); 	
-        
+
+        va_start(arg, format_EN);
+            vsprintf(BUFFER, format_FR, arg);
+        va_end(arg);
+
+        oCpc->debug_log_plus((const char*) BUFFER, 1, 1, alert, 0, 0, 0,  1100, NULL);
+
         BUFFER[0] = '\0';
     }
-    
 
-
-    gzBool fExeCpcDosLoadFile(const char* _sFullPath)
-    {
-
+    gzBool fExeCpcDosLoadFile(const char* _sFullPath) {
         nExeFileSize = 0;
         aExeFileData = 0;
-        
+
         _EXE_LOADER_DEBUG(0, "\nExeLoader: Test de l'existence de '%s'\n", "\nExeLoader: Test existence  '%s'\n", _sFullPath);
         gzUInt _nExist = oCpc->File_exist((char*) _sFullPath);
-        if(_nExist > 0)
-        {
+        if (_nExist > 0) {
             // Recuperer la taille du fichier
             nExeFileSize =  oCpc->File_size((char*) _sFullPath);
-            
+
             // Afficher sur la console Cpcdos
             _EXE_LOADER_DEBUG(0, "ExeLoader: Lecture de %s (%d octets)...", "ExeLoader: Reading %s (%d bytes)...", _sFullPath, nExeFileSize);
-            
+
             // Recuperer TOUT le contenu
             aExeFileData = (char*) calloc(nExeFileSize + 1, sizeof(char));
-            
+
             FILE *fptr;
 
-            if ((fptr = fopen(_sFullPath,"rb")) == NULL){
+            if ((fptr = fopen(_sFullPath, "rb")) == NULL) {
                 _EXE_LOADER_DEBUG(4, "\nExeLoader: Erreur d'ouverture du fichier %s.\n", "\nExeLoader: Error openning file %s.\n", _sFullPath);
                 return false;
             }
-            
-            
+
             fread(aExeFileData, nExeFileSize, 1, fptr);
-            
+
             // oCpc->File_read_all((char*)_sFullPath, (char*)"RB", (char*)aExeFileData);
-            
+
             // Caractere de terminaison
             aExeFileData[nExeFileSize] = '\0';
-        }else{
+        } else {
               _EXE_LOADER_DEBUG(4, "\nExeLoader: Fichier non disponible %s.\n", "\nExeLoader: File not avaiable %s.\n", _sFullPath);
             return false;
         }
@@ -260,42 +249,34 @@ HMEMORYMODULE fMainExeLoader(const char* _sPath = "");
 
 #define Func(_func) (void*)(&_func)
 
-
-bool fStartExeLoader(const char* _sPath){
-    if(fMainExeLoader(_sPath)==NULL){
+bool fStartExeLoader(const char* _sPath) {
+    if (fMainExeLoader(_sPath) == NULL) {
         return false;
-    }else{
+    } else {
         return true;
     }
-    //MemoryFreeLibrary(handle);
-
+    // MemoryFreeLibrary(handle);
 }
-
 
 #ifdef ImWin
 int main(int argc, char* argv[]) {
-	printf("\nMain Called %d, %s", argc, argv[0]);
+    printf("#\nMainCalled!! %d, %s", argc, argv[0]);
 
-	fMainExeLoader(argv[1]); //argv[0] is path
-	// fMainExeLoader("App.exe"); //argv[0] is path
+    fMainExeLoader(argv[1]);  // argv[0] is path
+    printf("\n -- END -- \n");
+    system("Pause");
 
-
-	printf("\n -- END -- \n");
-	system("Pause");
-
-//MemoryFreeLibrary(handle);
+    // MemoryFreeLibrary(handle);
     return false;
 }
 #endif
 
-#define DEREF_32( name )*(DWORD *)(name)
+#define DEREF_32(name) *(DWORD *)(name)
 #define BLOCKSIZE 100
 
-void fix_relocations(IMAGE_BASE_RELOCATION *base_reloc,DWORD dir_size,	DWORD new_imgbase, DWORD old_imgbase);
-
+void fix_relocations(IMAGE_BASE_RELOCATION *base_reloc, DWORD dir_size, DWORD new_imgbase, DWORD old_imgbase);
 
 mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
-
 	mainFunc2 dMain ;
 	
 	
@@ -346,8 +327,6 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 	
 	return NULL;
 }
-
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -466,6 +445,4 @@ HMEMORYMODULE fMainExeLoader(const char* _sPath){
 
 }
 
-
 //////////////////////////////// E N D  //////////////////////////////////////
-
