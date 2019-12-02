@@ -305,6 +305,7 @@ long nExeFileSize;
 
             // _oRc->fSetDynamicMemData(_aData, _nSize); //Will be auto free
             // Lib_GZ::Sys::pDebug::fConsole(gzStrL("---File Open!-- ") + _sFullPath);
+            fclose(f);
             return true;
         } else {
             // Lib_GZ::Sys::pDebug::fConsole(gzStrL("Error, can't open file : ") + _sFullPath);
