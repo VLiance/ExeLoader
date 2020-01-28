@@ -1,7 +1,7 @@
 /*
  * Memory DLL loading code
- * Version 0.0.4
- *
+ * Version 0.0.4  
+ *  
  * Copyright (c) 2004-2015 by Joachim Bauch / mail@joachim-bauch.de
  * http://www.joachim-bauch.de
  *

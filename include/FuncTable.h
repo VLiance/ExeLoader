@@ -325,10 +325,39 @@ sFunc aTableFunc[] = {
 {"scanf"  ,(FUNC_) scanf },
 {"fwrite"  ,(FUNC_) fwrite },
 
+
+{"vfprintf"  ,(FUNC_) vfprintf },
+
+//Todo a implémenter
+#ifdef InCpcDosCore
+//{"wcslen"  ,(FUNC_) fNotImplemented },
+
+{"GetFileAttributesW"  ,(FUNC_) fNotImplemented_1 },
+{"TlsAlloc"  ,(FUNC_) fNotImplemented_2 },
+{"TlsGetValue"  ,(FUNC_) fNotImplemented_3 },
+{"TlsSetValue"  ,(FUNC_) fNotImplemented_4 },
+{"_stricmp"  ,(FUNC_) stricmp },
+
+#else
+{"wcslen"  ,(FUNC_) wcslen },
 {"_strnicmp"  ,(FUNC_) _strnicmp },
 {"fwprintf"  ,(FUNC_) fwprintf },
-{"vfprintf"  ,(FUNC_) vfprintf },
 {"_vsnprintf"  ,(FUNC_) _vsnprintf },
+{"fputwc"  ,(FUNC_) fputwc },
+{"putwc"  ,(FUNC_) putwc },
+{"getwc"  ,(FUNC_) getwc },
+
+{"TlsAlloc"  ,(FUNC_) TlsAlloc },
+{"TlsGetValue"  ,(FUNC_) TlsGetValue },
+{"TlsSetValue"  ,(FUNC_) TlsSetValue },
+{"_stricmp"  ,(FUNC_) _stricmp }, //Use stricmp?
+{"GetFileAttributesW"  ,(FUNC_) GetFileAttributesW },
+#endif
+
+
+
+
+
 {"strcmp"  ,(FUNC_) strcmp },
 {"stricmp"  ,(FUNC_) stricmp },
 
@@ -373,9 +402,6 @@ sFunc aTableFunc[] = {
 {"fgetc"  ,(FUNC_) fgetc },
 {"putc"  ,(FUNC_) putc },
 //{"fputc"  ,(FUNC_) fputc },
-{"fputwc"  ,(FUNC_) fputwc },
-{"putwc"  ,(FUNC_) putwc },
-{"getwc"  ,(FUNC_) getwc },
 {"putchar"  ,(FUNC_) putchar },
 {"getchar"  ,(FUNC_) getchar },
 {"getch"  ,(FUNC_) getch },
@@ -402,13 +428,12 @@ sFunc aTableFunc[] = {
 //{"TlsAlloc"  ,(FUNC_) My_TlsAlloc },
 //{"TlsGetValue"  ,(FUNC_) My_TlsGetValue },
 //{"TlsSetValue"  ,(FUNC_) My_TlsSetValue },
-{"TlsAlloc"  ,(FUNC_) TlsAlloc },
-{"TlsGetValue"  ,(FUNC_) TlsGetValue },
-{"TlsSetValue"  ,(FUNC_) TlsSetValue },
+
+
+
+
 {"isdigit"  ,(FUNC_) isdigit },
-{"_stricmp"  ,(FUNC_) _stricmp },
 {"strstr"  ,(FUNC_) strstr },
-{"GetFileAttributesW"  ,(FUNC_) GetFileAttributesW },
 {"atoi"  ,(FUNC_) atoi },
 
 {"_lock"  ,(FUNC_) My_lock },
@@ -417,7 +442,7 @@ sFunc aTableFunc[] = {
 #include "CpcDosFuncTable.h"
 //////////////////////////////////////
 
-{"wcslen"  ,(FUNC_) wcslen },
+
 {"putchar"  ,(FUNC_) putchar },
 {"puts"  ,(FUNC_) puts } //Must be End
 };

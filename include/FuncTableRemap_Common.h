@@ -245,6 +245,28 @@ void My_GetStartupInfoA(LPSTARTUPINFO lpStartupInfo){
 void fNotImplemented(){
     _EXE_LOADER_DEBUG(3, "Fonction non implemente!", "Function not implemented!");
 }
+void fNotImplemented_1(){
+    _EXE_LOADER_DEBUG(3, "Fonction non implemente!1", "Function not implemented!:1");
+}
+void fNotImplemented_2(){
+    _EXE_LOADER_DEBUG(3, "Fonction non implemente!2", "Function not implemented!:2");
+}
+void * fNotImplemented_3(){
+    _EXE_LOADER_DEBUG(3, "TlsGetValue  Fonction non implemente!3", "TlsGetValue  Function not implemented!:3");
+	return (void* )malloc(1024);
+}
+bool fNotImplemented_4(){
+	
+    _EXE_LOADER_DEBUG(3, "TlsSetValue Fonction non implemente!4", "TlsSetValue  Function not implemented!:4");
+	return true;
+}
+void fNotImplemented_5(){
+    _EXE_LOADER_DEBUG(3, "Fonction non implemente!5", "Function not implemented!:5");
+}
+void fNotImplemented_6(){
+    _EXE_LOADER_DEBUG(3, "Fonction non implemente!6", "Function not implemented!:6");
+}
+
 
 LONG  My_InterlockedDecrement( LONG volatile *Addend){
 
