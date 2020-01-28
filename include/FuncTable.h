@@ -25,6 +25,10 @@
 #include <setjmp.h>
 #include <stdlib.h>  
 
+#ifdef InCpcDosCore
+	#define Use_Custom_ThreadStorage
+#endif
+
 
 #include "FuncTableRemap_Common.h"
 #include "FuncTableRemap_Windows.h"
@@ -33,6 +37,10 @@
 	//onCpcDos
 	#include "FuncTableRemap_CpcDos.h"
 #endif
+
+
+
+
 
 
 //Declaration                        ----------------------->    decorated name
@@ -328,14 +336,29 @@ sFunc aTableFunc[] = {
 
 {"vfprintf"  ,(FUNC_) vfprintf },
 
+
+
+
+
+#ifdef Use_Custom_ThreadStorage
+	{"TlsAlloc"  ,	 (FUNC_) My_TlsAlloc },
+	{"TlsGetValue"  ,(FUNC_) My_TlsGetValue },
+	{"TlsSetValue"  ,(FUNC_) My_TlsSetValue },
+#else
+	{"TlsAlloc"  ,	 (FUNC_) TlsAlloc },
+	{"TlsGetValue"  ,(FUNC_) TlsGetValue },
+	{"TlsSetValue"  ,(FUNC_) TlsSetValue },
+#endif
+
+
+
+
 //Todo a implémenter
 #ifdef InCpcDosCore
 //{"wcslen"  ,(FUNC_) fNotImplemented },
 
 {"GetFileAttributesW"  ,(FUNC_) fNotImplemented_1 },
-{"TlsAlloc"  ,(FUNC_) fNotImplemented_2 },
-{"TlsGetValue"  ,(FUNC_) fNotImplemented_3 },
-{"TlsSetValue"  ,(FUNC_) fNotImplemented_4 },
+
 {"_stricmp"  ,(FUNC_) stricmp },
 
 #else
@@ -347,9 +370,7 @@ sFunc aTableFunc[] = {
 {"putwc"  ,(FUNC_) putwc },
 {"getwc"  ,(FUNC_) getwc },
 
-{"TlsAlloc"  ,(FUNC_) TlsAlloc },
-{"TlsGetValue"  ,(FUNC_) TlsGetValue },
-{"TlsSetValue"  ,(FUNC_) TlsSetValue },
+
 {"_stricmp"  ,(FUNC_) _stricmp }, //Use stricmp?
 {"GetFileAttributesW"  ,(FUNC_) GetFileAttributesW },
 #endif

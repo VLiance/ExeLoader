@@ -1,4 +1,38 @@
 
+#ifdef Use_Custom_ThreadStorage
+//DWORD  TlsAlloc();										 //If the function succeeds, the return value is a TLS index. The slots for the index are initialized to zero.
+//BOOL   TlsSetValue( DWORD  dwTlsIndex, LPVOID lpTlsValue); //If the function succeeds, the return value is nonzero.
+//LPVOID TlsGetValue(DWORD dwTlsIndex); 					 //Each thread of a process has its own slot for each TLS index
+
+DWORD WINAPI My_TlsAlloc(void){
+    _EXE_LOADER_DEBUG(3, "TlsAlloc non implemente!", "TlsAlloc not implemented!");
+	return 0;
+}
+BOOL  WINAPI My_TlsSetValue(  DWORD dwTlsIndex, _In_opt_ LPVOID lpTlsValue){
+    _EXE_LOADER_DEBUG(3, "TlsSetValue non implemente!", "TlsSetValue not implemented!");
+    return false;
+}
+LPVOID WINAPI My_TlsGetValue(  DWORD dwTlsIndex){
+    _EXE_LOADER_DEBUG(3, "TlsGetValue non implemente!", "TlsGetValue not implemented!");
+    return (LPVOID)0;
+}
+#else
+/*
+	DWORD WINAPI My_TlsAlloc(void){
+    _EXE_LOADER_DEBUG(3, "TlsAlloc non implemente!", "TlsAlloc not implemented!");
+	return 0;
+	}
+	LPVOID WINAPI My_TlsGetValue(  DWORD dwTlsIndex){
+		_EXE_LOADER_DEBUG(3, "TlsGetValue non implemente!", "TlsGetValue not implemented!");
+		return (LPVOID)0;
+	}
+	BOOL  WINAPI My_TlsSetValue(  DWORD dwTlsIndex, _In_opt_ LPVOID lpTlsValue){
+		_EXE_LOADER_DEBUG(3, "TlsSetValue non implemente!", "TlsSetValue not implemented!");
+		return false;
+	}
+*/
+#endif
+
 
 extern  FARPROC MyMemoryDefaultGetProcAddress(HCUSTOMMODULE module, LPCSTR name, void *userdata);
 
@@ -36,18 +70,7 @@ LPTOP_LEVEL_EXCEPTION_FILTER  My_SetUnhandledExceptionFilter( LPTOP_LEVEL_EXCEPT
 }
 
 
-DWORD WINAPI My_TlsAlloc(void){
-    _EXE_LOADER_DEBUG(3, "TlsAlloc non implemente!", "TlsAlloc not implemented!");
-	return 0;
-}
-LPVOID WINAPI My_TlsGetValue(  DWORD dwTlsIndex){
-    _EXE_LOADER_DEBUG(3, "TlsGetValue non implemente!", "TlsGetValue not implemented!");
-    return (LPVOID)0;
-}
-BOOL  WINAPI My_TlsSetValue(  DWORD dwTlsIndex, _In_opt_ LPVOID lpTlsValue){
-    _EXE_LOADER_DEBUG(3, "TlsSetValue non implemente!", "TlsSetValue not implemented!");
-    return false;
-}
+
 
 void  My_lock(int locknum ){
 	printf("\nTry to lock");

@@ -2,5 +2,5 @@
 >
 -{_sOpt}="O2"
 >
--#Run Build.cwc -{_wToolchain}= VLianceTool/LibRT[Mingw]
+-#Run Build.cwc -{_wToolchain}= VLianceTool/LibRT
 
