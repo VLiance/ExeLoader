@@ -355,24 +355,31 @@ sFunc aTableFunc[] = {
 
 //Todo a implémenter
 #ifdef InCpcDosCore
-//{"wcslen"  ,(FUNC_) fNotImplemented },
+	
+	{"wcslen"  ,(FUNC_) strlen },
+	{"_strnicmp"  ,(FUNC_) strnicmp },
+	{"fwprintf"  ,(FUNC_) fprintf },
+	{"_vsnprintf"  ,(FUNC_) vsnprintf },
+	{"fputwc"  ,(FUNC_)	fputc },
+	{"putwc"  ,(FUNC_) putc },
+	{"getwc"  ,(FUNC_) getc },
 
-{"GetFileAttributesW"  ,(FUNC_) fNotImplemented_1 },
-
-{"_stricmp"  ,(FUNC_) stricmp },
+	{"GetFileAttributesW"  ,(FUNC_) fNotImplemented_1 },
+	{"_stricmp"  ,(FUNC_) stricmp },
+	
 
 #else
-{"wcslen"  ,(FUNC_) wcslen },
-{"_strnicmp"  ,(FUNC_) _strnicmp },
-{"fwprintf"  ,(FUNC_) fwprintf },
-{"_vsnprintf"  ,(FUNC_) _vsnprintf },
-{"fputwc"  ,(FUNC_) fputwc },
-{"putwc"  ,(FUNC_) putwc },
-{"getwc"  ,(FUNC_) getwc },
+	{"wcslen"  ,(FUNC_) wcslen },
+	{"_strnicmp"  ,(FUNC_) _strnicmp },
+	{"fwprintf"  ,(FUNC_) fwprintf },
+	{"_vsnprintf"  ,(FUNC_) _vsnprintf },
+	{"fputwc"  ,(FUNC_) fputwc },
+	{"putwc"  ,(FUNC_) putwc },
+	{"getwc"  ,(FUNC_) getwc },
 
 
-{"_stricmp"  ,(FUNC_) _stricmp }, //Use stricmp?
-{"GetFileAttributesW"  ,(FUNC_) GetFileAttributesW },
+	{"_stricmp"  ,(FUNC_) _stricmp }, //Use stricmp?
+	{"GetFileAttributesW"  ,(FUNC_) GetFileAttributesW },
 #endif
 
 

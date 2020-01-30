@@ -1,7 +1,7 @@
 /*
  * Memory DLL loading code
  * Version 0.0.4  
- *  
+ *   
  * Copyright (c) 2004-2015 by Joachim Bauch / mail@joachim-bauch.de
  * http://www.joachim-bauch.de
  *
@@ -20,7 +20,7 @@
  * The Initial Developer of the Original Code is Joachim Bauch.
  * 
  * --> Adaptation for Cpcdos OSx by Michael BANVILLE and Sebastien FAVIER
- *      Updated: 16 JUILLET 2019
+ *      Updated: 30 JAN 2020
  *
  * Portions created by Joachim Bauch are Copyright (C) 2004-2015
  * Joachim Bauch. All Rights Reserved.
