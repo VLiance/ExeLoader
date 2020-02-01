@@ -358,9 +358,9 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 
 HMEMORYMODULE fMainExeLoader(const char* _sPath){
 
-	//setbuf(stdout, NULL);
+	setbuf(stdout, NULL);//Just to test
 	#ifdef ImWin
-		setbuf(stdout, NULL);
+		setbuf(stdout, NULL);//Required to see every printf
 		registerSignal();
 	#endif
 	
