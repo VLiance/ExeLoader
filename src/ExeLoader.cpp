@@ -358,11 +358,11 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 
 HMEMORYMODULE fMainExeLoader(const char* _sPath){
 
-	setbuf(stdout, NULL);//Just to test
-	#ifdef ImWin
+	//setbuf(stdout, NULL);//Just to test
+	//#ifdef ImWin
 		setbuf(stdout, NULL);//Required to see every printf
 		registerSignal();
-	#endif
+	//#endif
 	
 	// Instancier MemoryModule
 	shared_ptr<MemoryModule> memory_module_instance(new MemoryModule());
