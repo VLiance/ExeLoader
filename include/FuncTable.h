@@ -4,11 +4,20 @@
 
 #include "win.h"
 
+//#define InCpcDosCore
+//#undef ImWin
+
 #ifndef ImWin
 #define InCpcDosCore
 #include "CPC_WPR.h"
 
 #endif // ImWin
+
+
+
+//#define InCpcDosCore
+
+
 
 //#define WinLastError
 
@@ -24,6 +33,7 @@
 #include <cstdarg>
 #include <setjmp.h>
 #include <stdlib.h>  
+
 
 #ifdef InCpcDosCore
 	#define Use_Custom_ThreadStorage

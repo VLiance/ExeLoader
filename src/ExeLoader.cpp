@@ -16,6 +16,8 @@
 #include <csignal>
 
 void signalHandler( int signum ) {
+
+	
    printf("\n Interrupt signal received: ");
 
    // cleanup and close up stuff here  
@@ -281,6 +283,9 @@ int main(int argc, char* argv[]) {
       printf("#\nMainCalled!! %d, %s", argc, argv[0]);
 
     fMainExeLoader(argv[1]); //argv[0] is path
+   // fMainExeLoader("App.exe"); //argv[0] is path
+	
+	
 	printf("\n -- END -- \n");
     system("Pause");
 
@@ -304,7 +309,7 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 
 	mainFunc2 dMain ;
 	
-	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'cpc_main()'... ", "research 'cpc_main()' entry point... ");
+	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'main_entry()'... ", "research 'main_entry()' entry point... ");
 	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "main_entry");
 	if(dMain){return dMain;}
 	
@@ -352,7 +357,10 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 HMEMORYMODULE fMainExeLoader(const char* _sPath){
+
+	//setbuf(stdout, NULL);
 	#ifdef ImWin
+		setbuf(stdout, NULL);
 		registerSignal();
 	#endif
 	
