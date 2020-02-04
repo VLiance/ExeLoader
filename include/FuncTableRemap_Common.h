@@ -23,13 +23,13 @@ DWORD WINAPI My_TlsAlloc(void){
 }
 BOOL  WINAPI My_TlsSetValue(  DWORD dwTlsIndex, _In_opt_ LPVOID lpTlsValue){
  // _EXE_LOADER_DEBUG(3, "TlsSetValue non implemente!", "TlsSetValue not implemented!"); return false;
- //  printf("\n Set: %d", dwTlsIndex);
+   printf("\n Set: %d", dwTlsIndex);
    aTlsNewMem[dwTlsIndex] = lpTlsValue;
    return true;
 }
 LPVOID WINAPI My_TlsGetValue(  DWORD dwTlsIndex){
   //  _EXE_LOADER_DEBUG(3, "TlsGetValue non implemente!", "TlsGetValue not implemented!");  return (LPVOID)0;
-  // printf("\n Get: %d", dwTlsIndex);
+   printf("\n Get: %d", dwTlsIndex);
    return aTlsNewMem[dwTlsIndex];
 }
 #else
