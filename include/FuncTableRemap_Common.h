@@ -5,7 +5,7 @@
 //BOOL   TlsSetValue( DWORD  dwTlsIndex, LPVOID lpTlsValue); //If the function succeeds, the return value is nonzero.
 //LPVOID TlsGetValue(DWORD dwTlsIndex); 					 //Each thread of a process has its own slot for each TLS index
 
-void** aTlsNewMem;
+void** aTlsNewMem = 0;
 DWORD WINAPI My_TlsAlloc(void){
    // _EXE_LOADER_DEBUG(3, "TlsAlloc non implemente!", "TlsAlloc not implemented!");	//return 0;
 	static int _nIndex = 0;
