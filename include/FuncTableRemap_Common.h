@@ -180,10 +180,10 @@ BOOL WINAPI My_IsProcessorFeaturePresent(_In_ DWORD ProcessorFeature){
     return false;
 }
 
-DWORD  WINAPI My_GetCurrentProcessId(void){
-    _EXE_LOADER_DEBUG(3, "GetCurrentProcessId non implemente!", "GetCurrentProcessId not implemented!");
-    return 0;
-}
+// DWORD  WINAPI My_GetCurrentProcessId(void){
+    // _EXE_LOADER_DEBUG(3, "GetCurrentProcessId non implemente!", "GetCurrentProcessId not implemented!");
+    // return 0;
+// }
 
 void Nothing(){
   //  #ifndef OnWin

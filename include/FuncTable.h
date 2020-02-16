@@ -251,7 +251,7 @@ sFunc aTableFunc[] = {
 
 
 	{"SetLastError"  ,(FUNC_) My_SetLastError }, //Required !?
-	{"fread"  ,(FUNC_) My_fread },
+	{"fread"  ,(FUNC_) fread },
 
 	{"MoveWindow"  ,(FUNC_) Nothing },
 	{"GetModuleFileNameW"  ,(FUNC_) Nothing }, //useless?
@@ -266,6 +266,8 @@ sFunc aTableFunc[] = {
 	{"SelectObject"  ,(FUNC_) My_SelectObject },
 	{"GetDC"  ,(FUNC_) My_GetDC },
 
+	{"GetCurrentProcessId "  ,(FUNC_) My_GetCurrentProcessId },
+	{"GetTickCount "  ,(FUNC_) clock() },
 
 	//Timer
 	{"QueryPerformanceCounter"  ,(FUNC_) My_QueryPerformanceCounter },
