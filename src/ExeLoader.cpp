@@ -234,28 +234,6 @@ long nExeFileSize;
 	}
 #endif /* !!! No Cpcdos !!! */
 
-bool fStartExeLoader(const char* _sPath) {
-    if (fMainExeLoader(_sPath) == NULL) {
-        return false;
-    } else {
-        return true;
-    }
-    // MemoryFreeLibrary(handle);
-}
-
-#ifdef ImWin
-int main(int argc, char* argv[]) {
-    printf("#\nMainCalled!! %d, %s", argc, argv[0]);
-
-    fMainExeLoader(argv[1]);  // argv[0] is path
-    printf("\n -- END -- \n");
-    system("Pause");
-
-    // MemoryFreeLibrary(handle);
-    return false;
-}
-#endif
-
 mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 	mainFunc2 dMain ;
 	
@@ -424,3 +402,25 @@ HMEMORYMODULE fMainExeLoader(const char* _sPath){
 	return handle;
 
 }
+
+bool fStartExeLoader(const char* _sPath) {
+    if (fMainExeLoader(_sPath) == NULL) {
+        return false;
+    } else {
+        return true;
+    }
+    // MemoryFreeLibrary(handle);
+}
+
+#ifdef ImWin
+int main(int argc, char* argv[]) {
+    printf("#\nMainCalled!! %d, %s", argc, argv[0]);
+
+    fMainExeLoader(argv[1]);  // argv[0] is path
+    printf("\n -- END -- \n");
+    system("Pause");
+
+    // MemoryFreeLibrary(handle);
+    return false;
+}
+#endif
