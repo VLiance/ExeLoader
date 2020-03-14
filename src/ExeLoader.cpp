@@ -149,7 +149,6 @@ long nExeFileSize;
     }
 #else /* !!! No Cpcdos !!! */
 
-<<<<<<< HEAD
 	//   #define UNICODE
 	//   #define _UNICODE
 	//    #include <windows.h>
@@ -233,87 +232,6 @@ long nExeFileSize;
 		fclose(f);
 		return false;
 	}
-=======
-    //   #define UNICODE
-    //   #define _UNICODE
-    //    #include <windows.h>
-
-    void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...) {
-        // Cette fonction permet d'utiliser le simuler un sprintf()
-        va_list arg;
-        char BUFFER[1024] = {0};
-
-        // TODO: Faire une condition si l'instance est en Francais ou non
-
-        va_start(arg, format_EN);
-            vsprintf(BUFFER, format_EN, arg);
-        va_end(arg);
-
-        printf("%s\n" , BUFFER);
-
-        // BUFFER[0] = '\0';
-        // printf("\n%d: %s",alert, format_FR);
-    }
-
-    /*
-    DWORD WINAPI GetModuleFileName(
-    _In_opt_ HMODULE hModule,
-    _Out_    char*  lpFilename,
-    _In_     DWORD   nSize
-    );
-    */
-    // #define MAX_PATH 255
-    gzBool fExeCpcDosLoadFile(const char* _sFullPath) {
-        if (_sFullPath == 0) {
-            printf("\n Error: No file to load. \n ");
-            return false;
-        }
-
-        // char buffer[MAX_PATH];
-        // GetModuleFileName(0, (char*)buffer, MAX_PATH );
-
-        //  gzUTF16 _wcFile(gzStrC(_sFullPath));
-        //   FILE*  f = _wfopen((wchar_t*)(gzUInt16*)_wcFile, L"rb+");
-        FILE*  f = fopen((char*)(gzUInt8*)_sFullPath, "rb+");
-        unsigned char *result;
-
-        if (f != NULL) {
-            WIN32_FILE_ATTRIBUTE_DATA fa;
-            /*
-            if (!GetFileAttributesExW((LPCWSTR)(gzUInt16*)_wcFile, GetFileExInfoStandard, &fa)){
-            // error handling
-            }*/
-            /*
-            if (!GetFileAttributesEx((LPCSTR)(gzUInt8*)_sFullPath, GetFileExInfoStandard, &fa)){
-            // error handling
-            }*/
-            //  int  size = ftell(f);
-            // obtain file size:
-
-            long lSize;
-            fseek(f , 0 , SEEK_END);
-            lSize = ftell(f);
-            rewind(f);
-            // gzUIntX _nSize =   ((gzUInt64)fa.nFileSizeHigh << 32) | fa.nFileSizeLow;
-            gzUIntX _nSize = lSize;
-
-            gzUInt8* _aData = new gzUInt8[_nSize];
-            fread(_aData, 1, _nSize, f);
-
-            nExeFileSize = _nSize;
-            aExeFileData = (char*)_aData;
-
-            // _oRc->fSetDynamicMemData(_aData, _nSize); //Will be auto free
-            // Lib_GZ::Sys::pDebug::fConsole(gzStrL("---File Open!-- ") + _sFullPath);
-            fclose(f);
-            return true;
-        } else {
-            // Lib_GZ::Sys::pDebug::fConsole(gzStrL("Error, can't open file : ") + _sFullPath);
-        }
-        fclose(f);
-        return false;
-    }
->>>>>>> ExeLoader.cpp: remove useless comment and move define,prototype,typedef in ExeLoader.h
 #endif /* !!! No Cpcdos !!! */
 
 bool fStartExeLoader(const char* _sPath) {

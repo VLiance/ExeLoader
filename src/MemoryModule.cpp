@@ -571,12 +571,6 @@ BuildImportTable(PMEMORYMODULE module) {
 
 #endif  // CustomLoader
 
-
-
-
-
-
-
 HMEMORYMODULE MemoryModule::MemoryLoadLibrary(const void *data, size_t size) {
     #ifdef CustomLoader
         return MemoryLoadLibraryEx(data, size, MyMemoryDefaultAlloc, MyMemoryDefaultFree, MyMemoryDefaultLoadLibrary, MyMemoryDefaultGetProcAddress, MyMemoryDefaultFreeLibrary, NULL);
@@ -769,11 +763,8 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
     // get entry point of loaded library
     if (result->headers->OptionalHeader.AddressOfEntryPoint != 0) {
         if (result->isDLL) {
-<<<<<<< HEAD
                 // 
 			_EXE_LOADER_DEBUG(0, "Format de fichier : Librairie", "File format : Library");
-=======
->>>>>>> MemoryModule.cpp: add and remove space/blankline
             DllEntryProc DllEntry = (DllEntryProc)(LPVOID)(code + result->headers->OptionalHeader.AddressOfEntryPoint);
             if (DllEntry == 0) {
                 return NULL;
@@ -787,10 +778,7 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
             */
             result->initialized = TRUE;
         } else {
-<<<<<<< HEAD
 			_EXE_LOADER_DEBUG(0, "Format de fichier : Executable Windows", "File format : Windows execuable");
-=======
->>>>>>> MemoryModule.cpp: add and remove space/blankline
             result->exeEntry = (ExeEntryProc)(LPVOID)(code + result->headers->OptionalHeader.AddressOfEntryPoint);
 			// fprintf(stdout, "Address 0x%08x\n", result->exeEntry);
         }
