@@ -3,7 +3,9 @@
 // Update v1 13/01/2016
 // Update v2 19 AVR 2019
 // Update v3 10 OCT 2019
-
+// Update v4 30 JAN 2020
+// Update v5 12 MAR 2020
+  
 #include <memory>
 #include <iostream>
 #include <cstdio>
@@ -15,32 +17,34 @@
 #include <csignal>
 
 void signalHandler( int signum ) {
+
+	
    printf("\n Interrupt signal received: ");
 
    // cleanup and close up stuff here  
    
 switch(signum){
-case SIGTERM:
-printf("SIGTERM, termination request, sent to the program ");
-break;
-case SIGSEGV:
-printf("SIGSEGV, invalid memory access (segmentation fault) ");
-break;
-case SIGINT:
-printf("SIGINT, external interrupt, usually initiated by the user ");
-break;
-case SIGILL:
-printf("SIGILL, invalid program image, such as invalid instruction ");
-break;
-case SIGABRT:
-printf("SIGABRT, abnormal termination condition, as is e.g. initiated by std::abort()");
-break;
-case SIGFPE:
-printf("SIGFPE, erroneous arithmetic operation such as divide by zero");
-break;
-default:
-printf("UNKNOW");
-break;
+	case SIGTERM:
+		printf("SIGTERM, termination request, sent to the program ");
+	break;
+	case SIGSEGV:
+		printf("SIGSEGV, invalid memory access (segmentation fault) ");
+	break;
+	case SIGINT:
+		printf("SIGINT, external interrupt, usually initiated by the user ");
+	break;
+	case SIGILL:
+		printf("SIGILL, invalid program image, such as invalid instruction ");
+	break;
+	case SIGABRT:
+		printf("SIGABRT, abnormal termination condition, as is e.g. initiated by std::abort()");
+	break;
+	case SIGFPE:
+		printf("SIGFPE, erroneous arithmetic operation such as divide by zero");
+	break;
+	default:
+		printf("UNKNOW");
+	break;
    }
    
    exit(signum);  
@@ -185,9 +189,7 @@ long nExeFileSize;
 		va_end (arg);
 		
 		printf("%s\n" , BUFFER); 
-		
-	//	BUFFER[0] = '\0';
-	//	printf("\n%d: %s",alert, format_FR);
+
 	}
 
 	
@@ -277,19 +279,19 @@ bool fStartExeLoader(const char* _sPath){
 
 #ifdef ImWin
 int main(int argc, char* argv[]) {
-      printf("#\nMainCalled!! %d, %s", argc, argv[0]);
+	printf("\nMain Called %d, %s", argc, argv[0]);
 
-    fMainExeLoader(argv[1]); //argv[0] is path
+	fMainExeLoader(argv[1]); //argv[0] is path
+	// fMainExeLoader("App.exe"); //argv[0] is path
+
+
 	printf("\n -- END -- \n");
-    system("Pause");
+	system("Pause");
 
 //MemoryFreeLibrary(handle);
     return false;
 }
 #endif
-
-
-
 
 #define DEREF_32( name )*(DWORD *)(name)
 #define BLOCKSIZE 100
@@ -297,13 +299,12 @@ int main(int argc, char* argv[]) {
 void fix_relocations(IMAGE_BASE_RELOCATION *base_reloc,DWORD dir_size,	DWORD new_imgbase, DWORD old_imgbase);
 
 
-
-
 mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 
 	mainFunc2 dMain ;
 	
-	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'cpc_main()'... ", "research 'cpc_main()' entry point... ");
+	
+	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'main_entry()'... ", "research 'main_entry()' entry point... ");
 	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "main_entry");
 	if(dMain){return dMain;}
 	
@@ -314,8 +315,8 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//// Disable standard main because of the CRT mess and Static Initialisation (Application must be compiled without this feature) ///
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Ive reactivated for tests
 	
-	/*
 	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'main()'... ", "research 'main()' entry point... ");
 	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "main");
 	if(dMain){return dMain;}
@@ -323,6 +324,12 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'WinMain@16()'... ", "research 'WinMain@16()' entry point... ");
 	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "WinMain@16");
 	if(dMain){return dMain;}
+	
+	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'WinMainCRTStartup()'... ", "research 'WinMainCRTStartup()' entry point... ");
+	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "WinMainCRTStartup");
+	if(dMain){return dMain;}
+	
+	
 	
 	// S'il s'agit d'une version Windows 16 bits
 	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'MAIN_LOOP_WINDOWS()'... ", "research 'MAIN_LOOP_WINDOWS()' entry point... ");
@@ -340,7 +347,7 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'QBMAIN()'... ", "research 'QBMAIN()' entry point... ");
 	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "QBMAIN");
 	if(dMain){return dMain;}
-	*/
+	
 	
 	return NULL;
 }
@@ -351,9 +358,12 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 HMEMORYMODULE fMainExeLoader(const char* _sPath){
-	#ifdef ImWin
-		registerSignal();
-	#endif
+
+	//setbuf(stdout, NULL);//Just to test
+	//#ifdef ImWin
+		// setbuf(stdout, NULL);//Required to see every printf
+		// registerSignal();
+	//#endif
 	
 	// Instancier MemoryModule
 	shared_ptr<MemoryModule> memory_module_instance(new MemoryModule());
@@ -456,8 +466,6 @@ HMEMORYMODULE fMainExeLoader(const char* _sPath){
 	{
 		_EXE_LOADER_DEBUG(4, "Exception catched !\n", "Catched exception !");
 	}
-
-	// printf("\n-------------------- End  : %s ------------------------\n ", _sPath );
 
 	return handle;
 

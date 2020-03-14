@@ -1,7 +1,7 @@
 CXX			= gpp
 RM			= del
 
-CXXFLAGS	+= -O0 -march=i686 -DNDEBUG -m32 -fpermissive -DCpcDos -I include -I .
+CXXFLAGS	+= -g -O0 -march=i686 -DNDEBUG -m32 -fpermissive -DCpcDos -I include -I .
 
 
 all: ExeLoader.obj MemoryModule.obj

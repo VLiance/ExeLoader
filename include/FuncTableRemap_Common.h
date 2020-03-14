@@ -1,4 +1,56 @@
 
+//#define Use_Custom_ThreadStorage
+#ifdef Use_Custom_ThreadStorage
+//DWORD  TlsAlloc();										 //If the function succeeds, the return value is a TLS index. The slots for the index are initialized to zero.
+//BOOL   TlsSetValue( DWORD  dwTlsIndex, LPVOID lpTlsValue); //If the function succeeds, the return value is nonzero.
+//LPVOID TlsGetValue(DWORD dwTlsIndex); 					 //Each thread of a process has its own slot for each TLS index
+
+void** aTlsNewMem = 0;
+DWORD WINAPI My_TlsAlloc(void){
+   // _EXE_LOADER_DEBUG(3, "TlsAlloc non implemente!", "TlsAlloc not implemented!");	//return 0;
+	static int _nIndex = 0;
+	static int _nMax = 0;
+	if(_nIndex >= _nMax){ //Realloc
+		int _nNewSize = _nMax*2 + 5; 
+		 void** _aNewMem = (void**)calloc(_nNewSize, sizeof(void*));
+		 memcpy(_aNewMem, aTlsNewMem, _nMax*sizeof(void*) );
+		 free(aTlsNewMem);
+		 aTlsNewMem = _aNewMem;
+		 _nMax = _nNewSize;
+	}
+	
+	printf("\n TLS Alloc: %d", _nIndex);
+	_nIndex++;
+	return _nIndex-1;
+}
+BOOL  WINAPI My_TlsSetValue(  DWORD dwTlsIndex, _In_opt_ LPVOID lpTlsValue){
+ // _EXE_LOADER_DEBUG(3, "TlsSetValue non implemente!", "TlsSetValue not implemented!"); return false;
+   printf("\n TLS  Set: %d", dwTlsIndex);
+   aTlsNewMem[dwTlsIndex] = lpTlsValue;
+   return true;
+}
+LPVOID WINAPI My_TlsGetValue(  DWORD dwTlsIndex){
+  //  _EXE_LOADER_DEBUG(3, "TlsGetValue non implemente!", "TlsGetValue not implemented!");  return (LPVOID)0;
+   printf("\n TLS  Get: %d", dwTlsIndex);
+   return aTlsNewMem[dwTlsIndex];
+}
+#else
+/*
+	DWORD WINAPI My_TlsAlloc(void){
+    _EXE_LOADER_DEBUG(3, "TlsAlloc non implemente!", "TlsAlloc not implemented!");
+	return 0;
+	}
+	LPVOID WINAPI My_TlsGetValue(  DWORD dwTlsIndex){
+		_EXE_LOADER_DEBUG(3, "TlsGetValue non implemente!", "TlsGetValue not implemented!");
+		return (LPVOID)0;
+	}
+	BOOL  WINAPI My_TlsSetValue(  DWORD dwTlsIndex, _In_opt_ LPVOID lpTlsValue){
+		_EXE_LOADER_DEBUG(3, "TlsSetValue non implemente!", "TlsSetValue not implemented!");
+		return false;
+	}
+*/
+#endif
+
 
 extern  FARPROC MyMemoryDefaultGetProcAddress(HCUSTOMMODULE module, LPCSTR name, void *userdata);
 
@@ -36,18 +88,7 @@ LPTOP_LEVEL_EXCEPTION_FILTER  My_SetUnhandledExceptionFilter( LPTOP_LEVEL_EXCEPT
 }
 
 
-DWORD WINAPI My_TlsAlloc(void){
-    _EXE_LOADER_DEBUG(3, "TlsAlloc non implemente!", "TlsAlloc not implemented!");
-	return 0;
-}
-LPVOID WINAPI My_TlsGetValue(  DWORD dwTlsIndex){
-    _EXE_LOADER_DEBUG(3, "TlsGetValue non implemente!", "TlsGetValue not implemented!");
-    return (LPVOID)0;
-}
-BOOL  WINAPI My_TlsSetValue(  DWORD dwTlsIndex, _In_opt_ LPVOID lpTlsValue){
-    _EXE_LOADER_DEBUG(3, "TlsSetValue non implemente!", "TlsSetValue not implemented!");
-    return false;
-}
+
 
 void  My_lock(int locknum ){
 	printf("\nTry to lock");
@@ -139,10 +180,10 @@ BOOL WINAPI My_IsProcessorFeaturePresent(_In_ DWORD ProcessorFeature){
     return false;
 }
 
-DWORD  WINAPI My_GetCurrentProcessId(void){
-    _EXE_LOADER_DEBUG(3, "GetCurrentProcessId non implemente!", "GetCurrentProcessId not implemented!");
-    return 0;
-}
+// DWORD  WINAPI My_GetCurrentProcessId(void){
+    // _EXE_LOADER_DEBUG(3, "GetCurrentProcessId non implemente!", "GetCurrentProcessId not implemented!");
+    // return 0;
+// }
 
 void Nothing(){
   //  #ifndef OnWin
@@ -245,6 +286,28 @@ void My_GetStartupInfoA(LPSTARTUPINFO lpStartupInfo){
 void fNotImplemented(){
     _EXE_LOADER_DEBUG(3, "Fonction non implemente!", "Function not implemented!");
 }
+void fNotImplemented_1(){
+    _EXE_LOADER_DEBUG(3, "Fonction non implemente!1", "Function not implemented!:1");
+}
+void fNotImplemented_2(){
+    _EXE_LOADER_DEBUG(3, "Fonction non implemente!2", "Function not implemented!:2");
+}
+void * fNotImplemented_3(){
+    _EXE_LOADER_DEBUG(3, "TlsGetValue  Fonction non implemente!3", "TlsGetValue  Function not implemented!:3");
+	return (void* )malloc(1024);
+}
+bool fNotImplemented_4(){
+	
+    _EXE_LOADER_DEBUG(3, "TlsSetValue Fonction non implemente!4", "TlsSetValue  Function not implemented!:4");
+	return true;
+}
+void fNotImplemented_5(){
+    _EXE_LOADER_DEBUG(3, "Fonction non implemente!5", "Function not implemented!:5");
+}
+void fNotImplemented_6(){
+    _EXE_LOADER_DEBUG(3, "Fonction non implemente!6", "Function not implemented!:6");
+}
+
 
 LONG  My_InterlockedDecrement( LONG volatile *Addend){
 

@@ -1,7 +1,7 @@
 /*
  * Memory DLL loading code
- * Version 0.0.4
- *
+ * Version 0.0.4  
+ *   
  * Copyright (c) 2004-2015 by Joachim Bauch / mail@joachim-bauch.de
  * http://www.joachim-bauch.de
  *
@@ -20,12 +20,13 @@
  * The Initial Developer of the Original Code is Joachim Bauch.
  * 
  * --> Adaptation for Cpcdos OSx by Michael BANVILLE and Sebastien FAVIER
- *      Updated: 16 JUILLET 2019
+ *      Updated: 23 MAR 2020
  *
  * Portions created by Joachim Bauch are Copyright (C) 2004-2015
  * Joachim Bauch. All Rights Reserved.
  *
  */
+#include <unistd.h>
 #include <stdio.h>
 #include "MemoryModule.h"
  
@@ -41,7 +42,6 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <stdint.h>
-//#include <tchar.h>
 #ifdef DEBUG_OUTPUT
 #include <stdio.h>
 #endif
@@ -813,8 +813,8 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
     // get entry point of loaded library
     if (result->headers->OptionalHeader.AddressOfEntryPoint != 0) {
         if (result->isDLL) {
-                // _EXE_LOADER_DEBUG(0, "", "");
-
+                // 
+			_EXE_LOADER_DEBUG(0, "Format de fichier : Librairie", "File format : Library");
             DllEntryProc DllEntry = (DllEntryProc)(LPVOID)(code + result->headers->OptionalHeader.AddressOfEntryPoint);
             if(DllEntry == 0){
                 return NULL;
@@ -831,8 +831,9 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 */
             result->initialized = TRUE;
         } else {
-
+			_EXE_LOADER_DEBUG(0, "Format de fichier : Executable Windows", "File format : Windows execuable");
             result->exeEntry = (ExeEntryProc)(LPVOID)(code + result->headers->OptionalHeader.AddressOfEntryPoint);
+			// fprintf(stdout, "Address 0x%08x\n", result->exeEntry);
         }
     } else {
         result->exeEntry = NULL;
@@ -946,11 +947,15 @@ void MemoryModule::MemoryFreeLibrary(HMEMORYMODULE mod)
 int MemoryModule::MemoryCallEntryPoint(HMEMORYMODULE mod)
 {
     PMEMORYMODULE module = (PMEMORYMODULE)mod;
+	
+	fprintf(stdout, "Adresse 0x%08x\n", module->exeEntry);
 
     if (module == NULL || module->isDLL || module->exeEntry == NULL || !module->isRelocated) {
+		fprintf(stdout, "ARF.....\n");
         return -1;
     }
 
+	fprintf(stdout, "EXECUFFIIOOONn..... 0x%08x\n", module->exeEntry);
     return module->exeEntry();
 }
 

@@ -68,6 +68,12 @@ extern "C" int __kbhit(void);
 		// Cette fonction permet d'utiliser le "sleep" de Cpcdos
 		cpc_cpinti_sleep_ms(millisecondes);
 	}
+	
+	unsigned int WINAPI My_GetCurrentProcessId()
+	{
+		// Juste pour retourner un simple nombre
+		return cpc_Thread_En_Cours();
+	}
 
 	int WINAPI kbhit_CPC(void)
 	{
@@ -85,17 +91,19 @@ extern "C" int __kbhit(void);
 		// Cette fonction permet d'utiliser le "printf" de Cpcdos
 
 		va_list arg;
-		int Retour;
-		char BUFFER[1024] = {0};
-		
-		va_start (arg, format);
-			Retour = vsprintf (BUFFER, format, arg);
-		va_end (arg);
-		
-		cpc_cpinti_debug_plus_cpinticore((const char*) BUFFER, 1, 1, 0, 0, 1, 0, 1110, NULL);
-		
-		memset(BUFFER, '\0', sizeof(char)*1024);
-		
-		return Retour;
+        int Retour;
+        static char BUFFER[1024] = {0};
+        
+        va_start (arg, format);
+            Retour = vsprintf(BUFFER, format, arg);
+        va_end (arg);
+        
+        BUFFER[Retour] = 0;
+        
+        cpc_cpinti_debug_plus_cpinticore((const char*) BUFFER, 1, 1, 0, 0, 1, 0, 1110, NULL);
+        
+        //memset(BUFFER, '\0', sizeof(char)*1024);
+        
+        return Retour;
 	}
 	

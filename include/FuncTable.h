@@ -4,11 +4,20 @@
 
 #include "win.h"
 
+//#define InCpcDosCore
+//#undef ImWin
+
 #ifndef ImWin
 #define InCpcDosCore
 #include "CPC_WPR.h"
 
 #endif // ImWin
+
+
+
+//#define InCpcDosCore
+
+
 
 //#define WinLastError
 
@@ -26,6 +35,11 @@
 #include <stdlib.h>  
 
 
+#ifdef InCpcDosCore
+	#define Use_Custom_ThreadStorage
+#endif
+
+
 #include "FuncTableRemap_Common.h"
 #include "FuncTableRemap_Windows.h"
 	
@@ -33,6 +47,10 @@
 	//onCpcDos
 	#include "FuncTableRemap_CpcDos.h"
 #endif
+
+
+
+
 
 
 //Declaration                        ----------------------->    decorated name
@@ -233,7 +251,7 @@ sFunc aTableFunc[] = {
 
 
 	{"SetLastError"  ,(FUNC_) My_SetLastError }, //Required !?
-	{"fread"  ,(FUNC_) My_fread },
+	{"fread"  ,(FUNC_) fread },
 
 	{"MoveWindow"  ,(FUNC_) Nothing },
 	{"GetModuleFileNameW"  ,(FUNC_) Nothing }, //useless?
@@ -248,6 +266,8 @@ sFunc aTableFunc[] = {
 	{"SelectObject"  ,(FUNC_) My_SelectObject },
 	{"GetDC"  ,(FUNC_) My_GetDC },
 
+	{"GetCurrentProcessId "  ,(FUNC_) My_GetCurrentProcessId },
+	{"GetTickCount "  ,(FUNC_) clock() },
 
 	//Timer
 	{"QueryPerformanceCounter"  ,(FUNC_) My_QueryPerformanceCounter },
@@ -325,10 +345,59 @@ sFunc aTableFunc[] = {
 {"scanf"  ,(FUNC_) scanf },
 {"fwrite"  ,(FUNC_) fwrite },
 
-{"_strnicmp"  ,(FUNC_) _strnicmp },
-{"fwprintf"  ,(FUNC_) fwprintf },
+
 {"vfprintf"  ,(FUNC_) vfprintf },
-{"_vsnprintf"  ,(FUNC_) _vsnprintf },
+
+
+
+
+
+#ifdef Use_Custom_ThreadStorage
+	{"TlsAlloc"  ,	 (FUNC_) My_TlsAlloc },
+	{"TlsGetValue"  ,(FUNC_) My_TlsGetValue },
+	{"TlsSetValue"  ,(FUNC_) My_TlsSetValue },
+#else
+	{"TlsAlloc"  ,	 (FUNC_) TlsAlloc },
+	{"TlsGetValue"  ,(FUNC_) TlsGetValue },
+	{"TlsSetValue"  ,(FUNC_) TlsSetValue },
+#endif
+
+
+
+
+//Todo a implémenter
+#ifdef InCpcDosCore
+	
+	{"wcslen"  ,(FUNC_) strlen },
+	{"_strnicmp"  ,(FUNC_) strnicmp },
+	{"fwprintf"  ,(FUNC_) fprintf },
+	{"_vsnprintf"  ,(FUNC_) vsnprintf },
+	{"fputwc"  ,(FUNC_)	fputc },
+	{"putwc"  ,(FUNC_) putc },
+	{"getwc"  ,(FUNC_) getc },
+
+	{"GetFileAttributesW"  ,(FUNC_) fNotImplemented_1 },
+	{"_stricmp"  ,(FUNC_) stricmp },
+	
+
+#else
+	{"wcslen"  ,(FUNC_) wcslen },
+	{"_strnicmp"  ,(FUNC_) _strnicmp },
+	{"fwprintf"  ,(FUNC_) fwprintf },
+	{"_vsnprintf"  ,(FUNC_) _vsnprintf },
+	{"fputwc"  ,(FUNC_) fputwc },
+	{"putwc"  ,(FUNC_) putwc },
+	{"getwc"  ,(FUNC_) getwc },
+
+
+	{"_stricmp"  ,(FUNC_) _stricmp }, //Use stricmp?
+	{"GetFileAttributesW"  ,(FUNC_) GetFileAttributesW },
+#endif
+
+
+
+
+
 {"strcmp"  ,(FUNC_) strcmp },
 {"stricmp"  ,(FUNC_) stricmp },
 
@@ -373,9 +442,6 @@ sFunc aTableFunc[] = {
 {"fgetc"  ,(FUNC_) fgetc },
 {"putc"  ,(FUNC_) putc },
 //{"fputc"  ,(FUNC_) fputc },
-{"fputwc"  ,(FUNC_) fputwc },
-{"putwc"  ,(FUNC_) putwc },
-{"getwc"  ,(FUNC_) getwc },
 {"putchar"  ,(FUNC_) putchar },
 {"getchar"  ,(FUNC_) getchar },
 {"getch"  ,(FUNC_) getch },
@@ -402,13 +468,12 @@ sFunc aTableFunc[] = {
 //{"TlsAlloc"  ,(FUNC_) My_TlsAlloc },
 //{"TlsGetValue"  ,(FUNC_) My_TlsGetValue },
 //{"TlsSetValue"  ,(FUNC_) My_TlsSetValue },
-{"TlsAlloc"  ,(FUNC_) TlsAlloc },
-{"TlsGetValue"  ,(FUNC_) TlsGetValue },
-{"TlsSetValue"  ,(FUNC_) TlsSetValue },
+
+
+
+
 {"isdigit"  ,(FUNC_) isdigit },
-{"_stricmp"  ,(FUNC_) _stricmp },
 {"strstr"  ,(FUNC_) strstr },
-{"GetFileAttributesW"  ,(FUNC_) GetFileAttributesW },
 {"atoi"  ,(FUNC_) atoi },
 
 {"_lock"  ,(FUNC_) My_lock },
@@ -417,7 +482,7 @@ sFunc aTableFunc[] = {
 #include "CpcDosFuncTable.h"
 //////////////////////////////////////
 
-{"wcslen"  ,(FUNC_) wcslen },
+
 {"putchar"  ,(FUNC_) putchar },
 {"puts"  ,(FUNC_) puts } //Must be End
 };
