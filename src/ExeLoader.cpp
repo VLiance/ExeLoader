@@ -1,75 +1,77 @@
 // Mickael BANVILLE & Sebastien FAVIER
-//  ExeLoader pour Cpcdos
+// ExeLoader pour Cpcdos
 // Update v1 13/01/2016
 // Update v2 19 AVR 2019
 // Update v3 10 OCT 2019
 // Update v4 30 JAN 2020
 // Update v5 12 MAR 2020
-  
-#include <memory>
-#include <iostream>
+
+#include <cstdlib>
 #include <cstdio>
 #include <cstring>
-#include <cstdarg> // Pour les arguments de fdebug_log
-#include <stdlib.h>
-
-//////////  Segfault catch //////////
+#include <cstdarg>  // Pour les arguments de fdebug_log
 #include <csignal>
 
-void signalHandler( int signum ) {
+#include <memory>
+#include <iostream>
 
-	
-   printf("\n Interrupt signal received: ");
+#include "win.h"
+#include "Lib_GZ/GZ.h"
+#ifdef CpcDos
+	#include "Lib_GZ/SysUtils/CpcDosHeader.h"
+#endif
+#include "MemoryModule.h"
+#include "ExeLoader.h"
 
-   // cleanup and close up stuff here  
-   
-switch(signum){
+void signalHandler(int signum) {
+	printf("\n Interrupt signal received: ");
+	// cleanup and close up stuff here
+	switch (signum) {
 	case SIGTERM:
 		printf("SIGTERM, termination request, sent to the program ");
-	break;
+		break;
 	case SIGSEGV:
 		printf("SIGSEGV, invalid memory access (segmentation fault) ");
-	break;
+		break;
 	case SIGINT:
 		printf("SIGINT, external interrupt, usually initiated by the user ");
-	break;
+		break;
 	case SIGILL:
 		printf("SIGILL, invalid program image, such as invalid instruction ");
-	break;
+		break;
 	case SIGABRT:
 		printf("SIGABRT, abnormal termination condition, as is e.g. initiated by std::abort()");
-	break;
+		break;
 	case SIGFPE:
 		printf("SIGFPE, erroneous arithmetic operation such as divide by zero");
-	break;
+		break;
 	default:
 		printf("UNKNOW");
-	break;
-   }
-   
-   exit(signum);  
+		break;
+	}
+	exit(signum);
 }
 
 /*
 void segfault_sigaction(int signal, void* si, void *arg)
 {
    printf("Caught segfault at address %p\n", si->si_addr);
-    exit(0);
+	exit(0);
 }*/
 
-void registerSignal(  ) {
+void registerSignal() {
 /* //No sigaction on Windows
 int *foo = NULL;
-    struct sigaction sa;
-    memset(&sa, 0, sizeof(struct sigaction));
-    sigemptyset(&sa.sa_mask);
-    sa.sa_sigaction = segfault_sigaction;
-    sa.sa_flags   = SA_SIGINFO;
-    sigaction(SIGSEGV, NULL, NULL);
+	struct sigaction sa;
+	memset(&sa, 0, sizeof(struct sigaction));
+	sigemptyset(&sa.sa_mask);
+	sa.sa_sigaction = segfault_sigaction;
+	sa.sa_flags   = SA_SIGINFO;
+	sigaction(SIGSEGV, NULL, NULL);
 */
-for(int i = 1; i < 32; i++){
-signal(i, signalHandler);
-}
+	for (int i = 1; i < 32; i++) {
+		signal(i, signalHandler);
+	}
 /*
 signal(SIGTERM, signalHandler);  //termination request, sent to the program
 signal(SIGSEGV, signalHandler);  //invalid memory access (segmentation fault)
@@ -79,34 +81,17 @@ signal(SIGABRT, signalHandler);  //abnormal termination condition, as is e.g. in
 signal(10, signalHandler); //SIGBUS
 */
 }
-///////////////////////
- 
-
-extern "C" bool fStartExeLoader(const char* Source_File);
-
 
 char * DLL_LOADED[512] = {0};
 void * DLL_HANDLE[512] = {0};
 int nTotalDLL = 0;
-
-typedef int (*addNumberProc)(int, int);
-typedef void (*testFunc)();
-typedef int (*mainFunc)();
-typedef int (*mainFunc2)(int argc, char* argv[]);
-typedef void (*FUNC_Version)(int _nMajor, int _nMinor);
-
-#include "Lib_GZ/GZ.h"
 
 char* aExeFileData;
 long nExeFileSize;
 
 #ifdef CpcDos /* It's Cpcdos */
 
-	#include "win.h"
-	
-    #include "Lib_GZ/SysUtils/CpcDosHeader.h"
-
-    gzSp<CpcdosOSx_CPintiCore> oCpc = gzSp<CpcdosOSx_CPintiCore>(new CpcdosOSx_CPintiCore);
+	gzSp<CpcdosOSx_CPintiCore> oCpc = gzSp<CpcdosOSx_CPintiCore>(new CpcdosOSx_CPintiCore);
 	
 	void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...)
 	{
@@ -125,9 +110,9 @@ long nExeFileSize;
 		BUFFER[0] = '\0';
 	}
 	
+		// TODO: Faire une condition si l'instance est en Francais ou non
 
-
-    gzBool fExeCpcDosLoadFile(const char* _sFullPath)
+	gzBool fExeCpcDosLoadFile(const char* _sFullPath)
 	{
 
 		nExeFileSize = 0;
@@ -160,8 +145,8 @@ long nExeFileSize;
 			
 			// Caractere de terminaison
 			aExeFileData[nExeFileSize] = '\0';
-		}else{
-			  _EXE_LOADER_DEBUG(4, "\nExeLoader: Fichier non disponible %s.\n", "\nExeLoader: File not avaiable %s.\n", _sFullPath);
+		} else {
+			_EXE_LOADER_DEBUG(4, "\nExeLoader: Fichier non disponible %s.\n", "\nExeLoader: File not avaiable %s.\n", _sFullPath);
 			return false;
 		}
 
@@ -169,12 +154,12 @@ long nExeFileSize;
 
 		return true;
 	}
+
 #else /* !!! No Cpcdos !!! */
 
 	//   #define UNICODE
 	//   #define _UNICODE
 	//    #include <windows.h>
-	#include "win.h"
 	
 	void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...)
 	{
@@ -257,50 +242,7 @@ long nExeFileSize;
 	}
 #endif /* !!! No Cpcdos !!! */
 
-
-#include "MemoryModule.h"
-using namespace std;
-
-HMEMORYMODULE fMainExeLoader(const char* _sPath = "");
-
-#define Func(_func) (void*)(&_func)
-
-
-bool fStartExeLoader(const char* _sPath){
-	if(fMainExeLoader(_sPath)==NULL){
-		return false;
-	}else{
-		return true;
-	}
-	//MemoryFreeLibrary(handle);
-
-}
-
-
-#ifdef ImWin
-int main(int argc, char* argv[]) {
-	printf("\nMain Called %d, %s", argc, argv[0]);
-
-	fMainExeLoader(argv[1]); //argv[0] is path
-	// fMainExeLoader("App.exe"); //argv[0] is path
-
-
-	printf("\n -- END -- \n");
-	system("Pause");
-
-//MemoryFreeLibrary(handle);
-    return false;
-}
-#endif
-
-#define DEREF_32( name )*(DWORD *)(name)
-#define BLOCKSIZE 100
-
-void fix_relocations(IMAGE_BASE_RELOCATION *base_reloc,DWORD dir_size,	DWORD new_imgbase, DWORD old_imgbase);
-
-
 mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
-
 	mainFunc2 dMain ;
 	
 	
@@ -352,8 +294,6 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 	return NULL;
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -366,7 +306,7 @@ HMEMORYMODULE fMainExeLoader(const char* _sPath){
 	//#endif
 	
 	// Instancier MemoryModule
-	shared_ptr<MemoryModule> memory_module_instance(new MemoryModule());
+	std::shared_ptr<MemoryModule> memory_module_instance(new MemoryModule());
 
 	void *data;
 	long filesize;
@@ -471,6 +411,24 @@ HMEMORYMODULE fMainExeLoader(const char* _sPath){
 
 }
 
+bool fStartExeLoader(const char* _sPath) {
+	if (fMainExeLoader(_sPath) == NULL) {
+		return false;
+	} else {
+		return true;
+	}
+	// MemoryFreeLibrary(handle);
+}
 
-//////////////////////////////// E N D  //////////////////////////////////////
+#ifdef ImWin
+int main(int argc, char* argv[]) {
+	printf("#\nMainCalled!! %d, %s", argc, argv[0]);
 
+	fMainExeLoader(argv[1]);  // argv[0] is path
+	printf("\n -- END -- \n");
+	system("Pause");
+
+	// MemoryFreeLibrary(handle);
+	return false;
+}
+#endif
