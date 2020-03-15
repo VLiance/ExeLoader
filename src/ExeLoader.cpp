@@ -18,60 +18,60 @@
 #include "win.h"
 #include "Lib_GZ/GZ.h"
 #ifdef CpcDos
-    #include "Lib_GZ/SysUtils/CpcDosHeader.h"
+	#include "Lib_GZ/SysUtils/CpcDosHeader.h"
 #endif
 #include "MemoryModule.h"
 #include "ExeLoader.h"
 
 void signalHandler(int signum) {
-    printf("\n Interrupt signal received: ");
-    // cleanup and close up stuff here
-    switch (signum) {
-    case SIGTERM:
-        printf("SIGTERM, termination request, sent to the program ");
-        break;
-    case SIGSEGV:
-        printf("SIGSEGV, invalid memory access (segmentation fault) ");
-        break;
-    case SIGINT:
-        printf("SIGINT, external interrupt, usually initiated by the user ");
-        break;
-    case SIGILL:
-        printf("SIGILL, invalid program image, such as invalid instruction ");
-        break;
-    case SIGABRT:
-        printf("SIGABRT, abnormal termination condition, as is e.g. initiated by std::abort()");
-        break;
-    case SIGFPE:
-        printf("SIGFPE, erroneous arithmetic operation such as divide by zero");
-        break;
-    default:
-        printf("UNKNOW");
-        break;
-    }
-    exit(signum);
+	printf("\n Interrupt signal received: ");
+	// cleanup and close up stuff here
+	switch (signum) {
+	case SIGTERM:
+		printf("SIGTERM, termination request, sent to the program ");
+		break;
+	case SIGSEGV:
+		printf("SIGSEGV, invalid memory access (segmentation fault) ");
+		break;
+	case SIGINT:
+		printf("SIGINT, external interrupt, usually initiated by the user ");
+		break;
+	case SIGILL:
+		printf("SIGILL, invalid program image, such as invalid instruction ");
+		break;
+	case SIGABRT:
+		printf("SIGABRT, abnormal termination condition, as is e.g. initiated by std::abort()");
+		break;
+	case SIGFPE:
+		printf("SIGFPE, erroneous arithmetic operation such as divide by zero");
+		break;
+	default:
+		printf("UNKNOW");
+		break;
+	}
+	exit(signum);
 }
 
 /*
 void segfault_sigaction(int signal, void* si, void *arg)
 {
    printf("Caught segfault at address %p\n", si->si_addr);
-    exit(0);
+	exit(0);
 }*/
 
 void registerSignal() {
 /* //No sigaction on Windows
 int *foo = NULL;
-    struct sigaction sa;
-    memset(&sa, 0, sizeof(struct sigaction));
-    sigemptyset(&sa.sa_mask);
-    sa.sa_sigaction = segfault_sigaction;
-    sa.sa_flags   = SA_SIGINFO;
-    sigaction(SIGSEGV, NULL, NULL);
+	struct sigaction sa;
+	memset(&sa, 0, sizeof(struct sigaction));
+	sigemptyset(&sa.sa_mask);
+	sa.sa_sigaction = segfault_sigaction;
+	sa.sa_flags   = SA_SIGINFO;
+	sigaction(SIGSEGV, NULL, NULL);
 */
-    for (int i = 1; i < 32; i++) {
-        signal(i, signalHandler);
-    }
+	for (int i = 1; i < 32; i++) {
+		signal(i, signalHandler);
+	}
 /*
 signal(SIGTERM, signalHandler);  //termination request, sent to the program
 signal(SIGSEGV, signalHandler);  //invalid memory access (segmentation fault)
@@ -91,7 +91,7 @@ long nExeFileSize;
 
 #ifdef CpcDos /* It's Cpcdos */
 
-    gzSp<CpcdosOSx_CPintiCore> oCpc = gzSp<CpcdosOSx_CPintiCore>(new CpcdosOSx_CPintiCore);
+	gzSp<CpcdosOSx_CPintiCore> oCpc = gzSp<CpcdosOSx_CPintiCore>(new CpcdosOSx_CPintiCore);
 	
 	void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...)
 	{
@@ -110,9 +110,9 @@ long nExeFileSize;
 		BUFFER[0] = '\0';
 	}
 	
-        // TODO: Faire une condition si l'instance est en Francais ou non
+		// TODO: Faire une condition si l'instance est en Francais ou non
 
-    gzBool fExeCpcDosLoadFile(const char* _sFullPath)
+	gzBool fExeCpcDosLoadFile(const char* _sFullPath)
 	{
 
 		nExeFileSize = 0;
@@ -412,23 +412,23 @@ HMEMORYMODULE fMainExeLoader(const char* _sPath){
 }
 
 bool fStartExeLoader(const char* _sPath) {
-    if (fMainExeLoader(_sPath) == NULL) {
-        return false;
-    } else {
-        return true;
-    }
-    // MemoryFreeLibrary(handle);
+	if (fMainExeLoader(_sPath) == NULL) {
+		return false;
+	} else {
+		return true;
+	}
+	// MemoryFreeLibrary(handle);
 }
 
 #ifdef ImWin
 int main(int argc, char* argv[]) {
-    printf("#\nMainCalled!! %d, %s", argc, argv[0]);
+	printf("#\nMainCalled!! %d, %s", argc, argv[0]);
 
-    fMainExeLoader(argv[1]);  // argv[0] is path
-    printf("\n -- END -- \n");
-    system("Pause");
+	fMainExeLoader(argv[1]);  // argv[0] is path
+	printf("\n -- END -- \n");
+	system("Pause");
 
-    // MemoryFreeLibrary(handle);
-    return false;
+	// MemoryFreeLibrary(handle);
+	return false;
 }
 #endif
