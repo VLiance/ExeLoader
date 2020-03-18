@@ -17,21 +17,31 @@ DWORD WINAPI My_TlsAlloc(void){
 		 free(aTlsNewMem);
 		 aTlsNewMem = _aNewMem;
 		 _nMax = _nNewSize;
+		_EXE_LOADER_DEBUG(3,"\n TLS ReAlloc, size: %d","\n TLS ReAlloc, size: %d", _nNewSize);
 	}
 	
-	printf("\n TLS Alloc: %d", _nIndex);
+	_EXE_LOADER_DEBUG(3,"\n TLS Alloc: %d","\n TLS Alloc: %d", _nIndex);
 	_nIndex++;
 	return _nIndex-1;
 }
 BOOL  WINAPI My_TlsSetValue(  DWORD dwTlsIndex, _In_opt_ LPVOID lpTlsValue){
  // _EXE_LOADER_DEBUG(3, "TlsSetValue non implemente!", "TlsSetValue not implemented!"); return false;
-   printf("\n TLS  Set: %d", dwTlsIndex);
+
+   if(lpTlsValue != 0){
+		_EXE_LOADER_DEBUG(3,"\n TLS  Set: %d : %p, val: %d","\n TLS  Set: %d : %p, val: %d", dwTlsIndex, lpTlsValue, *(int*)lpTlsValue );
+   }else{
+		_EXE_LOADER_DEBUG(3,"\n TLS  Set: %d : %p",	"\n TLS  Set: %d : %p",		 dwTlsIndex, lpTlsValue);
+   }
    aTlsNewMem[dwTlsIndex] = lpTlsValue;
    return true;
 }
 LPVOID WINAPI My_TlsGetValue(  DWORD dwTlsIndex){
   //  _EXE_LOADER_DEBUG(3, "TlsGetValue non implemente!", "TlsGetValue not implemented!");  return (LPVOID)0;
-   printf("\n TLS  Get: %d", dwTlsIndex);
+   if(aTlsNewMem[dwTlsIndex] != 0){
+		_EXE_LOADER_DEBUG(3,"\n TLS  Get: %d : %p , val: %d","\n TLS  Get: %d : %p , val: %d", dwTlsIndex, aTlsNewMem[dwTlsIndex], *(int*)aTlsNewMem[dwTlsIndex]);
+   }else{
+		_EXE_LOADER_DEBUG(3,"\n TLS  Get: %d : %p",	"\n TLS  Get: %d : %p",			 dwTlsIndex, aTlsNewMem[dwTlsIndex]);
+   }
    return aTlsNewMem[dwTlsIndex];
 }
 #else
