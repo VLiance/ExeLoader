@@ -9,12 +9,12 @@
  * 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- *
+ * 
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- *
+ * 
  * The Original Code is MemoryModule.c
  *
  * The Initial Developer of the Original Code is Joachim Bauch.
@@ -25,21 +25,22 @@
  * Portions created by Joachim Bauch are Copyright (C) 2004-2015
  * Joachim Bauch. All Rights Reserved.
  *
- */
+ */     
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <time.h>
 #include "MemoryModule.h"
-
+// #include "malloc.h" 
+ 
 #ifdef CpcDos
 #define CustomLoader
 #else
-#define OnWin
+#define OnWin 
 #endif
 // Temp
 #define CustomLoader
-
+ 
 #include <iostream>
 
 #include "FuncTable.h"
@@ -55,9 +56,15 @@
 #define IMAGE_SIZEOF_BASE_RELOCATION (sizeof(IMAGE_BASE_RELOCATION))
 #endif
 
+// #include "ManagedAlloc.h"
+
+
+
+
+
 typedef BOOL (WINAPI *DllEntryProc)(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved);
 typedef int (WINAPI *ExeEntryProc)(void);
-
+ 
 typedef struct {
 	PIMAGE_NT_HEADERS headers;
 	unsigned char *codeBase;
@@ -67,7 +74,7 @@ typedef struct {
 	BOOL isDLL;
 	BOOL isRelocated;
 	CustomAllocFunc alloc;
-	CustomFreeFunc free;
+	CustomFreeFunc free_;
 	CustomLoadLibraryFunc loadLibrary;
 	CustomGetProcAddressFunc getProcAddress;
 	CustomFreeLibraryFunc freeLibrary;
@@ -112,8 +119,8 @@ CheckSize(size_t size, size_t expected) {
 	return TRUE;
 }
 
-static BOOL
-CopySections(const unsigned char *data, size_t size, PIMAGE_NT_HEADERS old_headers, PMEMORYMODULE module) {
+static BOOL CopySections(const unsigned char *data, size_t size, PIMAGE_NT_HEADERS old_headers, PMEMORYMODULE module, ManagedAlloc& AllocManager) 
+{
 	int i, section_size;
 	unsigned char *codeBase = module->codeBase;
 	unsigned char *dest;
@@ -128,7 +135,7 @@ CopySections(const unsigned char *data, size_t size, PIMAGE_NT_HEADERS old_heade
 					section_size,
 					MEM_COMMIT,
 					PAGE_READWRITE,
-					module->userdata);
+					module->userdata, (ManagedAlloc&) AllocManager);
 				if (dest == NULL) {
 					return FALSE;
 				}
@@ -153,7 +160,7 @@ CopySections(const unsigned char *data, size_t size, PIMAGE_NT_HEADERS old_heade
 							section->SizeOfRawData,
 							MEM_COMMIT,
 							PAGE_READWRITE,
-							module->userdata);
+							module->userdata, (ManagedAlloc&) AllocManager);
 		if (dest == NULL) {
 			return FALSE;
 		}
@@ -179,7 +186,7 @@ static int ProtectionFlags[2][2][2] = {
 		{PAGE_EXECUTE_READ, PAGE_EXECUTE_READWRITE},
 	},
 };
-
+ 
 static DWORD
 GetRealSectionSize(PMEMORYMODULE module, PIMAGE_SECTION_HEADER section) {
 	DWORD size = section->SizeOfRawData;
@@ -194,7 +201,7 @@ GetRealSectionSize(PMEMORYMODULE module, PIMAGE_SECTION_HEADER section) {
 }
 
 static BOOL
-FinalizeSection(PMEMORYMODULE module, PSECTIONFINALIZEDATA sectionData) {
+FinalizeSection(PMEMORYMODULE module, PSECTIONFINALIZEDATA sectionData, ManagedAlloc& AllocManager) {
 	DWORD protect, oldProtect;
 	BOOL executable;
 	BOOL readable;
@@ -212,7 +219,7 @@ FinalizeSection(PMEMORYMODULE module, PSECTIONFINALIZEDATA sectionData) {
 			 (sectionData->size % module->pageSize) == 0)
 		   ) {
 			// Only allowed to decommit whole pages
-			module->free(sectionData->address, sectionData->size, MEM_DECOMMIT, module->userdata);
+			module->free_(sectionData->address, sectionData->size, MEM_DECOMMIT, module->userdata, (ManagedAlloc&) AllocManager);
 		}
 		return TRUE;
 	}
@@ -240,7 +247,7 @@ FinalizeSection(PMEMORYMODULE module, PSECTIONFINALIZEDATA sectionData) {
 }
 
 static BOOL
-FinalizeSections(PMEMORYMODULE module) {
+FinalizeSections(PMEMORYMODULE module, ManagedAlloc &AllocManager) {
 	int i;
 	PIMAGE_SECTION_HEADER section = IMAGE_FIRST_SECTION(module->headers);
 #ifdef _WIN64
@@ -275,7 +282,7 @@ FinalizeSections(PMEMORYMODULE module) {
 			continue;
 		}
 
-		if (!FinalizeSection(module, &sectionData)) {
+		if (!FinalizeSection(module, &sectionData, (ManagedAlloc&) AllocManager)) {
 			return FALSE;
 		}
 		sectionData.address = sectionAddress;
@@ -284,7 +291,7 @@ FinalizeSections(PMEMORYMODULE module) {
 		sectionData.characteristics = section->Characteristics;
 	}
 	sectionData.last = TRUE;
-	if (!FinalizeSection(module, &sectionData)) {
+	if (!FinalizeSection(module, &sectionData, (ManagedAlloc&) AllocManager)) {
 		return FALSE;
 	}
 #ifndef _WIN64
@@ -293,8 +300,8 @@ FinalizeSections(PMEMORYMODULE module) {
 	return TRUE;
 }
 
-static BOOL
-ExecuteTLS(PMEMORYMODULE module) {
+static BOOL ExecuteTLS(PMEMORYMODULE module) 
+{
 	unsigned char *codeBase = module->codeBase;
 	PIMAGE_TLS_DIRECTORY tls;
 	PIMAGE_TLS_CALLBACK* callback;
@@ -314,9 +321,9 @@ ExecuteTLS(PMEMORYMODULE module) {
 	}
 	return TRUE;
 }
-
-static BOOL
-PerformBaseRelocation(PMEMORYMODULE module, ptrdiff_t delta) {
+  
+static BOOL PerformBaseRelocation(PMEMORYMODULE module, ptrdiff_t delta) 
+{
 	unsigned char *codeBase = module->codeBase;
 	PIMAGE_BASE_RELOCATION relocation;
 
@@ -372,8 +379,8 @@ PerformBaseRelocation(PMEMORYMODULE module, ptrdiff_t delta) {
 	return TRUE;
 }
 
-static BOOL
-BuildImportTable(PMEMORYMODULE module) {
+static BOOL BuildImportTable(PMEMORYMODULE module, ManagedAlloc &AllocManager /* Recuperer l'instance */) 
+{
 	unsigned char *codeBase = module->codeBase;
 	PIMAGE_IMPORT_DESCRIPTOR importDesc;
 	BOOL result = TRUE;
@@ -397,17 +404,19 @@ BuildImportTable(PMEMORYMODULE module) {
 		HCUSTOMMODULE *tmp;
 
 
-		HCUSTOMMODULE handle = module->loadLibrary((LPCSTR) (codeBase + importDesc->Name), module->userdata);
+		HCUSTOMMODULE handle = module->loadLibrary((LPCSTR) (codeBase + importDesc->Name), module->userdata, (ManagedAlloc&) AllocManager);
 		if (handle == NULL) {
 			SetLastError(ERROR_MOD_NOT_FOUND);
 			result = FALSE;
 			break;
 		}
-
+  
 	   // tmp = (HCUSTOMMODULE *) realloc(module->modules, (module->numModules+1)*(sizeof(HCUSTOMMODULE)));
 	   _EXE_LOADER_DEBUG(1, "\n Module No.%d de %d octets", "\n Module Nb.%d of %d bytes", (module->numModules+1), (module->numModules+1)*(sizeof(HCUSTOMMODULE)));
 	   
-		tmp = (HCUSTOMMODULE *) malloc((module->numModules+1)*(sizeof(HCUSTOMMODULE)));
+	   /* Corrige via FreeLibrary */
+		tmp = (HCUSTOMMODULE *) AllocManager.ManagedMalloc((module->numModules+1)*(sizeof(HCUSTOMMODULE)));
+		// tmp = (HCUSTOMMODULE *) malloc((module->numModules+1)*(sizeof(HCUSTOMMODULE)));
 		if (tmp == 0) {
 			module->freeLibrary(handle, module->userdata);
 			SetLastError(ERROR_OUTOFMEMORY);
@@ -433,48 +442,67 @@ BuildImportTable(PMEMORYMODULE module) {
 				*funcRef = module->getProcAddress(handle, (LPCSTR)&thunkData->Name, module->userdata);
 			}
 			if (*funcRef == 0) {
+				/* Correction memory LEAKCHECKER 19 MARS 2020*/
+				// if(tmp != NULL) free(tmp);
+				
+				module->freeLibrary(handle, module->userdata);
+				
 				result = FALSE;
+
 				break;
 			}
 		}
-
+		
+		/* Correction memory LEAKCHECKER 19 MARS 2020*/
+		// if(tmp != NULL) free(tmp);
 		if (!result) {
+			
 			module->freeLibrary(handle, module->userdata);
 			SetLastError(ERROR_PROC_NOT_FOUND);
+			
 			break;
 		}
+		module->freeLibrary(handle, module->userdata);
 	}
+	
 	return result;
 }
+
 
 
 ////////////////////////////////////////////////////////////////////////
 
 #ifdef CustomLoader
 
-	LPVOID MyMemoryDefaultAlloc(LPVOID address, SIZE_T size, DWORD allocationType, DWORD protect, void* userdata) {
+	LPVOID MyMemoryDefaultAlloc(LPVOID address, SIZE_T size, DWORD allocationType, DWORD protect, void* userdata, ManagedAlloc &AllocManager) 
+	{
 		UNREFERENCED_PARAMETER(userdata);
 		//  return VirtualAlloc(address, size, allocationType, protect);
-		return calloc(1, size);
+		// return calloc(1, size);
+		return AllocManager.ManagedCalloc(1, size);
 		// return malloc(size);
 	}
 
-	BOOL MyMemoryDefaultFree(LPVOID lpAddress, SIZE_T dwSize, DWORD dwFreeType, void* userdata) {
+	BOOL MyMemoryDefaultFree(LPVOID lpAddress, SIZE_T dwSize, DWORD dwFreeType, void* userdata, ManagedAlloc& AllocManager)  
+	{
 		UNREFERENCED_PARAMETER(userdata);
 	 //   return VirtualFree(lpAddress, dwSize, dwFreeType);
-		free(lpAddress);
+		// free(lpAddress);
+		AllocManager.ManagedFree(lpAddress);
 		return true;
 	}
 
-	HMEMORYMODULE fMainExeLoader(const char* _sPath);
+	bool fMainExeLoader(const char* _sPath);
 
-	HCUSTOMMODULE MyMemoryDefaultLoadLibrary(LPCSTR filename, void *userdata) {
+	HCUSTOMMODULE MyMemoryDefaultLoadLibrary(LPCSTR filename, void *userdata, ManagedAlloc &AllocManager) 
+	{
 		HMODULE result;
 		UNREFERENCED_PARAMETER(userdata);
 
 		_EXE_LOADER_DEBUG(1, "\n------ [DLL] Import:%s \n", "\n------ [DLL] Import:%s \n",   filename);
 
-		MEMORYMODULE* _oModule =  (MEMORYMODULE*)calloc(1, sizeof(MEMORYMODULE));
+		MEMORYMODULE* _oModule =  (MEMORYMODULE*)AllocManager.ManagedCalloc(1, sizeof(MEMORYMODULE));
+		// MEMORYMODULE* _oModule =  (MEMORYMODULE*)calloc(1, sizeof(MEMORYMODULE));
 		_oModule->isDLL = true;
 		_oModule->codeBase = (unsigned char*)filename;
 
@@ -521,8 +549,11 @@ BuildImportTable(PMEMORYMODULE module) {
 	   return (FARPROC)aDummyFunc[current].dFunc;
 	}
 
-	void MyMemoryDefaultFreeLibrary(HCUSTOMMODULE module, void *userdata) {
+	void MyMemoryDefaultFreeLibrary(HCUSTOMMODULE module, void *userdata)
+	{
 		UNREFERENCED_PARAMETER(userdata);
+		
+		// AllocManager.
 		// FreeLibrary((HMODULE) module);
 	}
 
@@ -553,30 +584,40 @@ BuildImportTable(PMEMORYMODULE module) {
 
 		return (HCUSTOMMODULE) result;
 	}
-
+	
 	FARPROC MemoryDefaultGetProcAddress(HCUSTOMMODULE module, LPCSTR name, void *userdata) {
 		UNREFERENCED_PARAMETER(userdata);
 			_EXE_LOADER_DEBUG(1, "Fonction: %s \n", "Function: %s \n",   name);
 
 		return (FARPROC) GetProcAddress((HMODULE) module, name);
 	}
-
+ 
 	void MemoryDefaultFreeLibrary(HCUSTOMMODULE module, void *userdata) {
 		UNREFERENCED_PARAMETER(userdata);
 
 		FreeLibrary((HMODULE) module);
 	}
-
+  
 ///////////////////////////////////////////////////////////////////////////
 
 #endif  // CustomLoader
 
 HMEMORYMODULE MemoryModule::MemoryLoadLibrary(const void *data, size_t size) {
+	
+	instance_AllocManager.ManagedAlloc_(1024, (const char*) __FILE__);
+	
 	#ifdef CustomLoader
 		return MemoryLoadLibraryEx(data, size, MyMemoryDefaultAlloc, MyMemoryDefaultFree, MyMemoryDefaultLoadLibrary, MyMemoryDefaultGetProcAddress, MyMemoryDefaultFreeLibrary, NULL);
 	#else  // Windows standard
 		return MemoryLoadLibraryEx(data, size, MemoryDefaultAlloc, MemoryDefaultFree, MemoryDefaultLoadLibrary, MemoryDefaultGetProcAddress, MemoryDefaultFreeLibrary, NULL);
 	#endif
+}
+ 
+void MemoryModule::Fin_instance()
+{
+	fprintf(stdout, "Fin_instance() BEGIN \n");
+	instance_AllocManager.ManagedAlloc_clean();
+	fprintf(stdout, "Fin_instance() END \n");
 }
 
 HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
@@ -672,7 +713,7 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 		alignedImageSize,
 		MEM_RESERVE | MEM_COMMIT,
 		PAGE_READWRITE,
-		userdata);
+		userdata, this->instance_AllocManager);
 
 	if (code == NULL) {
 		// try to allocate memory at arbitrary position
@@ -680,7 +721,7 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 			alignedImageSize,
 			MEM_RESERVE | MEM_COMMIT,
 			PAGE_READWRITE,
-			userdata);
+			userdata, this->instance_AllocManager);
 		if (code == NULL) {
 			SetLastError(ERROR_OUTOFMEMORY);
 			return NULL;
@@ -690,11 +731,13 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 	#ifdef OnWin
 	result = (PMEMORYMODULE)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(MEMORYMODULE));
 	#else
-		result = (PMEMORYMODULE)calloc(1, sizeof(MEMORYMODULE));
+		/* Corrige via FreeLibrary */
+		result = (PMEMORYMODULE)instance_AllocManager.ManagedCalloc(1, sizeof(MEMORYMODULE));
+		// result = (PMEMORYMODULE)calloc(1, sizeof(MEMORYMODULE));
 	#endif
 
 	if (result == NULL) {
-		freeMemory(code, 0, MEM_RELEASE, userdata);
+		freeMemory(code, 0, MEM_RELEASE, userdata, this->instance_AllocManager);
 		SetLastError(ERROR_OUTOFMEMORY);
 		return NULL;
 	}
@@ -702,7 +745,7 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 	result->codeBase = code;
 	result->isDLL = (old_header->FileHeader.Characteristics & IMAGE_FILE_DLL) != 0;
 	result->alloc = allocMemory;
-	result->free = freeMemory;
+	result->free_ = freeMemory;
 	result->loadLibrary = loadLibrary;
 	result->getProcAddress = getProcAddress;
 	result->freeLibrary = freeLibrary;
@@ -718,17 +761,20 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 		old_header->OptionalHeader.SizeOfHeaders,
 		MEM_COMMIT,
 		PAGE_READWRITE,
-		userdata);
+		userdata, this->instance_AllocManager);
 
 	// copy PE header to code
 	memcpy(headers, dos_header, old_header->OptionalHeader.SizeOfHeaders);
+	
+	
+	
 	result->headers = (PIMAGE_NT_HEADERS)&((const unsigned char *)(headers))[dos_header->e_lfanew];
 
 	// update position
 	result->headers->OptionalHeader.ImageBase = (uintptr_t)code;
 
 	// copy sections from DLL file block to new memory location
-	if (!CopySections((const unsigned char *) data, size, old_header, result)) {
+	if (!CopySections((const unsigned char *) data, size, old_header, result, this->instance_AllocManager)) {
 		goto error;
 	}
 
@@ -741,16 +787,18 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 	}
 
 	// load required dlls and adjust function table of imports
-	if (!BuildImportTable(result)) {
+	if (!BuildImportTable(result, this->instance_AllocManager)) {
 		goto error;
 	}
 
 	// mark memory pages depending on section headers and release
 	// sections that are marked as "discardable"
-	if (!FinalizeSections(result)) {
+	if (!FinalizeSections(result, this->instance_AllocManager)) {
 		goto error;
 	}
 
+	/* Correction 20-mars-2020 WARNING LEAKED */
+	freeMemory(headers, 0, MEM_RELEASE, userdata, this->instance_AllocManager);
 
 #ifndef CustomLoader
 	// Todo According to Microsoft, Thread Local Storage (TLS) is a mechanism that allows Microsoft Windows to define data objects that are not automatic (stack) variables,
@@ -785,6 +833,9 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 	} else {
 		result->exeEntry = NULL;
 	}
+	
+	/* Correction 20-mars-2020 WARNING LEAKED */
+	// freeMemory(code, 0, MEM_RELEASE, userdata, this->instance_AllocManager);
 
 	return (HMEMORYMODULE)result;
 
@@ -872,18 +923,25 @@ void MemoryModule::MemoryFreeLibrary(HMEMORYMODULE mod) {
 			}
 		}
 
-		free(module->modules);
+		instance_AllocManager.ManagedFree(module->modules);
+		// free(module->modules);
 	}
 
 	if (module->codeBase != NULL) {
 		// release memory of library
-		module->free(module->codeBase, 0, MEM_RELEASE, module->userdata);
+		module->free_(module->codeBase, 0, MEM_RELEASE, module->userdata, this->instance_AllocManager);
 	}
+	
+	// if (module->headers != NULL) {
+		// release memory of library
+		// module->free_(module->headers, 0, MEM_RELEASE, module->userdata);
+	// }
 
 	#ifdef OnWin
 		HeapFree(GetProcessHeap(), 0, module);
 	#else
-		free(module);
+		instance_AllocManager.ManagedFree(module);
+		// free(module);
 	#endif
 }
 

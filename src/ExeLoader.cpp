@@ -4,10 +4,12 @@
 // Update v2 19 AVR 2019
 // Update v3 10 OCT 2019
 // Update v4 30 JAN 2020
-// Update v5 12 MAR 2020
+// Update v5 12 MAR 2020  
+// Update v5.1 20 MAR 2020  
 
-#include <cstdlib>
-#include <cstdio>
+     
+#include <cstdlib> 
+#include <cstdio> 
 #include <cstring>
 #include <cstdarg>  // Pour les arguments de fdebug_log
 #include <csignal>
@@ -20,8 +22,13 @@
 #ifdef CpcDos
 	#include "Lib_GZ/SysUtils/CpcDosHeader.h"
 #endif
+
+
 #include "MemoryModule.h"
 #include "ExeLoader.h"
+
+ 
+ManagedAlloc instance_AllocManager;
 
 void signalHandler(int signum) {
 	printf("\n Interrupt signal received: ");
@@ -129,7 +136,8 @@ long nExeFileSize;
 			_EXE_LOADER_DEBUG(0, "ExeLoader: Lecture de %s (%d octets)...", "ExeLoader: Reading %s (%d bytes)...", _sFullPath, nExeFileSize);
 			
 			// Recuperer TOUT le contenu
-			aExeFileData = (char*) calloc(nExeFileSize + 1, sizeof(char));
+			aExeFileData = (char*) instance_AllocManager.ManagedCalloc(nExeFileSize + 1, sizeof(char));
+			// aExeFileData = (char*) calloc(nExeFileSize + 1, sizeof(char));
 			
 			FILE *fptr;
 
@@ -168,7 +176,7 @@ long nExeFileSize;
 		char BUFFER[1024] = {0};
 		
 		// Faire une condition si l'instance est en Francais ou non
-		
+
 		va_start (arg, format_EN);
 			vsprintf (BUFFER, format_EN, arg);
 		va_end (arg);
@@ -297,7 +305,19 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 ////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-HMEMORYMODULE fMainExeLoader(const char* _sPath){
+// class hndl
+// {
+	// int idx;
+	
+	// public:
+	// HMEMORYMODULE handle;
+	
+	
+// };
+
+
+
+bool fMainExeLoader(const char* _sPath){
 
 	//setbuf(stdout, NULL);//Just to test
 	//#ifdef ImWin
@@ -306,13 +326,15 @@ HMEMORYMODULE fMainExeLoader(const char* _sPath){
 	//#endif
 	
 	// Instancier MemoryModule
-	std::shared_ptr<MemoryModule> memory_module_instance(new MemoryModule());
+	std::unique_ptr<MemoryModule> memory_module_instance(new MemoryModule());
 
 	void *data;
 	long filesize;
-	HMEMORYMODULE handle;
+	std::unique_ptr<HMEMORYMODULE> handle_ptr{new HMEMORYMODULE};
+	
+	HMEMORYMODULE *handle = (HMEMORYMODULE*) handle_ptr.get();
 	mainFunc2 dMain ;
-
+ 
 
 	for(int index = 0; index < nTotalDLL ; index++)  
 	{
@@ -327,14 +349,15 @@ HMEMORYMODULE fMainExeLoader(const char* _sPath){
 			if(strcmp(_sName, _sPath) == 0)
 			{
 				_EXE_LOADER_DEBUG(5, "\nFichier %s deja charge", "\nFile %s already loaded", (char*) _sPath);
-				return DLL_HANDLE[index];
+				// return DLL_HANDLE[index];
+				return false;
 			}
 		}
-
+ 
 	}
 
 	// Charger le fichier en memoire
-	if(!fExeCpcDosLoadFile(_sPath)) return NULL;
+	if(!fExeCpcDosLoadFile(_sPath)) return false;
 
 	// Recuperer la taille
 	filesize = nExeFileSize;
@@ -342,13 +365,13 @@ HMEMORYMODULE fMainExeLoader(const char* _sPath){
 
 
 	// Charger le fichier
-	handle = memory_module_instance->MemoryLoadLibrary(data, filesize);
+	handle = (HMEMORYMODULE) memory_module_instance->MemoryLoadLibrary(data, filesize);
 	DLL_HANDLE[nTotalDLL - 1] = handle;
-	
+	 
 	// Oups probleme
 	if (handle == NULL) {
 		_EXE_LOADER_DEBUG(4, "\nImpossible de charger la librairie depuis la memoire\n", "\nUnable to to load library from the memory\n");
-		return handle;
+		return false;
 	}
 
 	try{
@@ -382,12 +405,12 @@ HMEMORYMODULE fMainExeLoader(const char* _sPath){
 				dCpcVer(1,0);
 
 			#endif // ImWin
-
+ 
 			int boucle = 0;
 			
 			dMain = fFindMainFunction(memory_module_instance.get(), handle);
 			
-			
+			 
 			// Le point d'entre a ete trouve, maintenant on l'execute
 			if(dMain != NULL)
 			{
@@ -396,7 +419,7 @@ HMEMORYMODULE fMainExeLoader(const char* _sPath){
 				_EXE_LOADER_DEBUG(5, " Execution du point d'entre TERMINE!\n", "Point entry execution...FINISHED!");
 			}
 			else
-			{
+			{ 
 				_EXE_LOADER_DEBUG(6, "Dernier essai, call Entry\n", "Last try, call Entry.");
 				memory_module_instance->MemoryCallEntryPoint(handle);
 			}
@@ -407,16 +430,32 @@ HMEMORYMODULE fMainExeLoader(const char* _sPath){
 		_EXE_LOADER_DEBUG(4, "Exception catched !\n", "Catched exception !");
 	}
 
-	return handle;
+	
+	 
+	memory_module_instance->MemoryFreeLibrary(handle);
+	memory_module_instance->Fin_instance(); 
+	// Delete instance
+	// delete memory_module_instance.get();
+	  
+	return true;
 
 }
 
+
+
 bool fStartExeLoader(const char* _sPath) {
-	if (fMainExeLoader(_sPath) == NULL) {
-		return false;
-	} else {
-		return true;
-	}
+	
+	// Lancer une instance du ManagedAlloc
+	instance_AllocManager.ManagedAlloc_(1024, (const char*) __FILE__);
+	
+	bool resultat = fMainExeLoader(_sPath);
+	
+	// Tout nettoyer!
+	instance_AllocManager.ManagedAlloc_clean();
+	
+	return resultat;
+	
+	
 	// MemoryFreeLibrary(handle);
 }
 

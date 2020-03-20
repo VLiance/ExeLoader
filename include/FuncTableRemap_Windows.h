@@ -181,13 +181,20 @@ BOOL WINAPI My_MoveWindow(
  return false;
 }
 
+#define FakePath L"FakePath"
+const wchar_t* _sMachin = FakePath;
+
 DWORD WINAPI My_GetModuleFileNameW(
   _In_opt_ HMODULE hModule,
   _Out_    LPTSTR  lpFilename,
   _In_     DWORD   nSize
 ){
- _EXE_LOADER_DEBUG(3, "GetModuleFileNameW non implemente!", "GetModuleFileNameW not implemented!");
- return 0;
+	
+	_EXE_LOADER_DEBUG(3, "GetModuleFileNameW ()", "GetModuleFileNameW ()");
+	memcpy(lpFilename, _sMachin , sizeof(FakePath));
+	
+	_EXE_LOADER_DEBUG(3, "END!! GetModuleFileNameW ()", "END!! GetModuleFileNameW ()");
+	return sizeof( FakePath );
 }
 
 BOOL WINAPI My_GetFileAttributesExW(

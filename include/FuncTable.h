@@ -33,7 +33,7 @@
 #include <cstdarg>
 #include <setjmp.h>
 #include <stdlib.h>  
-
+ 
 
 #ifdef InCpcDosCore
 	#define Use_Custom_ThreadStorage
@@ -49,8 +49,7 @@
 #endif
 
 
-
-
+#include "..\..\..\OS2.1\CPinti\include\leakchk.h"
 
 
 //Declaration                        ----------------------->    decorated name
@@ -356,6 +355,7 @@ sFunc aTableFunc[] = {
 	{"TlsAlloc"  ,	 (FUNC_) My_TlsAlloc },
 	{"TlsGetValue"  ,(FUNC_) My_TlsGetValue },
 	{"TlsSetValue"  ,(FUNC_) My_TlsSetValue },
+	{"TlsFree"  	,(FUNC_) My_TlsFree },
 #else
 	{"TlsAlloc"  ,	 (FUNC_) TlsAlloc },
 	{"TlsGetValue"  ,(FUNC_) TlsGetValue },
@@ -405,8 +405,8 @@ sFunc aTableFunc[] = {
 {"memmove"  ,(FUNC_) memmove },
 {"fputs"  ,(FUNC_) fputs },
 
-/* {"_write"  ,(FUNC_) _write },*/
-/* {"_snwprintf"  ,(FUNC_) _snwprintf }, */
+{"_write"  ,(FUNC_) fwrite },  // Décommenté le 18 Mars 2020 (Gze_text.exe test)
+{"_snwprintf"  ,(FUNC_) snprintf },  // Décommenté le 18 Mars 2020 (Gze_text.exe test)
 
 {"rand"  ,(FUNC_) rand },
 
@@ -431,7 +431,7 @@ sFunc aTableFunc[] = {
 {"strtok"  ,(FUNC_) strtok },
 {"strtol"  ,(FUNC_) strtol },
 {"time"  ,(FUNC_) time },
-// {"wcscpy"  ,(FUNC_) wcscpy }, 
+{"wcscpy"  ,(FUNC_) strcpy },  // Décommenté le 18 Mars 2020 (Gze_text.exe test)
 {"strrchr"  ,(FUNC_) strrchr },
 {"srand"  ,(FUNC_) srand },
 {"strrchr"  ,(FUNC_) strrchr },
