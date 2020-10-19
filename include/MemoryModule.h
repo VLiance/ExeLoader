@@ -77,13 +77,7 @@ class MemoryModule
 	
 	public:
 	ManagedAlloc instance_AllocManager;
-	
-	
-	MemoryModule(){ 
-		_EXE_LOADER_DEBUG(2, "CONSTRUCTEUR: MemoryModule instancie avec succes!\n", "CONSTRUCTOR: MemoryModule instancied with success!"); 
-	
-	};
-	
+	MemoryModule(){ _EXE_LOADER_DEBUG(2, "CONSTRUCTEUR: MemoryModule instancie avec succes!\n", "CONSTRUCTOR: MemoryModule instancied with success!"); };
 	void Fin_instance();
 
 	/**
