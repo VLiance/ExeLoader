@@ -49,7 +49,7 @@ extern void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* form
 #define ALIGN_DOWN(address, alignment)      (LPVOID)((uintptr_t)(address) & ~((alignment) - 1))
 #define ALIGN_VALUE_UP(value, alignment)    (((value) + (alignment) - 1) & ~((alignment) - 1))
 
-
+#include "ManagedAlloc.h"
 
 
 typedef BOOL (WINAPI *DllEntryProc)(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved);
@@ -66,16 +66,19 @@ typedef void *HCUSTOMMODULE;
 extern "C" {
 #endif
 
-typedef LPVOID (*CustomAllocFunc)(LPVOID, SIZE_T, DWORD, DWORD, void*);
-typedef BOOL (*CustomFreeFunc)(LPVOID, SIZE_T, DWORD, void*);
-typedef HCUSTOMMODULE (*CustomLoadLibraryFunc)(LPCSTR, void *);
+typedef LPVOID (*CustomAllocFunc)(LPVOID, SIZE_T, DWORD, DWORD, void*, ManagedAlloc&);
+typedef BOOL (*CustomFreeFunc)(LPVOID, SIZE_T, DWORD, void*, ManagedAlloc&);
+typedef HCUSTOMMODULE (*CustomLoadLibraryFunc)(LPCSTR, void *, ManagedAlloc&);
 typedef FARPROC (*CustomGetProcAddressFunc)(HCUSTOMMODULE, LPCSTR, void *);
 typedef void (*CustomFreeLibraryFunc)(HCUSTOMMODULE, void *);
 
 class MemoryModule
 {
+	
 	public:
+	ManagedAlloc instance_AllocManager;
 	MemoryModule(){ _EXE_LOADER_DEBUG(2, "CONSTRUCTEUR: MemoryModule instancie avec succes!\n", "CONSTRUCTOR: MemoryModule instancied with success!"); };
+	void Fin_instance();
 
 	/**
 	 * Load EXE/DLL from memory location with the given size.
