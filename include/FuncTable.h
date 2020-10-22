@@ -49,7 +49,7 @@
 #endif
 
 
-#include "..\..\..\OS2.1\CPinti\include\leakchk.h"
+//#include "..\..\..\OS2.1\CPinti\include\leakchk.h"
 
 
 //Declaration                        ----------------------->    decorated name
@@ -72,7 +72,8 @@ typedef struct {
 } sFunc;
 
 
-sFunc aTableFunc[] = {
+
+ sFunc aTableFunc[] = {
 {"fNotImplemented" ,(FUNC_) fNotImplemented }, //Must be first
 
 {"GetProcAddress" ,(FUNC_) My_GetProcAddress }, //Special
@@ -82,7 +83,7 @@ sFunc aTableFunc[] = {
 /////////////////////////////////////////////////////////////////////////////////////////
 
 #ifdef UseWinFunc
-
+/*
 	{"ScreenToClient"  ,(FUNC_) ScreenToClient },
 	{"GetCursorInfo"  ,(FUNC_) GetCursorInfo },
 	{"SetWindowPos"  ,(FUNC_) SetWindowPos },
@@ -218,7 +219,7 @@ sFunc aTableFunc[] = {
 	{"MessageBoxW"  ,(FUNC_) MessageBoxW },
 
 	{"fgets"  ,(FUNC_) fgets },
-
+*/
 #else  
 	////////////////////
 	////// CpcDos //////

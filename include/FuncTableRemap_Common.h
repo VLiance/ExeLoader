@@ -178,7 +178,7 @@ void My_Onexit(void (*func)(int status, void *arg)){
 //char gblbuf[1024] = "";
 //void setbuf ( FILE * stream, char * buffer );
 void My_setbuf( FILE * stream, char * buffer){
-	printf("Using setbuf...%s \n", 0);
+	printf("Using setbuf... \n");
 	setbuf(stream, 0);
 }
 void My_exit(int status){
@@ -353,7 +353,7 @@ void My_puts( const char * str ){
 	printf("\n\n");
 }*/
 //int printf ( const char * format, ... );
-int WINAPI My_printf( const char * format, ... ){
+int  My_printf( const char * format, ... ){
 	printf("\nPrintfCallled!\n");
     return 1;
 

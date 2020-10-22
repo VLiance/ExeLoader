@@ -948,14 +948,14 @@ void MemoryModule::MemoryFreeLibrary(HMEMORYMODULE mod) {
 int MemoryModule::MemoryCallEntryPoint(HMEMORYMODULE mod) {
 	PMEMORYMODULE module = (PMEMORYMODULE)mod;
 	
-	fprintf(stdout, "Adresse 0x%08x\n", module->exeEntry);
+	fprintf(stdout, "Adresse %p \n", module->exeEntry);
 
 	if (module == NULL || module->isDLL || module->exeEntry == NULL || !module->isRelocated) {
 		fprintf(stdout, "ARF.....\n");
 		return -1;
 	}
 
-	fprintf(stdout, "EXECUFFIIOOONn..... 0x%08x\n", module->exeEntry);
+	fprintf(stdout, "EXECUTION..... %p \n", module->exeEntry);
 	return module->exeEntry();
 }
 

@@ -6,7 +6,7 @@
 
 #include "ManagedAlloc.h"
 
-#include "..\..\..\OS2.1\CPinti\include\leakchk.h"
+//#include "..\..\..\OS2.1\CPinti\include\leakchk.h"
 
 void ManagedAlloc::ManagedAlloc_(int alloc_max, const char* name)
 {
@@ -28,6 +28,7 @@ int ManagedAlloc::ManagedAlloc_clean()
 			fprintf(stdout, "%d : [0x%p] freed!\n", index, (void*) this->Alloc_Array[index]);
 		}
 	}
+	return 0;
 }
 
 bool ManagedAlloc::ManagedFree(void* ptr)

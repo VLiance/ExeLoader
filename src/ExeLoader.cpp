@@ -28,7 +28,7 @@
 #include "ExeLoader.h"
 
  
-ManagedAlloc instance_AllocManager;
+ManagedAlloc instance_AllocManager = {1024};
 
 void signalHandler(int signum) {
 	printf("\n Interrupt signal received: ");
@@ -193,7 +193,7 @@ long nExeFileSize;
 	_In_     DWORD   nSize
 	);
 	*/
-	#define MAX_PATH 255
+	//#define MAX_PATH 255
 	gzBool fExeCpcDosLoadFile(const char* _sFullPath)
 	{
 	
@@ -332,7 +332,7 @@ bool fMainExeLoader(const char* _sPath){
 	long filesize;
 	std::unique_ptr<HMEMORYMODULE> handle_ptr{new HMEMORYMODULE};
 	
-	HMEMORYMODULE *handle = (HMEMORYMODULE*) handle_ptr.get();
+	HMEMORYMODULE* handle = (HMEMORYMODULE*) handle_ptr.get();
 	mainFunc2 dMain ;
  
 
@@ -365,7 +365,7 @@ bool fMainExeLoader(const char* _sPath){
 
 
 	// Charger le fichier
-	handle = (HMEMORYMODULE) memory_module_instance->MemoryLoadLibrary(data, filesize);
+	handle = (HMEMORYMODULE*) memory_module_instance->MemoryLoadLibrary(data, filesize);
 	DLL_HANDLE[nTotalDLL - 1] = handle;
 	 
 	// Oups probleme
@@ -374,7 +374,9 @@ bool fMainExeLoader(const char* _sPath){
 		return false;
 	}
 
+	#ifdef __cpp_exceptions
 	try{
+	#endif
 		///////////// MAIN //////////////
 		char* argument[] = {(char*)"aaaabbbvvv", (char*)"aaaaa"};
 
@@ -425,11 +427,12 @@ bool fMainExeLoader(const char* _sPath){
 			}
 		} /*** EXE ***/
 
+	#ifdef __cpp_exceptions
 	} catch (...) 
 	{
 		_EXE_LOADER_DEBUG(4, "Exception catched !\n", "Catched exception !");
 	}
-
+	#endif
 	
 	 
 	memory_module_instance->MemoryFreeLibrary(handle);
@@ -468,6 +471,6 @@ int main(int argc, char* argv[]) {
 	system("Pause");
 
 	// MemoryFreeLibrary(handle);
-	return false;
+	return 0;
 }
 #endif

@@ -32,13 +32,12 @@ extern void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* form
 #ifndef __MEMORY_MODULE_HEADER
 #define __MEMORY_MODULE_HEADER
 
-#undef CpcDos
-#define CpcDos ////////////////////////////////////////////
+//#undef CpcDos
+//#define CpcDos ////////////////////////////////////////////
 
-
+#include "win.h"
 
 #ifdef CpcDos
-    #include "win.h"
 	#define  SetLastError(x)
 #endif
 
