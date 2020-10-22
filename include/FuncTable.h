@@ -73,6 +73,25 @@ typedef struct {
 
 
 
+HRESULT MyGetDpiForMonitor(
+  HMONITOR         hmonitor,
+ // MONITOR_DPI_TYPE dpiType,
+  int dpiType,
+  UINT             *dpiX,
+  UINT             *dpiY
+){
+*dpiX = 0;
+*dpiY = 0;
+}
+inline BOOL MySetProcessDPIAware(){return true;}
+inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
+///inline void __stdcall MyRegisterClassW(void* value){
+inline void  MyRegisterClassW(){
+//inline unsigned short __stdcall MyRegisterClassW(void* value){
+printf("\n REGISTER");
+//return 0;
+}
+
  sFunc aTableFunc[] = {
 {"fNotImplemented" ,(FUNC_) fNotImplemented }, //Must be first
 
@@ -81,9 +100,25 @@ typedef struct {
 /////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////// FUNC TABLE /////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
-
+//#include <shellscalingapi.h>
 #ifdef UseWinFunc
-/*
+
+///////////////
+	//{"RegisterClassW"  ,(FUNC_) MyRegisterClassW }, //Shcore.dll //shellscalingapi.h
+	{"GetDpiForMonitor"  ,(FUNC_) MyGetDpiForMonitor }, //Shcore.dll //shellscalingapi.h
+//	{"SetProcessDpiAwareness"  ,(FUNC_) SetProcessDpiAwareness }, //Shcore.dll //shellscalingapi.h
+	{"SetProcessDpiAwareness"  ,(FUNC_) MySetProcessDpiAwareness }, //Shcore.dll //shellscalingapi.h
+//	{"SetProcessDPIAware"  ,(FUNC_) SetProcessDPIAware },
+	{"SetProcessDPIAware"  ,(FUNC_) MySetProcessDPIAware },
+	{"CommandLineToArgvW"  ,(FUNC_) CommandLineToArgvW },
+	{"GetCommandLineW"  ,(FUNC_) GetCommandLineW },
+	{"LocalFree"  ,(FUNC_) LocalFree },
+	{"FreeLibrary"  ,(FUNC_) FreeLibrary },
+	{"LoadLibraryA"  ,(FUNC_) LoadLibraryA },
+	
+///////////////
+
+
 	{"ScreenToClient"  ,(FUNC_) ScreenToClient },
 	{"GetCursorInfo"  ,(FUNC_) GetCursorInfo },
 	{"SetWindowPos"  ,(FUNC_) SetWindowPos },
@@ -218,8 +253,9 @@ typedef struct {
 	{"LoadIconW"  ,(FUNC_) LoadIconW },
 	{"MessageBoxW"  ,(FUNC_) MessageBoxW },
 
+	
 	{"fgets"  ,(FUNC_) fgets },
-*/
+
 #else  
 	////////////////////
 	////// CpcDos //////
