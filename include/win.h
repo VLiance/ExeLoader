@@ -10,6 +10,7 @@
 #endif
 
 #ifdef ImWin
+#undef CDECL
 #define CDECL  __cdecl
 #else // CpcDos
 #define CDECL __attribute__((cdecl))
