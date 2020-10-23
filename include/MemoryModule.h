@@ -75,7 +75,7 @@ typedef void (*CustomFreeLibraryFunc)(HCUSTOMMODULE, void *);
 class MemoryModule
 {
 	public:
-	MemoryModule(){ _EXE_LOADER_DEBUG(2, "CONSTRUCTEUR: MemoryModule instancie avec succes!\n", "CONSTRUCTEOR: MemoryModule instancied with succes!"); };
+	MemoryModule(){ _EXE_LOADER_DEBUG(2, "CONSTRUCTEUR: MemoryModule instancie avec succes!\n", "CONSTRUCTOR: MemoryModule instancied with success!"); };
 
 	/**
 	 * Load EXE/DLL from memory location with the given size.
