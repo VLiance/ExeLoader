@@ -353,6 +353,7 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 HMEMORYMODULE fMainExeLoader(const char* _sPath){
 	#ifdef ImWin
 		registerSignal();
+		setbuf(stdout, NULL);
 	#endif
 	
 	// Instancier MemoryModule
