@@ -170,6 +170,8 @@ static BOOL CopySections(const unsigned char *data, size_t size, PIMAGE_NT_HEADE
 		dest = codeBase + section->VirtualAddress;
 		memcpy(dest, data + section->PointerToRawData, section->SizeOfRawData);
 		section->Misc.PhysicalAddress = (DWORD) (uintptr_t) dest;
+		
+		printf("\n-----COPY section: dest[%p], src[%p], size[%d]",dest,  data + section->PointerToRawData, section->SizeOfRawData );
 	}
 	return TRUE;
 }
@@ -410,6 +412,10 @@ static BOOL BuildImportTable(PMEMORYMODULE module, ManagedAlloc &AllocManager /*
 			result = FALSE;
 			break;
 		}
+  
+printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
+  
+  
   
 	   // tmp = (HCUSTOMMODULE *) realloc(module->modules, (module->numModules+1)*(sizeof(HCUSTOMMODULE)));
 	   _EXE_LOADER_DEBUG(1, "\n Module No.%d de %d octets", "\n Module Nb.%d of %d bytes", (module->numModules+1), (module->numModules+1)*(sizeof(HCUSTOMMODULE)));
@@ -742,6 +748,9 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 		return NULL;
 	}
 
+printf("\n-+-------------- New codeBase: %p ", (code ) );
+
+
 	result->codeBase = code;
 	result->isDLL = (old_header->FileHeader.Characteristics & IMAGE_FILE_DLL) != 0;
 	result->alloc = allocMemory;
@@ -772,6 +781,8 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 
 	// update position
 	result->headers->OptionalHeader.ImageBase = (uintptr_t)code;
+	
+	
 
 	// copy sections from DLL file block to new memory location
 	if (!CopySections((const unsigned char *) data, size, old_header, result, this->instance_AllocManager)) {

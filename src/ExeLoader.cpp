@@ -319,20 +319,27 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 
 bool fMainExeLoader(const char* _sPath){
 
+	if(strlen(_sPath) <= 0){
+		_EXE_LOADER_DEBUG(5, "Aucun fichier spécifié", "No Input files");
+		return false;
+	}else{
+		_EXE_LOADER_DEBUG(5, "Fichier: %s", "File: %s", _sPath);
+	}
+
 	//setbuf(stdout, NULL);//Just to test
-	//#ifdef ImWin
-		// setbuf(stdout, NULL);//Required to see every printf
-		// registerSignal();
-	//#endif
+	#ifdef ImWin
+		 setbuf(stdout, NULL);//Required to see every printf
+		 registerSignal();
+	#endif
 	
 	// Instancier MemoryModule
 	std::unique_ptr<MemoryModule> memory_module_instance(new MemoryModule());
 
 	void *data;
 	long filesize;
-	std::unique_ptr<HMEMORYMODULE> handle_ptr{new HMEMORYMODULE};
+//	std::unique_ptr<HMEMORYMODULE> handle_ptr{new HMEMORYMODULE};
 	
-	HMEMORYMODULE* handle = (HMEMORYMODULE*) handle_ptr.get();
+	//HMEMORYMODULE* handle = (HMEMORYMODULE*) handle_ptr.get();
 	mainFunc2 dMain ;
  
 
@@ -365,7 +372,7 @@ bool fMainExeLoader(const char* _sPath){
 
 
 	// Charger le fichier
-	handle = (HMEMORYMODULE*) memory_module_instance->MemoryLoadLibrary(data, filesize);
+	HMEMORYMODULE* handle = (HMEMORYMODULE*) memory_module_instance->MemoryLoadLibrary(data, filesize);
 	DLL_HANDLE[nTotalDLL - 1] = handle;
 	 
 	// Oups probleme
@@ -410,6 +417,8 @@ bool fMainExeLoader(const char* _sPath){
  
 			int boucle = 0;
 			
+
+		//	_EXE_LOADER_DEBUG(5, "Lancement[%p]: %s", "Run[%p]: %s", ((PMEMORYMODULE*)handle)->codeBase, _sPath);
 			dMain = fFindMainFunction(memory_module_instance.get(), handle);
 			
 			 

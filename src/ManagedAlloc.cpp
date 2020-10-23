@@ -77,7 +77,7 @@ void* ManagedAlloc::ManagedCalloc(size_t size__, size_t sizeElem__)
 		}
 	
 	// Plus de places
-	return malloc(size__);
+	return calloc(size__, sizeElem__);
 }
 
 
