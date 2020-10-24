@@ -64,20 +64,20 @@ void* ManagedAlloc::ManagedMalloc(size_t size__)
 	
 }
 
-void* ManagedAlloc::ManagedCalloc(size_t size__, size_t sizeElem__)
+void* ManagedAlloc::ManagedCalloc(size_t numElem__, size_t sizeElem__)
 {
 	// Chercher un emplacement vide et malloc dedans!
-	fprintf(stdout, "[%s] ManagedCalloc() %d ", this->name, (int) size__);
+	fprintf(stdout, "[%s] ManagedCalloc() %d ", this->name, (int) numElem__*sizeElem__);
 	for(int index = 0; index < this->managed_alloc_max; index++)
 		if(this->Alloc_Array[index] == 0)
 		{
-			this->Alloc_Array[index] = calloc(size__, sizeElem__);
+			this->Alloc_Array[index] = calloc(numElem__, sizeElem__);
 			fprintf(stdout, "Wrote in [0x%p] -> %d\n", this->Alloc_Array[index], index);
 			return this->Alloc_Array[index];
 		}
 	
 	// Plus de places
-	return calloc(size__, sizeElem__);
+	return calloc(numElem__, sizeElem__);
 }
 
 

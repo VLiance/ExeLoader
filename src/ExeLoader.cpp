@@ -148,6 +148,7 @@ long nExeFileSize;
 			
 			
 			fread(aExeFileData, nExeFileSize, 1, fptr);
+			//fclose(fptr);
 			
 			// oCpc->File_read_all((char*)_sFullPath, (char*)"RB", (char*)aExeFileData);
 			
@@ -236,16 +237,14 @@ long nExeFileSize;
 
 			nExeFileSize = _nSize;
 			aExeFileData = (char*)_aData;
-
+			fclose(f);
 			// _oRc->fSetDynamicMemData(_aData, _nSize); //Will be auto free
 			// Lib_GZ::Sys::pDebug::fConsole(gzStrL("---File Open!-- ") + _sFullPath);
 			return true;
-		}
-		else
-		{
+		}else{
 			// Lib_GZ::Sys::pDebug::fConsole(gzStrL("Error, can't open file : ") + _sFullPath);
 		}
-		fclose(f);
+		
 		return false;
 	}
 #endif /* !!! No Cpcdos !!! */

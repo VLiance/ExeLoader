@@ -31,6 +31,8 @@
 #include <stdio.h>
 #include <time.h>
 #include "MemoryModule.h"
+
+#define Use_HeapAlloc
 // #include "malloc.h" 
  
 #ifdef CpcDos
@@ -171,7 +173,7 @@ static BOOL CopySections(const unsigned char *data, size_t size, PIMAGE_NT_HEADE
 		memcpy(dest, data + section->PointerToRawData, section->SizeOfRawData);
 		section->Misc.PhysicalAddress = (DWORD) (uintptr_t) dest;
 		
-		printf("\n-----COPY section: dest[%p], src[%p], size[%d]",dest,  data + section->PointerToRawData, section->SizeOfRawData );
+		printf("\n-----COPY section [%s]: dest[0x%p], src[0x%p], size[%d]", section->Name , dest,  data + section->PointerToRawData, section->SizeOfRawData );
 	}
 	return TRUE;
 }
@@ -421,7 +423,7 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 	   _EXE_LOADER_DEBUG(1, "\n Module No.%d de %d octets", "\n Module Nb.%d of %d bytes", (module->numModules+1), (module->numModules+1)*(sizeof(HCUSTOMMODULE)));
 	   
 	   /* Corrige via FreeLibrary */
-		tmp = (HCUSTOMMODULE *) AllocManager.ManagedMalloc((module->numModules+1)*(sizeof(HCUSTOMMODULE)));
+		tmp = (HCUSTOMMODULE *) AllocManager.ManagedCalloc((module->numModules+1),(sizeof(HCUSTOMMODULE)));
 		// tmp = (HCUSTOMMODULE *) malloc((module->numModules+1)*(sizeof(HCUSTOMMODULE)));
 		if (tmp == 0) {
 			module->freeLibrary(handle, module->userdata);
@@ -734,8 +736,8 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 		}
 	}
 
-	#ifdef OnWin
-	result = (PMEMORYMODULE)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(MEMORYMODULE));
+	#ifdef Use_HeapAlloc
+		result = (PMEMORYMODULE)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(MEMORYMODULE));
 	#else
 		/* Corrige via FreeLibrary */
 		result = (PMEMORYMODULE)instance_AllocManager.ManagedCalloc(1, sizeof(MEMORYMODULE));
@@ -775,8 +777,6 @@ printf("\n-+-------------- New codeBase: %p ", (code ) );
 	// copy PE header to code
 	memcpy(headers, dos_header, old_header->OptionalHeader.SizeOfHeaders);
 	
-	
-	
 	result->headers = (PIMAGE_NT_HEADERS)&((const unsigned char *)(headers))[dos_header->e_lfanew];
 
 	// update position
@@ -808,8 +808,6 @@ printf("\n-+-------------- New codeBase: %p ", (code ) );
 		goto error;
 	}
 
-	/* Correction 20-mars-2020 WARNING LEAKED */
-	freeMemory(headers, 0, MEM_RELEASE, userdata, this->instance_AllocManager);
 
 #ifndef CustomLoader
 	// Todo According to Microsoft, Thread Local Storage (TLS) is a mechanism that allows Microsoft Windows to define data objects that are not automatic (stack) variables,
@@ -845,9 +843,6 @@ printf("\n-+-------------- New codeBase: %p ", (code ) );
 		result->exeEntry = NULL;
 	}
 	
-	/* Correction 20-mars-2020 WARNING LEAKED */
-	// freeMemory(code, 0, MEM_RELEASE, userdata, this->instance_AllocManager);
-
 	return (HMEMORYMODULE)result;
 
 error:
@@ -943,15 +938,17 @@ void MemoryModule::MemoryFreeLibrary(HMEMORYMODULE mod) {
 		module->free_(module->codeBase, 0, MEM_RELEASE, module->userdata, this->instance_AllocManager);
 	}
 	
-	// if (module->headers != NULL) {
+	if (module->headers != NULL) {
 		// release memory of library
-		// module->free_(module->headers, 0, MEM_RELEASE, module->userdata);
-	// }
+		 module->free_(module->headers, 0, MEM_RELEASE, module->userdata, this->instance_AllocManager);
+	}
 
-	#ifdef OnWin
+
+	#ifdef Use_HeapAlloc
 		HeapFree(GetProcessHeap(), 0, module);
 	#else
-		instance_AllocManager.ManagedFree(module);
+		module->free_(module);
+	//	instance_AllocManager.ManagedFree(module);
 		// free(module);
 	#endif
 }
