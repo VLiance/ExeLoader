@@ -242,6 +242,7 @@ long nExeFileSize;
 			// Lib_GZ::Sys::pDebug::fConsole(gzStrL("---File Open!-- ") + _sFullPath);
 			return true;
 		}else{
+			_EXE_LOADER_DEBUG(6, " * Impossible d'ouvrir le fichier: %s", "Error, can't open file: %s", _sFullPath );
 			// Lib_GZ::Sys::pDebug::fConsole(gzStrL("Error, can't open file : ") + _sFullPath);
 		}
 		
