@@ -315,6 +315,30 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 	
 // };
 
+//#include <process.h>
+
+
+bool GDB_Send_RunCmd_AndWait(int _timeout = 1000){ //1000 = 1 seconde
+
+	printf("Cmd(add)[GDB]:Continue\n");
+	printf("Cmd(run)[GDB]:(waiting)\n");
+	
+	#ifdef ImWin
+	while(_timeout>0){
+		Sleep(1);
+		_timeout--;
+		if(_timeout == 5){
+			return true;
+		}
+	}
+	#endif
+	return false;
+}
+bool GDB_Send_AddSymbolFile(char* _path, void* _text_adress, int _timeout = 1000){
+//add-symbol-file "E:/.../app.exe" 0xXXXXX
+	printf("Cmd(add)[GDB]:add-symbol-file \"%s\" 0x%p\n", _path, _text_adress);
+	GDB_Send_RunCmd_AndWait(_timeout);
+}
 
 
 bool fMainExeLoader(const char* _sPath){
@@ -330,6 +354,18 @@ bool fMainExeLoader(const char* _sPath){
 	#ifdef ImWin
 		 setbuf(stdout, NULL);//Required to see every printf
 		 registerSignal();
+		 
+		 
+		 raise(SIGINT); //pause
+		 
+		// GDB_Send_Load_Symbols(0);
+		  //  printf( "Process id: %d\n", _getpid() );
+		//	kill(_getpid(), SIGINT);
+		// pid_t iPid = getpid(); /* Process gets its id.*/
+	//	kill(iPid, SIGINT);  /* Process sends itself a  SIGINT signal   
+
+		 
+		 
 	#endif
 	
 	// Instancier MemoryModule
