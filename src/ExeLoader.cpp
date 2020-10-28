@@ -317,7 +317,11 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 
 //#include <process.h>
 
+//GDB will automaticly break here (with Cwc compiler)
+extern "C" GDB_Func_Break(){} //raise(SIGTRAP)? void __debugbreak();?
+extern "C" GDB_Func_ExecuteCmds(){} 
 
+/*
 bool GDB_Send_RunCmd_AndWait(int _timeout = 1000){ //1000 = 1 seconde
 
 	printf("Cmd(add)[GDB]:Continue\n");
@@ -333,12 +337,17 @@ bool GDB_Send_RunCmd_AndWait(int _timeout = 1000){ //1000 = 1 seconde
 	}
 	#endif
 	return false;
-}
+}*/
+
 bool GDB_Send_AddSymbolFile(char* _path, void* _text_adress, int _timeout = 1000){
 //add-symbol-file "E:/.../app.exe" 0xXXXXX
-	printf("Cmd(add)[GDB]:add-symbol-file \"%s\" 0x%p\n", _path, _text_adress);
-	GDB_Send_RunCmd_AndWait(_timeout);
+	fprintf(stderr, "Cmd[GDB]:add-symbol-file \"%s\" 0x%p\n", _path, _text_adress);
+	//GDB_Func_Break();
+	GDB_Func_ExecuteCmds();
+//	GDB_Send_RunCmd_AndWait(_timeout);
 }
+
+
 
 
 bool fMainExeLoader(const char* _sPath){
@@ -350,15 +359,22 @@ bool fMainExeLoader(const char* _sPath){
 		_EXE_LOADER_DEBUG(5, "Fichier: %s", "File: %s", _sPath);
 	}
 
+//raise(SIGTRAP);
+
+
 	//setbuf(stdout, NULL);//Just to test
 	#ifdef ImWin
 		 setbuf(stdout, NULL);//Required to see every printf
 		 registerSignal();
 		 
 		 
-		 raise(SIGINT); //pause
+		
+//		 raise(SIGINT); //pause
+
+
 		 
-		// GDB_Send_Load_Symbols(0);
+		GDB_Send_AddSymbolFile((char*)_sPath, 0);
+		
 		  //  printf( "Process id: %d\n", _getpid() );
 		//	kill(_getpid(), SIGINT);
 		// pid_t iPid = getpid(); /* Process gets its id.*/
