@@ -318,8 +318,9 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 //#include <process.h>
 
 //GDB will automaticly break here (with Cwc compiler)
-extern "C" GDB_Func_Break(){} //raise(SIGTRAP)? void __debugbreak();?
-extern "C" GDB_Func_ExecuteCmds(){} 
+extern "C" void GDB_Func_Break(){} //raise(SIGTRAP)? void __debugbreak();?
+//extern "C" GDB_Func_ExecuteCmds(char* _sCmd){
+extern "C" void GDB_Func_ExecuteCmds(){}
 
 /*
 bool GDB_Send_RunCmd_AndWait(int _timeout = 1000){ //1000 = 1 seconde
@@ -339,10 +340,14 @@ bool GDB_Send_RunCmd_AndWait(int _timeout = 1000){ //1000 = 1 seconde
 	return false;
 }*/
 
-bool GDB_Send_AddSymbolFile(char* _path, void* _text_adress, int _timeout = 1000){
+void GDB_Send_AddSymbolFile(char* _path, void* _text_adress, int _timeout = 1000){
 //add-symbol-file "E:/.../app.exe" 0xXXXXX
 	fprintf(stderr, "Cmd[GDB]:add-symbol-file \"%s\" 0x%p\n", _path, _text_adress);
+//	fprintf(stderr, "Cmd[GDB]:Continue\n");//Auto answer yes to confirm adress
+	
 	//GDB_Func_Break();
+	//char myCmd[100];sprintf(myCmd, "add-symbol-file 0x%d", _text_adress);
+	//GDB_Func_ExecuteCmds(myCmd);
 	GDB_Func_ExecuteCmds();
 //	GDB_Send_RunCmd_AndWait(_timeout);
 }
@@ -365,6 +370,7 @@ bool fMainExeLoader(const char* _sPath){
 	//setbuf(stdout, NULL);//Just to test
 	#ifdef ImWin
 		 setbuf(stdout, NULL);//Required to see every printf
+		 setbuf(stderr, NULL);//Required to see every printf
 		 registerSignal();
 		 
 		 
