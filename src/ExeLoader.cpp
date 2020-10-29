@@ -148,6 +148,7 @@ long nExeFileSize;
 			
 			
 			fread(aExeFileData, nExeFileSize, 1, fptr);
+			//fclose(fptr);
 			
 			// oCpc->File_read_all((char*)_sFullPath, (char*)"RB", (char*)aExeFileData);
 			
@@ -236,16 +237,15 @@ long nExeFileSize;
 
 			nExeFileSize = _nSize;
 			aExeFileData = (char*)_aData;
-
+			fclose(f);
 			// _oRc->fSetDynamicMemData(_aData, _nSize); //Will be auto free
 			// Lib_GZ::Sys::pDebug::fConsole(gzStrL("---File Open!-- ") + _sFullPath);
 			return true;
-		}
-		else
-		{
+		}else{
+			_EXE_LOADER_DEBUG(6, " * Impossible d'ouvrir le fichier: %s", "Error, can't open file: %s", _sFullPath );
 			// Lib_GZ::Sys::pDebug::fConsole(gzStrL("Error, can't open file : ") + _sFullPath);
 		}
-		fclose(f);
+		
 		return false;
 	}
 #endif /* !!! No Cpcdos !!! */
@@ -315,24 +315,83 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 	
 // };
 
+//#include <process.h>
+
+//GDB will automaticly break here (with Cwc compiler)
+extern "C" GDB_Func_Break(){} //raise(SIGTRAP)? void __debugbreak();?
+extern "C" GDB_Func_ExecuteCmds(){} 
+
+/*
+bool GDB_Send_RunCmd_AndWait(int _timeout = 1000){ //1000 = 1 seconde
+
+	printf("Cmd(add)[GDB]:Continue\n");
+	printf("Cmd(run)[GDB]:(waiting)\n");
+	
+	#ifdef ImWin
+	while(_timeout>0){
+		Sleep(1);
+		_timeout--;
+		if(_timeout == 5){
+			return true;
+		}
+	}
+	#endif
+	return false;
+}*/
+
+bool GDB_Send_AddSymbolFile(char* _path, void* _text_adress, int _timeout = 1000){
+//add-symbol-file "E:/.../app.exe" 0xXXXXX
+	fprintf(stderr, "Cmd[GDB]:add-symbol-file \"%s\" 0x%p\n", _path, _text_adress);
+	//GDB_Func_Break();
+	GDB_Func_ExecuteCmds();
+//	GDB_Send_RunCmd_AndWait(_timeout);
+}
+
+
 
 
 bool fMainExeLoader(const char* _sPath){
 
+	if(strlen(_sPath) <= 0){
+		_EXE_LOADER_DEBUG(5, "Aucun fichier spécifié", "No Input files");
+		return false;
+	}else{
+		_EXE_LOADER_DEBUG(5, "Fichier: %s", "File: %s", _sPath);
+	}
+
+//raise(SIGTRAP);
+
+
 	//setbuf(stdout, NULL);//Just to test
-	//#ifdef ImWin
-		// setbuf(stdout, NULL);//Required to see every printf
-		// registerSignal();
-	//#endif
+	#ifdef ImWin
+		 setbuf(stdout, NULL);//Required to see every printf
+		 registerSignal();
+		 
+		 
+		
+//		 raise(SIGINT); //pause
+
+
+		 
+		GDB_Send_AddSymbolFile((char*)_sPath, 0);
+		
+		  //  printf( "Process id: %d\n", _getpid() );
+		//	kill(_getpid(), SIGINT);
+		// pid_t iPid = getpid(); /* Process gets its id.*/
+	//	kill(iPid, SIGINT);  /* Process sends itself a  SIGINT signal   
+
+		 
+		 
+	#endif
 	
 	// Instancier MemoryModule
 	std::unique_ptr<MemoryModule> memory_module_instance(new MemoryModule());
 
 	void *data;
 	long filesize;
-	std::unique_ptr<HMEMORYMODULE> handle_ptr{new HMEMORYMODULE};
+//	std::unique_ptr<HMEMORYMODULE> handle_ptr{new HMEMORYMODULE};
 	
-	HMEMORYMODULE* handle = (HMEMORYMODULE*) handle_ptr.get();
+	//HMEMORYMODULE* handle = (HMEMORYMODULE*) handle_ptr.get();
 	mainFunc2 dMain ;
  
 
@@ -365,7 +424,7 @@ bool fMainExeLoader(const char* _sPath){
 
 
 	// Charger le fichier
-	handle = (HMEMORYMODULE*) memory_module_instance->MemoryLoadLibrary(data, filesize);
+	HMEMORYMODULE* handle = (HMEMORYMODULE*) memory_module_instance->MemoryLoadLibrary(data, filesize);
 	DLL_HANDLE[nTotalDLL - 1] = handle;
 	 
 	// Oups probleme
@@ -410,6 +469,8 @@ bool fMainExeLoader(const char* _sPath){
  
 			int boucle = 0;
 			
+
+		//	_EXE_LOADER_DEBUG(5, "Lancement[%p]: %s", "Run[%p]: %s", ((PMEMORYMODULE*)handle)->codeBase, _sPath);
 			dMain = fFindMainFunction(memory_module_instance.get(), handle);
 			
 			 
