@@ -456,6 +456,10 @@ bool fMainExeLoader(const char* _sPath){
 
 			#endif // ImWin
  
+ 
+ 
+ GDB_Func_Break();
+ 
 			int boucle = 0;
 			
 
