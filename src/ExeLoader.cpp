@@ -320,6 +320,7 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 extern "C" void GDB_Func_Break(){} //raise(SIGTRAP)? void __debugbreak();?
 extern "C" void GDB_Func_ExecuteCmds(){} 
 
+
 /*
 bool GDB_Send_RunCmd_AndWait(int _timeout = 1000){ //1000 = 1 seconde
 
@@ -338,12 +339,11 @@ bool GDB_Send_RunCmd_AndWait(int _timeout = 1000){ //1000 = 1 seconde
 	return false;
 }*/
 
-bool GDB_Send_AddSymbolFile(char* _path, void* _text_adress, int _timeout = 1000){
+void GDB_Send_AddSymbolFile(char* _path, void* _text_adress, int _timeout = 1000){
 //add-symbol-file "E:/.../app.exe" 0xXXXXX
 	//fflush(stdout);fflush(stderr);//To be sure we receive the cmd
 	fprintf(stderr, "Cmd[GDB]:add-symbol-file \"%s\" 0x%p\n", _path, _text_adress);
 	fflush(stdout);fflush(stderr);//To be sure we receive the cmd
-	//GDB_Func_Break();
 	GDB_Func_ExecuteCmds();
 }
 
