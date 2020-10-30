@@ -71,11 +71,35 @@ typedef HCUSTOMMODULE (*CustomLoadLibraryFunc)(LPCSTR, void *, ManagedAlloc&);
 typedef FARPROC (*CustomGetProcAddressFunc)(HCUSTOMMODULE, LPCSTR, void *);
 typedef void (*CustomFreeLibraryFunc)(HCUSTOMMODULE, void *);
 
+
+
+typedef struct MEMORYMODULE {
+	PIMAGE_NT_HEADERS headers;
+	unsigned char *codeBase;
+	HCUSTOMMODULE *modules;
+	int numModules;
+	BOOL initialized;
+	BOOL isDLL;
+	BOOL isRelocated;
+	CustomAllocFunc alloc;
+	CustomFreeFunc free_;
+	CustomLoadLibraryFunc loadLibrary;
+	CustomGetProcAddressFunc getProcAddress;
+	CustomFreeLibraryFunc freeLibrary;
+	void *userdata;
+	ExeEntryProc exeEntry;
+	DWORD pageSize;
+	void* section_text;
+} MEMORYMODULE, *PMEMORYMODULE;
+
+
+extern ManagedAlloc instance_AllocManager;
+
 class MemoryModule
 {
 	
 	public:
-	ManagedAlloc instance_AllocManager;
+//	ManagedAlloc instance_AllocManager;
 	MemoryModule(){ _EXE_LOADER_DEBUG(2, "CONSTRUCTEUR: MemoryModule instancie avec succes!\n", "CONSTRUCTOR: MemoryModule instancied with success!"); };
 	void Fin_instance();
 
