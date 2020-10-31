@@ -13,6 +13,7 @@
 
 #endif // ImWin
 
+#include "FuncPipe.h"
 
 
 //#define InCpcDosCore
@@ -86,11 +87,10 @@ HRESULT MyGetDpiForMonitor(
 inline BOOL MySetProcessDPIAware(){return true;}
 inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 ///inline void __stdcall MyRegisterClassW(void* value){
-inline void  MyRegisterClassW(){
-//inline unsigned short __stdcall MyRegisterClassW(void* value){
-printf("\n REGISTER");
-//return 0;
-}
+
+
+
+
 
  sFunc aTableFunc[] = {
 {"fNotImplemented" ,(FUNC_) fNotImplemented }, //Must be first
@@ -104,7 +104,7 @@ printf("\n REGISTER");
 #ifdef UseWinFunc
 
 ///////////////
-	//{"RegisterClassW"  ,(FUNC_) MyRegisterClassW }, //Shcore.dll //shellscalingapi.h
+	{"RegisterClassW"  ,(FUNC_) pipe_RegisterClassW }, 
 	{"GetDpiForMonitor"  ,(FUNC_) MyGetDpiForMonitor }, //Shcore.dll //shellscalingapi.h
 //	{"SetProcessDpiAwareness"  ,(FUNC_) SetProcessDpiAwareness }, //Shcore.dll //shellscalingapi.h
 	{"SetProcessDpiAwareness"  ,(FUNC_) MySetProcessDpiAwareness }, //Shcore.dll //shellscalingapi.h

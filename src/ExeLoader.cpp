@@ -458,7 +458,7 @@ bool fMainExeLoader(const char* _sPath){
  
  
  
- GDB_Func_Break();
+ //GDB_Func_Break();
  
 			int boucle = 0;
 			
