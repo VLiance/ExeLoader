@@ -27,8 +27,7 @@
 #include "MemoryModule.h"
 #include "ExeLoader.h"
 
- 
-ManagedAlloc instance_AllocManager = {1024};
+ ManagedAlloc instance_AllocManager = {1024};
 
 void signalHandler(int signum) {
 	printf("\n Interrupt signal received: ");
@@ -318,8 +317,9 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 //#include <process.h>
 
 //GDB will automaticly break here (with Cwc compiler)
-extern "C" GDB_Func_Break(){} //raise(SIGTRAP)? void __debugbreak();?
-extern "C" GDB_Func_ExecuteCmds(){} 
+extern "C" void GDB_Func_Break(){} //raise(SIGTRAP)? void __debugbreak();?
+extern "C" void GDB_Func_ExecuteCmds(){} 
+
 
 /*
 bool GDB_Send_RunCmd_AndWait(int _timeout = 1000){ //1000 = 1 seconde
@@ -339,14 +339,13 @@ bool GDB_Send_RunCmd_AndWait(int _timeout = 1000){ //1000 = 1 seconde
 	return false;
 }*/
 
-bool GDB_Send_AddSymbolFile(char* _path, void* _text_adress, int _timeout = 1000){
+void GDB_Send_AddSymbolFile(char* _path, void* _text_adress, int _timeout = 1000){
 //add-symbol-file "E:/.../app.exe" 0xXXXXX
+	//fflush(stdout);fflush(stderr);//To be sure we receive the cmd
 	fprintf(stderr, "Cmd[GDB]:add-symbol-file \"%s\" 0x%p\n", _path, _text_adress);
-	//GDB_Func_Break();
+	fflush(stdout);fflush(stderr);//To be sure we receive the cmd
 	GDB_Func_ExecuteCmds();
-//	GDB_Send_RunCmd_AndWait(_timeout);
 }
-
 
 
 
@@ -365,23 +364,8 @@ bool fMainExeLoader(const char* _sPath){
 	//setbuf(stdout, NULL);//Just to test
 	#ifdef ImWin
 		 setbuf(stdout, NULL);//Required to see every printf
+		 setbuf(stderr, NULL);//Required to see every printf
 		 registerSignal();
-		 
-		 
-		
-//		 raise(SIGINT); //pause
-
-
-		 
-		GDB_Send_AddSymbolFile((char*)_sPath, 0);
-		
-		  //  printf( "Process id: %d\n", _getpid() );
-		//	kill(_getpid(), SIGINT);
-		// pid_t iPid = getpid(); /* Process gets its id.*/
-	//	kill(iPid, SIGINT);  /* Process sends itself a  SIGINT signal   
-
-		 
-		 
 	#endif
 	
 	// Instancier MemoryModule
@@ -432,6 +416,11 @@ bool fMainExeLoader(const char* _sPath){
 		_EXE_LOADER_DEBUG(4, "\nImpossible de charger la librairie depuis la memoire\n", "\nUnable to to load library from the memory\n");
 		return false;
 	}
+	
+	if(((MEMORYMODULE*)handle)->section_text != 0){
+		GDB_Send_AddSymbolFile((char*)_sPath, ((MEMORYMODULE*)handle)->section_text );
+	}
+	
 
 	#ifdef __cpp_exceptions
 	try{
@@ -466,6 +455,10 @@ bool fMainExeLoader(const char* _sPath){
 				dCpcVer(1,0);
 
 			#endif // ImWin
+ 
+ 
+ 
+ GDB_Func_Break();
  
 			int boucle = 0;
 			

@@ -68,24 +68,6 @@ typedef BOOL (WINAPI *DllEntryProc)(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID 
 typedef int (WINAPI *ExeEntryProc)(void);
  
 typedef struct {
-	PIMAGE_NT_HEADERS headers;
-	unsigned char *codeBase;
-	HCUSTOMMODULE *modules;
-	int numModules;
-	BOOL initialized;
-	BOOL isDLL;
-	BOOL isRelocated;
-	CustomAllocFunc alloc;
-	CustomFreeFunc free_;
-	CustomLoadLibraryFunc loadLibrary;
-	CustomGetProcAddressFunc getProcAddress;
-	CustomFreeLibraryFunc freeLibrary;
-	void *userdata;
-	ExeEntryProc exeEntry;
-	DWORD pageSize;
-} MEMORYMODULE, *PMEMORYMODULE;
-
-typedef struct {
 	LPVOID address;
 	LPVOID alignedAddress;
 	DWORD size;
@@ -126,6 +108,7 @@ static BOOL CopySections(const unsigned char *data, size_t size, PIMAGE_NT_HEADE
 	int i, section_size;
 	unsigned char *codeBase = module->codeBase;
 	unsigned char *dest;
+	module->section_text = 0;
 	PIMAGE_SECTION_HEADER section = IMAGE_FIRST_SECTION(module->headers);
 	for (i=0; i < module->headers->FileHeader.NumberOfSections; i++, section++) {
 		if (section->SizeOfRawData == 0) {
@@ -173,6 +156,9 @@ static BOOL CopySections(const unsigned char *data, size_t size, PIMAGE_NT_HEADE
 		memcpy(dest, data + section->PointerToRawData, section->SizeOfRawData);
 		section->Misc.PhysicalAddress = (DWORD) (uintptr_t) dest;
 		
+		if( strcmp( (char*)section->Name, ".text") == 0){
+			module->section_text = dest;
+		}
 		printf("\n-----COPY section [%s]: dest[0x%p], src[0x%p], size[%d]", section->Name , dest,  data + section->PointerToRawData, section->SizeOfRawData );
 	}
 	return TRUE;
@@ -721,7 +707,7 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 		alignedImageSize,
 		MEM_RESERVE | MEM_COMMIT,
 		PAGE_READWRITE,
-		userdata, this->instance_AllocManager);
+		userdata, instance_AllocManager);
 
 	if (code == NULL) {
 		// try to allocate memory at arbitrary position
@@ -729,7 +715,7 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 			alignedImageSize,
 			MEM_RESERVE | MEM_COMMIT,
 			PAGE_READWRITE,
-			userdata, this->instance_AllocManager);
+			userdata, instance_AllocManager);
 		if (code == NULL) {
 			SetLastError(ERROR_OUTOFMEMORY);
 			return NULL;
@@ -745,7 +731,7 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 	#endif
 
 	if (result == NULL) {
-		freeMemory(code, 0, MEM_RELEASE, userdata, this->instance_AllocManager);
+		freeMemory(code, 0, MEM_RELEASE, userdata, instance_AllocManager);
 		SetLastError(ERROR_OUTOFMEMORY);
 		return NULL;
 	}
@@ -772,7 +758,7 @@ printf("\n-+-------------- New codeBase: %p ", (code ) );
 		old_header->OptionalHeader.SizeOfHeaders,
 		MEM_COMMIT,
 		PAGE_READWRITE,
-		userdata, this->instance_AllocManager);
+		userdata, instance_AllocManager);
 
 	// copy PE header to code
 	memcpy(headers, dos_header, old_header->OptionalHeader.SizeOfHeaders);
@@ -785,7 +771,7 @@ printf("\n-+-------------- New codeBase: %p ", (code ) );
 	
 
 	// copy sections from DLL file block to new memory location
-	if (!CopySections((const unsigned char *) data, size, old_header, result, this->instance_AllocManager)) {
+	if (!CopySections((const unsigned char *) data, size, old_header, result, instance_AllocManager)) {
 		goto error;
 	}
 
@@ -798,13 +784,13 @@ printf("\n-+-------------- New codeBase: %p ", (code ) );
 	}
 
 	// load required dlls and adjust function table of imports
-	if (!BuildImportTable(result, this->instance_AllocManager)) {
+	if (!BuildImportTable(result, instance_AllocManager)) {
 		goto error;
 	}
 
 	// mark memory pages depending on section headers and release
 	// sections that are marked as "discardable"
-	if (!FinalizeSections(result, this->instance_AllocManager)) {
+	if (!FinalizeSections(result, instance_AllocManager)) {
 		goto error;
 	}
 
@@ -935,12 +921,12 @@ void MemoryModule::MemoryFreeLibrary(HMEMORYMODULE mod) {
 
 	if (module->codeBase != NULL) {
 		// release memory of library
-		module->free_(module->codeBase, 0, MEM_RELEASE, module->userdata, this->instance_AllocManager);
+		module->free_(module->codeBase, 0, MEM_RELEASE, module->userdata, instance_AllocManager);
 	}
 	
 	if (module->headers != NULL) {
 		// release memory of library
-		 module->free_(module->headers, 0, MEM_RELEASE, module->userdata, this->instance_AllocManager);
+		 module->free_(module->headers, 0, MEM_RELEASE, module->userdata, instance_AllocManager);
 	}
 
 
