@@ -401,7 +401,20 @@ HMODULE  My_LoadLibraryEx(  LPCTSTR lpFileName, HANDLE  hFile, DWORD   dwFlags)
 
 //LoadLibraryExW
 FARPROC WINAPI  My_GetProcAddress(  HMODULE hModule, LPCSTR  lpProcName){
-    _EXE_LOADER_DEBUG(0, "GetProcAddress --> %s() ...", "GetProcAddress --> %s() ...", lpProcName);
+
+
+PIMAGE_EXPORT_DIRECTORY exports;
+	PIMAGE_DATA_DIRECTORY directory = GET_HEADER_DICTIONARY((PMEMORYMODULE)hModule, IMAGE_DIRECTORY_ENTRY_EXPORT);
+	
+	if (directory->Size == 0) {
+		 _EXE_LOADER_DEBUG(0, "no export table found", "no export table found" );
+	}
+
+	exports = (PIMAGE_EXPORT_DIRECTORY) ( ((MEMORYMODULE*)hModule)->codeBase + directory->VirtualAddress);
+	char* _sDllName = (char*)"unknow";
+	_sDllName =  (char*) ( ((MEMORYMODULE*)hModule)->codeBase + exports->Name);
+
+    _EXE_LOADER_DEBUG(0, "GetProcAddress[%s] --> %s() ...", "GetProcAddress[%s] --> %s() ...", _sDllName, lpProcName);
     return MyMemoryDefaultGetProcAddress(0, lpProcName, 0);
 }
 

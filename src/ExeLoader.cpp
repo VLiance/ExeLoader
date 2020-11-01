@@ -163,7 +163,7 @@ long nExeFileSize;
 		return true;
 	}
 
-#else /* !!! No Cpcdos !!! */
+#else /* !!! Not Cpcdos !!! */
 
 	//   #define UNICODE
 	//   #define _UNICODE
@@ -348,7 +348,7 @@ void GDB_Send_AddSymbolFile(char* _path, void* _text_adress, int _timeout = 1000
 }
 
 
-
+MemoryModule* memory_module = 0;
 bool fMainExeLoader(const char* _sPath){
 
 	if(strlen(_sPath) <= 0){
@@ -370,6 +370,8 @@ bool fMainExeLoader(const char* _sPath){
 	
 	// Instancier MemoryModule
 	std::unique_ptr<MemoryModule> memory_module_instance(new MemoryModule());
+	memory_module = memory_module_instance.get();
+	
 
 	void *data;
 	long filesize;
@@ -401,7 +403,6 @@ bool fMainExeLoader(const char* _sPath){
 
 	// Charger le fichier en memoire
 	if(!fExeCpcDosLoadFile(_sPath)) return false;
-
 	// Recuperer la taille
 	filesize = nExeFileSize;
 	data = aExeFileData;
@@ -498,6 +499,27 @@ bool fMainExeLoader(const char* _sPath){
 
 }
 
+HMEMORYMODULE AddLibray(const char* _sPath) {
+	_EXE_LOADER_DEBUG(0, "\n///===============================================================================================================///", 
+						 "\n///===============================================================================================================///");
+	_EXE_LOADER_DEBUG(0, "\n///========= AddLibray: %s", 
+						 "\n///========= AddLibray: %s", _sPath);
+	_EXE_LOADER_DEBUG(0, "\n///===============================================================================================================///", 
+						 "\n///===============================================================================================================///");
+	// Charger le fichier en memoire
+	if(!fExeCpcDosLoadFile(_sPath)) return 0;
+	long filesize = nExeFileSize;
+	void* data = aExeFileData;
+	
+	HMEMORYMODULE handle = (HMEMORYMODULE)memory_module->MemoryLoadLibrary(data, filesize);
+		_EXE_LOADER_DEBUG(0, "\n///===============================================================================================================///", 
+						 "\n///===============================================================================================================///");
+		_EXE_LOADER_DEBUG(0, "\n///====== Loaded: %s", 
+							 "\n///====== Loaded: %s",  _sPath);
+		_EXE_LOADER_DEBUG(0, "\n///===============================================================================================================///", 
+							"\n///===============================================================================================================///");
+	return handle;
+}
 
 
 bool fStartExeLoader(const char* _sPath) {

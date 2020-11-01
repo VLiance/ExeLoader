@@ -1,6 +1,7 @@
-// Mickael BANVILLE & Sebastien FAVIER
-//  ExeLoader pour Cpcdos
-// Update 27/10/2016
+/* @autor Maeiky  & Sebastien FAVIER
+*
+*/
+
 
 #include "win.h"
 
@@ -83,6 +84,7 @@ HRESULT MyGetDpiForMonitor(
 ){
 *dpiX = 0;
 *dpiY = 0;
+return 0;
 }
 inline BOOL MySetProcessDPIAware(){return true;}
 inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
@@ -104,7 +106,18 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 #ifdef UseWinFunc
 
 ///////////////
+	{"LoadLibraryA"  ,(FUNC_) pipe_LoadLibraryA },
 	{"RegisterClassW"  ,(FUNC_) pipe_RegisterClassW }, 
+	
+	
+	{"SetPixelFormat"  ,(FUNC_) pipe_SetPixelFormat }, 
+	{"ChoosePixelFormat"  ,(FUNC_) pipe_ChoosePixelFormat },
+	
+//	{"wglMakeCurrent"  ,(FUNC_) pipe_wglMakeCurrent },
+	
+	
+	
+	
 	{"GetDpiForMonitor"  ,(FUNC_) MyGetDpiForMonitor }, //Shcore.dll //shellscalingapi.h
 //	{"SetProcessDpiAwareness"  ,(FUNC_) SetProcessDpiAwareness }, //Shcore.dll //shellscalingapi.h
 	{"SetProcessDpiAwareness"  ,(FUNC_) MySetProcessDpiAwareness }, //Shcore.dll //shellscalingapi.h
@@ -114,7 +127,7 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 	{"GetCommandLineW"  ,(FUNC_) GetCommandLineW },
 	{"LocalFree"  ,(FUNC_) LocalFree },
 	{"FreeLibrary"  ,(FUNC_) FreeLibrary },
-	{"LoadLibraryA"  ,(FUNC_) LoadLibraryA },
+
 	
 ///////////////
 

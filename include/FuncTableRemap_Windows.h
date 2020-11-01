@@ -1,4 +1,8 @@
-
+/* @autor Maeiky  
+*
+* Custom Windows Function Remapped
+*
+*/
 
 /////////////////////////////// WPrintf //////////////
 #define tConvtBufferSize 1024

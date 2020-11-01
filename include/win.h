@@ -1,3 +1,9 @@
+/* @autor Maeiky  
+*
+* Minimal Windows func extracted to be include in non-Windows system
+*
+*/
+
 #ifdef UseWinFunc
 #include <windows.h>
 #define HDEF_Win  //Desactivate following
@@ -21,10 +27,6 @@
 
 
 #define WINAPI STDCALL
-
-
-
-
 
 
 #include <stdlib.h>
@@ -552,17 +554,7 @@ typedef struct _SYSTEM_INFO {
 
 #define __TEXT(quote) quote
 #define TEXT(quote) __TEXT(quote)
-
-
-
-
-
-
-	#define NUL '\0'
-
-
-
-
+#define NUL '\0'
 
 #define IMAGE_RESOURCE_NAME_IS_STRING 0x80000000
 #define IMAGE_RESOURCE_DATA_IS_DIRECTORY 0x80000000
@@ -748,7 +740,7 @@ DECLARE_HANDLE (HHOOK);
   typedef LONG_PTR LRESULT;
 
 
-  DECLARE_HANDLE(HACCEL);
+DECLARE_HANDLE(HACCEL);
 DECLARE_HANDLE(HBITMAP);
 DECLARE_HANDLE(HBRUSH);
 DECLARE_HANDLE(HCOLORSPACE);
@@ -763,9 +755,6 @@ DECLARE_HANDLE(HPALETTE);
 DECLARE_HANDLE(HPEN);
 DECLARE_HANDLE(HMONITOR);
 DECLARE_HANDLE(HWINEVENTHOOK);
-
-
-
 
 
   typedef struct tagRECT {
@@ -791,8 +780,4 @@ DECLARE_HANDLE(HWINEVENTHOOK);
 
 
 
-
-
-
-
-	#endif
+#endif
