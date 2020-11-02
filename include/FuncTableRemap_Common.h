@@ -395,10 +395,9 @@ HMODULE  My_LoadLibraryEx(  LPCTSTR lpFileName, HANDLE  hFile, DWORD   dwFlags)
 FARPROC WINAPI  My_GetProcAddress(  HMODULE hModule, LPCSTR  lpProcName){
 
 	char* _sDllName = (char*)"unknow";
-
-
+/*  //Not work if GetProcAddress is used on non-Exeloader LoadLibrary
+	#ifndef USE_Windows_LoadLibrary
 	PIMAGE_DATA_DIRECTORY directory = GET_HEADER_DICTIONARY((PMEMORYMODULE)hModule, IMAGE_DIRECTORY_ENTRY_EXPORT);
-	
 	if(directory != 0){
 		if ( directory->Size == 0) {
 			 _EXE_LOADER_DEBUG(0, "no export table found", "no export table found" );
@@ -407,8 +406,8 @@ FARPROC WINAPI  My_GetProcAddress(  HMODULE hModule, LPCSTR  lpProcName){
 		PIMAGE_EXPORT_DIRECTORY exports = (PIMAGE_EXPORT_DIRECTORY) ( ((MEMORYMODULE*)hModule)->codeBase + directory->VirtualAddress);
 		_sDllName =  (char*) ( ((MEMORYMODULE*)hModule)->codeBase + exports->Name);
 	}
-	
-	
+	#endif
+	*/
     _EXE_LOADER_DEBUG(0, "GetProcAddress[%s] --> %s() ...", "GetProcAddress[%s] --> %s() ...", _sDllName, lpProcName);
     return MyMemoryDefaultGetProcAddress(0, lpProcName, 0);
 }

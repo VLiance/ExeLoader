@@ -17,40 +17,41 @@ extern DWORD My_GetLastError();
 #define showfunc_unimplt(name, ...) _EXE_LOADER_DEBUG(0, "\n-->Appel de Fonction non implémenté: " name, "\n-->Call not implemented func: " name , __VA_ARGS__);
 #define showfunc(name, ...) _EXE_LOADER_DEBUG(0, "\n-->Appel de: " name, "\n-->Call: " name , __VA_ARGS__);
 #define showfunc_ret(name, ...) _EXE_LOADER_DEBUG(0, "\n-->Retour: " name, "\n-->Return: " name , __VA_ARGS__);
-#if ImWin
-#define Func_Win
+
+#ifdef Pipe_Show_AllFunc
+#define showfunc_opt showfunc
+#else
+#define showfunc_opt
 #endif
-#define Func_Win
 
 //!ATOM RegisterClassW(const WNDCLASSW *lpWndClass)
 inline ATOM WINAPI pipe_RegisterClassW(void* value){
 	showfunc("RegisterClassW( value: %p )", value);
 	#ifdef Func_Win
-	return RegisterClassW((WNDCLASSW*)value);
+		return RegisterClassW((WNDCLASSW*)value);
 	#else
-	return 0;
+		return 0;
 	#endif
 }
 
 //!HMODULE LoadLibraryA(LPCSTR lpLibFileName)
 inline HMODULE WINAPI pipe_LoadLibraryA(LPCSTR lpLibFileName){
 	showfunc("LoadLibraryA( lpLibFileName: %s )", lpLibFileName);
-	#ifdef Func_Win
-		#ifdef USE_Windows_LoadLibrary
-			HMODULE _ret = LoadLibraryA(lpLibFileName);
-			if(!_ret){My_GetLastError();}return _ret;
-		#endif
+	#ifdef USE_Windows_LoadLibrary
+		HMODULE _ret = LoadLibraryA(lpLibFileName);
+		if(!_ret){My_GetLastError();}return _ret;
+	#else
+		return (HMODULE)AddLibray(lpLibFileName);
 	#endif
-	return (HMODULE)AddLibray(lpLibFileName);
 }
 
 //!BOOL SetPixelFormat(HDC hdc, int format, const PIXELFORMATDESCRIPTOR *ppfd)
 inline BOOL WINAPI pipe_SetPixelFormat(void* hdc, int format, void* ppfd){
 	showfunc("SetPixelFormat( hdc: %p, format: %d, ppfd: %p )", hdc, format, ppfd);
 	#ifdef Func_Win
-	return SetPixelFormat((HDC)hdc, format, (PIXELFORMATDESCRIPTOR*)ppfd);
+		return SetPixelFormat((HDC)hdc, format, (PIXELFORMATDESCRIPTOR*)ppfd);
 	#else
-	return true;
+		return true;
 	#endif
 }
 
@@ -58,39 +59,71 @@ inline BOOL WINAPI pipe_SetPixelFormat(void* hdc, int format, void* ppfd){
 inline int WINAPI pipe_ChoosePixelFormat(void* hdc, void* ppfd){
 	showfunc("ChoosePixelFormat( hdc: %p, ppfd: %p )", hdc, ppfd);
 	#ifdef Func_Win
-	int _ret = ChoosePixelFormat((HDC)hdc, (PIXELFORMATDESCRIPTOR*)ppfd);
-	showfunc_ret("ChoosePixelFormat[ int: %d ]", _ret);return _ret;
+		int _ret = ChoosePixelFormat((HDC)hdc, (PIXELFORMATDESCRIPTOR*)ppfd);
+		showfunc_ret("ChoosePixelFormat[ int: %d ]", _ret);return _ret;
 	#else
-	return 0;
+		return 0;
 	#endif
 }
 
 
 //!void __cdecl _lock(int locknum)
 inline void  pipe_lock(int locknum){
-	showfunc("_lock( locknum: %d )", locknum);
+	showfunc_opt("_lock( locknum: %d )", locknum);
 	#ifdef Func_Win
-	//_lock(locknum);
+		//_lock(locknum);
 	#else
 	#endif
 }
 
 //!void __cdecl _unlock(int locknum)
 inline void  pipe_unlock(int locknum){
-	showfunc("_unlock( locknum: %d )", locknum);
+	showfunc_opt("_unlock( locknum: %d )", locknum);
 	#ifdef Func_Win
 	//_unlock(locknum);
 	#else
 	#endif
 }
 
+//!HANDLE  CreateToolhelp32Snapshot(DWORD  dwFlags,DWORD  th32ProcessID)
+inline HANDLE pipe_CreateToolhelp32Snapshot(DWORD  dwFlags,DWORD  th32ProcessID){
+	showfunc("CreateToolhelp32Snapshot( dwFlags: %p, th32ProcessID: %p )", dwFlags,th32ProcessID);
+	return 0;
+}
+
+//!BOOL Thread32First(HANDLE hSnapshot,LPTHREADENTRY32 lpte)
+BOOL pipe_Thread32First(HANDLE hSnapshot,void* lpte){
+	showfunc("Thread32First( hSnapshot: %p, lpte: %p )", hSnapshot,lpte);
+	return 0;
+}
+
+//!BOOL Thread32Next(HANDLE hSnapshot,LPTHREADENTRY32 lpte)
+BOOL pipe_Thread32Next(HANDLE hSnapshot,void* lpte){
+	showfunc("Thread32Next( hSnapshot: %p, lpte: %p )", hSnapshot,lpte);
+	return 0;
+}
+
 //!void __cdecl _initterm(PVFV *,PVFV *);
-inline void pipe_initterm(void* a,void* b){
-	showfunc("_initterm( a: %p, b: %p )", a,b);
-	#ifdef Func_Win
-	//_initterm(a, b);
-	#else
-	#endif
+typedef void (__cdecl *_PVFV)();
+inline void pipe_initterm(_PVFV* ppfn,_PVFV* end){
+	showfunc("_initterm( ppfn: %p, end: %p )", ppfn,end);
+	do {
+        if (_PVFV pfn = *++ppfn){
+            pfn();
+        }
+    } while (ppfn < end);
+}
+
+//!void __cdecl _initterm(PVFV *,PVFV *);
+typedef int  (__cdecl *_PIFV)();
+inline int pipe_initterm_e(_PIFV* ppfn,_PIFV* end){
+	showfunc("_initterm_e( ppfn: %p, end: %p )", ppfn,end);
+	do {
+        if (_PIFV pfn = *++ppfn){
+            if (int err = pfn()) return err;
+        }
+    } while (ppfn < end);
+    return 0;
 }
 
 //!HANDLE My_CreateSemaphore(_In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,_In_ LONG lInitialCount, _In_ LONG lMaximumCount, _In_opt_ LPCTSTR lpName)

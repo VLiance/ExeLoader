@@ -85,9 +85,9 @@ typedef struct MEMORYMODULE {
 	CustomGetProcAddressFunc getProcAddress;
 	CustomFreeLibraryFunc freeLibrary;
 	void *userdata;
+	DWORD pageSize;
 	ExeEntryProc exeEntry;
 	DllEntryProc dllEntry;
-	DWORD pageSize;
 	void* section_text;
 } MEMORYMODULE, *PMEMORYMODULE;
 

@@ -118,6 +118,13 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 	{"_lock"  ,(FUNC_) pipe_lock },
 	{"_unlock"  ,(FUNC_) pipe_unlock },
 	{"_initterm"  ,(FUNC_) pipe_initterm },
+	{"_initterm_e"  ,(FUNC_) pipe_initterm_e },
+	
+	{"CreateToolhelp32Snapshot"  ,(FUNC_) pipe_CreateToolhelp32Snapshot },
+	{"Thread32First"  ,(FUNC_) pipe_Thread32First },
+	{"Thread32Next"  ,(FUNC_) pipe_Thread32Next },
+	
+	
 	
 	
 	{"GetDpiForMonitor"  ,(FUNC_) MyGetDpiForMonitor }, //Shcore.dll //shellscalingapi.h
