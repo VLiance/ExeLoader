@@ -430,9 +430,11 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 		}
 		for (; *thunkRef; thunkRef++, funcRef++) {
 			if (IMAGE_SNAP_BY_ORDINAL(*thunkRef)) {
+				//exetern FARPROC MyMemoryDefaultGetProcAddress(HCUSTOMMODULE module, LPCSTR name, void *userdata);
 				*funcRef = module->getProcAddress(handle, (LPCSTR)IMAGE_ORDINAL(*thunkRef), module->userdata);
 			} else {
 				PIMAGE_IMPORT_BY_NAME thunkData = (PIMAGE_IMPORT_BY_NAME) (codeBase + (*thunkRef));
+				//exetern FARPROC MyMemoryDefaultGetProcAddress(HCUSTOMMODULE module, LPCSTR name, void *userdata);
 				*funcRef = module->getProcAddress(handle, (LPCSTR)&thunkData->Name, module->userdata);
 			}
 			if (*funcRef == 0) {

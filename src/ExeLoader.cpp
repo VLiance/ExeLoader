@@ -498,6 +498,63 @@ bool fMainExeLoader(const char* _sPath){
 
 }
 
+
+FARPROC _dFunc_wglChoosePixelFormat = 0;
+void GetLibraryExportTable(PMEMORYMODULE module){
+
+	unsigned char *codeBase = ((PMEMORYMODULE)module)->codeBase;
+	DWORD idx = 0;
+	PIMAGE_EXPORT_DIRECTORY exports;
+	PIMAGE_DATA_DIRECTORY directory = GET_HEADER_DICTIONARY((PMEMORYMODULE)module, IMAGE_DIRECTORY_ENTRY_EXPORT);
+	if (directory->Size == 0) {
+		// no export table found
+		SetLastError(ERROR_PROC_NOT_FOUND);
+		return;
+	}
+
+	exports = (PIMAGE_EXPORT_DIRECTORY) (codeBase + directory->VirtualAddress);
+	if (exports->NumberOfNames == 0 || exports->NumberOfFunctions == 0) {
+		// DLL doesn't export anything
+		SetLastError(ERROR_PROC_NOT_FOUND);
+		return;
+	}
+
+	// search function name in list of exported names
+	DWORD i;
+	DWORD *nameRef = (DWORD *) (codeBase + exports->AddressOfNames);
+	WORD *ordinal = (WORD *) (codeBase + exports->AddressOfNameOrdinals);
+	BOOL found = FALSE;
+	for (i=0; i < exports->NumberOfNames; i++, nameRef++, ordinal++) {
+		LPCSTR funcName = (const char *) (codeBase + (*nameRef));
+		_EXE_LOADER_DEBUG(0, "/===: %s", 
+							 "/===: %s", funcName);
+		
+		//// Special Function ///
+		if (strcmp("wglChoosePixelFormat", funcName) == 0) {
+			//idx = *ordinal;
+			
+			FARPROC _dFunc = (FARPROC)(LPVOID)(codeBase + (*(DWORD *) (codeBase + exports->AddressOfFunctions + ((*ordinal)*4))));
+			_EXE_LOADER_DEBUG_("FOUND Special function:%s",funcName);
+			_dFunc_wglChoosePixelFormat = _dFunc;
+			
+		}
+		//////////////////////////
+	}
+
+/*
+	if (idx > exports->NumberOfFunctions) {
+		// name <-> ordinal number don't match
+		SetLastError(ERROR_PROC_NOT_FOUND);
+		return;
+	}
+*/
+	// AddressOfFunctions contains the RVAs to the "real" functions
+	//return (FARPROC)(LPVOID)(codeBase + (*(DWORD *) (codeBase + exports->AddressOfFunctions + (idx*4))));
+	
+}
+
+
+
 HMEMORYMODULE AddLibray(const char* _sPath) {
 	_EXE_LOADER_DEBUG_("///===============================================================================================================///","");
 	_EXE_LOADER_DEBUG(0, "///========= AddLibray: %s", 
@@ -510,6 +567,8 @@ HMEMORYMODULE AddLibray(const char* _sPath) {
 	
 	HMEMORYMODULE handle = (HMEMORYMODULE)memory_module->MemoryLoadLibrary(data, filesize);
 	
+
+	
 	_EXE_LOADER_DEBUG_("///===============================================================================================================///","");
 	if(handle == 0){
 		_EXE_LOADER_DEBUG(0, "///====== ERREUR: Chargement de la DLL Impossible %s", 
@@ -519,6 +578,11 @@ HMEMORYMODULE AddLibray(const char* _sPath) {
 	}else{
 		_EXE_LOADER_DEBUG(0, "///====== Loaded: %s", 
 							 "///====== Loaded: %s",  _sPath);
+					 
+		_EXE_LOADER_DEBUG(0, "///====== Export function table:", 
+							 "///====== Export function table:",  "");				 
+		GetLibraryExportTable((PMEMORYMODULE)handle);
+		
 	}
 	_EXE_LOADER_DEBUG_("///===============================================================================================================///","");
 

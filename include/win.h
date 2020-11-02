@@ -294,6 +294,7 @@ typedef struct _IMAGE_DOS_HEADER {
       DWORD Name;
       DWORD FirstThunk;
     } IMAGE_IMPORT_DESCRIPTOR;
+	
     typedef IMAGE_IMPORT_DESCRIPTOR UNALIGNED *PIMAGE_IMPORT_DESCRIPTOR;
     typedef struct _IMAGE_IMPORT_BY_NAME {
       WORD Hint;

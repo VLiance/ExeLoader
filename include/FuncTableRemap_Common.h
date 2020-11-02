@@ -1,4 +1,44 @@
 #include "_Config.h"
+
+
+///////////////////////////////////////////////
+///////////////////////////////////////////////
+extern  FARPROC MyMemoryDefaultGetProcAddress(HCUSTOMMODULE module, LPCSTR name, void *userdata);
+
+//LoadLibraryA
+FARPROC WINAPI  My_GetProcAddress(  HMODULE hModule, LPCSTR  lpProcName){
+
+	char* _sDllName = (char*)"unknow";
+/*  //Not work if GetProcAddress is used on non-Exeloader LoadLibrary
+	#ifndef USE_Windows_LoadLibrary
+	PIMAGE_DATA_DIRECTORY directory = GET_HEADER_DICTIONARY((PMEMORYMODULE)hModule, IMAGE_DIRECTORY_ENTRY_EXPORT);
+	if(directory != 0){
+		if ( directory->Size == 0) {
+			 _EXE_LOADER_DEBUG(0, "no export table found", "no export table found" );
+		}
+
+		PIMAGE_EXPORT_DIRECTORY exports = (PIMAGE_EXPORT_DIRECTORY) ( ((MEMORYMODULE*)hModule)->codeBase + directory->VirtualAddress);
+		_sDllName =  (char*) ( ((MEMORYMODULE*)hModule)->codeBase + exports->Name);
+	}
+	#endif
+	*/
+	
+	//TODO CALL: FARPROC MemoryModule::MemoryGetProcAddress(HMEMORYMODULE module, LPCSTR name)
+	//MemoryGetProcAddress
+	
+	
+    _EXE_LOADER_DEBUG(0, "GetProcAddress[%s] --> %s() ...", "GetProcAddress[%s] --> %s() ...", _sDllName, lpProcName);
+    return MyMemoryDefaultGetProcAddress(0, lpProcName, 0); //Look in our function table
+}
+
+////////////////////////////////////////////
+////////////////////////////////////////////
+
+
+
+
+
+
 //#define Use_Custom_ThreadStorage
 #ifdef Use_Custom_ThreadStorage
 //DWORD  TlsAlloc();										 //If the function succeeds, the return value is a TLS index. The slots for the index are initialized to zero.
@@ -6,6 +46,8 @@
 //LPVOID TlsGetValue(DWORD dwTlsIndex); 					 //Each thread of a process has its own slot for each TLS index
 
 void** aTlsNewMem = 0;
+
+
 
 DWORD WINAPI My_TlsAlloc(void){
    // _EXE_LOADER_DEBUG(3, "TlsAlloc non implemente!", "TlsAlloc not implemented!");	//return 0;
@@ -72,7 +114,6 @@ BOOL WINAPI My_TlsFree (DWORD dwTlsIndex)
 */
 #endif
 
-extern  FARPROC MyMemoryDefaultGetProcAddress(HCUSTOMMODULE module, LPCSTR name, void *userdata);
 
 
 void WINAPI  My_EnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
@@ -391,26 +432,6 @@ HMODULE  My_LoadLibraryEx(  LPCTSTR lpFileName, HANDLE  hFile, DWORD   dwFlags)
 
 
 #define GET_HEADER_DICTIONARYs(module, idx)  &(module)->headers->OptionalHeader.DataDirectory[idx]
-//LoadLibraryA
-FARPROC WINAPI  My_GetProcAddress(  HMODULE hModule, LPCSTR  lpProcName){
-
-	char* _sDllName = (char*)"unknow";
-/*  //Not work if GetProcAddress is used on non-Exeloader LoadLibrary
-	#ifndef USE_Windows_LoadLibrary
-	PIMAGE_DATA_DIRECTORY directory = GET_HEADER_DICTIONARY((PMEMORYMODULE)hModule, IMAGE_DIRECTORY_ENTRY_EXPORT);
-	if(directory != 0){
-		if ( directory->Size == 0) {
-			 _EXE_LOADER_DEBUG(0, "no export table found", "no export table found" );
-		}
-
-		PIMAGE_EXPORT_DIRECTORY exports = (PIMAGE_EXPORT_DIRECTORY) ( ((MEMORYMODULE*)hModule)->codeBase + directory->VirtualAddress);
-		_sDllName =  (char*) ( ((MEMORYMODULE*)hModule)->codeBase + exports->Name);
-	}
-	#endif
-	*/
-    _EXE_LOADER_DEBUG(0, "GetProcAddress[%s] --> %s() ...", "GetProcAddress[%s] --> %s() ...", _sDllName, lpProcName);
-    return MyMemoryDefaultGetProcAddress(0, lpProcName, 0);
-}
 
 int WINAPI abs_CPC(int nombre)
 {

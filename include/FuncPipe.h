@@ -55,10 +55,57 @@ inline BOOL WINAPI pipe_SetPixelFormat(void* hdc, int format, void* ppfd){
 	#endif
 }
 
+
+
+/*
+inline int wglChoosePixelFormat(HDC hdc, CONST PIXELFORMATDESCRIPTOR *ppfd ){
+printf("\n wglChoosePixelFormat!\n");
+   if (ppfd->nSize != sizeof( PIXELFORMATDESCRIPTOR ) || ppfd->nVersion != 1)
+      return 0;
+   if (ppfd->iPixelType != PFD_TYPE_RGBA)
+      return 0;
+   if (!(ppfd->dwFlags & PFD_DRAW_TO_WINDOW))
+      return 0;
+   if (!(ppfd->dwFlags & PFD_SUPPORT_OPENGL))
+      return 0;
+   if (ppfd->dwFlags & PFD_DRAW_TO_BITMAP)
+      return 0;
+   if (!(ppfd->dwFlags & PFD_STEREO_DONTCARE) && (ppfd->dwFlags & PFD_STEREO))
+      return 0;
+
+printf("\n end!\n");
+   return stw_pixelformat_choose( hdc, ppfd );
+   
+}
+
+_sapp.wgl.ChoosePixelFormat = (PFN_wglChoosePixelFormat) GetProcAddress(_sapp.wgl.opengl32, "wglChoosePixelFormat");
+SOKOL_ASSERT(_sapp.wgl.ChoosePixelFormat);
+*/
+/*
+O> GetProcAddress[unknow] --> wglDeleteContext() ...
+O> Warning, :  ---------   wglDeleteContext 
+O> GetProcAddress[unknow] --> wglGetProcAddress() ...
+O> Warning, :  ---------   wglGetProcAddress 
+O> GetProcAddress[unknow] --> wglGetCurrentDC() ...
+O> Warning, :  ---------   wglGetCurrentDC 
+O> GetProcAddress[unknow] --> wglMakeCurrent() ...
+O> Warning, :  ---------   wglMakeCurrent 
+O> GetProcAddress[unknow] --> wglChoosePixelFormat() ...
+O> Warning, :  ---------   wglChoosePixelFormat 
+*/
+
+
+
+
 //!int ChoosePixelFormat( HDC hdc, const PIXELFORMATDESCRIPTOR *ppfd)
 inline int WINAPI pipe_ChoosePixelFormat(void* hdc, void* ppfd){
 	showfunc("ChoosePixelFormat( hdc: %p, ppfd: %p )", hdc, ppfd);
+	
+	//Check if we have wglChoosePixelFormat which is a better replacement
+	//////////////////////////////////
 	#ifdef Func_Win
+
+		//_sapp.wgl.ChoosePixelFormat(_sapp.wgl.msg_dc, &pfd);
 		int _ret = ChoosePixelFormat((HDC)hdc, (PIXELFORMATDESCRIPTOR*)ppfd);
 		showfunc_ret("ChoosePixelFormat[ int: %d ]", _ret);return _ret;
 	#else
