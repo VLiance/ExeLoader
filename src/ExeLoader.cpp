@@ -176,7 +176,6 @@ long nExeFileSize;
 		char BUFFER[1024] = {0};
 		
 		// Faire une condition si l'instance est en Francais ou non
-
 		va_start (arg, format_EN);
 			vsprintf (BUFFER, format_EN, arg);
 		va_end (arg);
@@ -500,24 +499,37 @@ bool fMainExeLoader(const char* _sPath){
 }
 
 HMEMORYMODULE AddLibray(const char* _sPath) {
-	_EXE_LOADER_DEBUG(0, "\n///===============================================================================================================///", 
-						 "\n///===============================================================================================================///");
-	_EXE_LOADER_DEBUG(0, "\n///========= AddLibray: %s", 
-						 "\n///========= AddLibray: %s", _sPath);
-	_EXE_LOADER_DEBUG(0, "\n///===============================================================================================================///", 
-						 "\n///===============================================================================================================///");
+	_EXE_LOADER_DEBUG_("///===============================================================================================================///","");
+	_EXE_LOADER_DEBUG(0, "///========= AddLibray: %s", 
+						 "///========= AddLibray: %s", _sPath);
+	_EXE_LOADER_DEBUG_("///===============================================================================================================///","");
 	// Charger le fichier en memoire
 	if(!fExeCpcDosLoadFile(_sPath)) return 0;
 	long filesize = nExeFileSize;
 	void* data = aExeFileData;
 	
 	HMEMORYMODULE handle = (HMEMORYMODULE)memory_module->MemoryLoadLibrary(data, filesize);
-		_EXE_LOADER_DEBUG(0, "\n///===============================================================================================================///", 
-						 "\n///===============================================================================================================///");
-		_EXE_LOADER_DEBUG(0, "\n///====== Loaded: %s", 
-							 "\n///====== Loaded: %s",  _sPath);
-		_EXE_LOADER_DEBUG(0, "\n///===============================================================================================================///", 
-							"\n///===============================================================================================================///");
+		_EXE_LOADER_DEBUG_("///===============================================================================================================///","");
+		_EXE_LOADER_DEBUG(0, "///====== Loaded: %s", 
+							 "///====== Loaded: %s",  _sPath);
+		_EXE_LOADER_DEBUG_("///===============================================================================================================///","");
+	
+	
+
+	PMEMORYMODULE module = (PMEMORYMODULE)handle;
+	fprintf(stdout, "Adresse %p \n", module->dllEntry);
+
+	if (module == NULL || !module->isDLL || module->dllEntry == NULL || !module->isRelocated) {
+		fprintf(stdout, "ARF.....\n");
+		return 0;
+	}
+
+	fprintf(stdout, "EXECUTION DllMain..... %p \n", module->dllEntry);
+	//!BOOL WINAPI DllMain(HINSTANCE hinstDLL,/*handle to DLL module*/DWORD fdwReason,/*reason for calling function*/LPVOID lpReserved ) /*reserved*/
+	void* _lpReserved = 0;
+	module->dllEntry((HINSTANCE)module, DLL_PROCESS_ATTACH, _lpReserved);
+	
+	
 	return handle;
 }
 

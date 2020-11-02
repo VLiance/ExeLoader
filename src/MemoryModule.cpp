@@ -809,9 +809,9 @@ printf("\n-+-------------- New codeBase: %p ", (code ) );
 				// 
 			_EXE_LOADER_DEBUG(0, "Format de fichier : Librairie", "File format : Library");
 			DllEntryProc DllEntry = (DllEntryProc)(LPVOID)(code + result->headers->OptionalHeader.AddressOfEntryPoint);
-			if (DllEntry == 0) {
-				return NULL;
-			}
+			result->dllEntry = DllEntry;
+			//if (DllEntry == 0) {return NULL;}
+			
 			/* TODO: notify library about attaching to process
 			BOOL successfull = (*DllEntry)((HINSTANCE)code, DLL_PROCESS_ATTACH, 0);
 			if (!successfull) {

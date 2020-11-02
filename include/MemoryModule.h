@@ -26,8 +26,7 @@
  * Joachim Bauch. All Rights Reserved.
  *
  */
-
-extern void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...);
+#include "_Config.h"
 
 #ifndef __MEMORY_MODULE_HEADER
 #define __MEMORY_MODULE_HEADER
@@ -40,7 +39,6 @@ extern void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* form
 #ifdef CpcDos
 	#define  SetLastError(x)
 #endif
-
 
 
 
@@ -88,6 +86,7 @@ typedef struct MEMORYMODULE {
 	CustomFreeLibraryFunc freeLibrary;
 	void *userdata;
 	ExeEntryProc exeEntry;
+	DllEntryProc dllEntry;
 	DWORD pageSize;
 	void* section_text;
 } MEMORYMODULE, *PMEMORYMODULE;

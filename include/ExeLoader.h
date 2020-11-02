@@ -1,5 +1,5 @@
 #ifndef EXELOADER_H
-# define EXELOADER_H 1
+#define EXELOADER_H 1
 
 #define Func(_func) (void*)(&_func)
 #define DEREF_32(name) *(DWORD *)(name)

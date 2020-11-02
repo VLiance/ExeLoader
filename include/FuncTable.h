@@ -2,7 +2,7 @@
 *
 */
 
-
+#include "_Config.h"
 #include "win.h"
 
 //#define InCpcDosCore
@@ -115,7 +115,9 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 	
 //	{"wglMakeCurrent"  ,(FUNC_) pipe_wglMakeCurrent },
 	
-	
+	{"_lock"  ,(FUNC_) pipe_lock },
+	{"_unlock"  ,(FUNC_) pipe_unlock },
+	{"_initterm"  ,(FUNC_) pipe_initterm },
 	
 	
 	{"GetDpiForMonitor"  ,(FUNC_) MyGetDpiForMonitor }, //Shcore.dll //shellscalingapi.h
@@ -362,7 +364,7 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 
 {"GetLastError"  ,(FUNC_) My_GetLastError },
 
-{"CreateSemaphoreW"  ,(FUNC_) My_CreateSemaphore },
+{"CreateSemaphoreW"  ,(FUNC_) pipe_CreateSemaphore },
 {"___lc_codepage_func"  ,(FUNC_) My__lc_codepage_func },
 {"getenv"  ,(FUNC_) My_getenv },
 {"__getmainargs" ,(FUNC_) My_getmainargs },
@@ -526,7 +528,7 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 {"strstr"  ,(FUNC_) strstr },
 {"atoi"  ,(FUNC_) atoi },
 
-{"_lock"  ,(FUNC_) My_lock },
+
 
 ////////// CPC DOS ///////////////////
 #include "CpcDosFuncTable.h"

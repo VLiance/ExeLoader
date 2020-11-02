@@ -1,3 +1,4 @@
+#include "_Config.h"
 //#define Use_Custom_ThreadStorage
 #ifdef Use_Custom_ThreadStorage
 //DWORD  TlsAlloc();										 //If the function succeeds, the return value is a TLS index. The slots for the index are initialized to zero.
@@ -109,9 +110,6 @@ LPTOP_LEVEL_EXCEPTION_FILTER  My_SetUnhandledExceptionFilter( LPTOP_LEVEL_EXCEPT
 
 
 
-void  My_lock(int locknum ){
-	printf("\nTry to lock");
-}
 
 void My_VirtualProtect(){
     _EXE_LOADER_DEBUG(3, "VirtualProtect non implemente!", "VirtualProtect not implemented!");
@@ -240,16 +238,6 @@ UINT  My__lc_codepage_func(){
 
 
 
-HANDLE  STDCALL  My_CreateSemaphore( //Must have  __stdcall
- _In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,
-  _In_     LONG                  lInitialCount,
-  _In_     LONG                  lMaximumCount,
-  _In_opt_ LPCTSTR               lpName
-)
-{
-   _EXE_LOADER_DEBUG(3, "CreateSemaphore non implemente!", "CreateSemaphore not implemented!");
-	return 0;
-}
 
 
 
@@ -399,21 +387,28 @@ HMODULE  My_LoadLibraryEx(  LPCTSTR lpFileName, HANDLE  hFile, DWORD   dwFlags)
     return 0;
 }
 
-//LoadLibraryExW
+
+
+
+#define GET_HEADER_DICTIONARYs(module, idx)  &(module)->headers->OptionalHeader.DataDirectory[idx]
+//LoadLibraryA
 FARPROC WINAPI  My_GetProcAddress(  HMODULE hModule, LPCSTR  lpProcName){
 
+	char* _sDllName = (char*)"unknow";
 
-PIMAGE_EXPORT_DIRECTORY exports;
+
 	PIMAGE_DATA_DIRECTORY directory = GET_HEADER_DICTIONARY((PMEMORYMODULE)hModule, IMAGE_DIRECTORY_ENTRY_EXPORT);
 	
-	if (directory->Size == 0) {
-		 _EXE_LOADER_DEBUG(0, "no export table found", "no export table found" );
+	if(directory != 0){
+		if ( directory->Size == 0) {
+			 _EXE_LOADER_DEBUG(0, "no export table found", "no export table found" );
+		}
+
+		PIMAGE_EXPORT_DIRECTORY exports = (PIMAGE_EXPORT_DIRECTORY) ( ((MEMORYMODULE*)hModule)->codeBase + directory->VirtualAddress);
+		_sDllName =  (char*) ( ((MEMORYMODULE*)hModule)->codeBase + exports->Name);
 	}
-
-	exports = (PIMAGE_EXPORT_DIRECTORY) ( ((MEMORYMODULE*)hModule)->codeBase + directory->VirtualAddress);
-	char* _sDllName = (char*)"unknow";
-	_sDllName =  (char*) ( ((MEMORYMODULE*)hModule)->codeBase + exports->Name);
-
+	
+	
     _EXE_LOADER_DEBUG(0, "GetProcAddress[%s] --> %s() ...", "GetProcAddress[%s] --> %s() ...", _sDllName, lpProcName);
     return MyMemoryDefaultGetProcAddress(0, lpProcName, 0);
 }
@@ -429,3 +424,15 @@ int My_abs(int nombre){
 	}
     return nombre;
 }
+
+
+
+
+
+
+
+
+
+
+
+

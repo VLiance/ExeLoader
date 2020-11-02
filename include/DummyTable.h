@@ -1,5 +1,4 @@
-
-extern void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...);
+#include "_Config.h"
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,4 +1,4 @@
-
+#include "_Config.h"
 #ifndef ImWin
 
 	{"cpc_Creer_Contexte", 				(FUNC_)cpc_Creer_Contexte },

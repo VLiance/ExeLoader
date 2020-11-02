@@ -1,3 +1,4 @@
+#include "_Config.h"
 #ifndef ManagedAlloc
 
 	class ManagedAlloc
