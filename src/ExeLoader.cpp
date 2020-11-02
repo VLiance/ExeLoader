@@ -509,12 +509,18 @@ HMEMORYMODULE AddLibray(const char* _sPath) {
 	void* data = aExeFileData;
 	
 	HMEMORYMODULE handle = (HMEMORYMODULE)memory_module->MemoryLoadLibrary(data, filesize);
+	
+	_EXE_LOADER_DEBUG_("///===============================================================================================================///","");
+	if(handle == 0){
+		_EXE_LOADER_DEBUG(0, "///====== ERREUR: Chargement de la DLL Impossible %s", 
+						 "///====== ERROR: Unable to load DLL: %s",  _sPath);
 		_EXE_LOADER_DEBUG_("///===============================================================================================================///","");
+		return 0;
+	}else{
 		_EXE_LOADER_DEBUG(0, "///====== Loaded: %s", 
 							 "///====== Loaded: %s",  _sPath);
-		_EXE_LOADER_DEBUG_("///===============================================================================================================///","");
-	
-	
+	}
+	_EXE_LOADER_DEBUG_("///===============================================================================================================///","");
 
 	PMEMORYMODULE module = (PMEMORYMODULE)handle;
 	fprintf(stdout, "Adresse %p \n", module->dllEntry);
