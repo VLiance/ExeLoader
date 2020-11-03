@@ -554,11 +554,31 @@ void GetLibraryExportTable(PMEMORYMODULE module){
 }
 
 
+//Max laoded dll: 50
+HMEMORYMODULE  aLibList[50] = {};
+int aLibList_size = 0;
+bool aLibList_add(HMEMORYMODULE _handle){
+	if(aLibList_size < 50){
+		aLibList[aLibList_size] = _handle;
+		aLibList_size++;
+		return true;
+	}
+	return false;
+}
+bool is_in_aLibList(HMEMORYMODULE _handle){
+	for(int i =0; i < aLibList_size; i++){
+		if(_handle == aLibList[i]){
+			return true;
+		}
+	}
+	return false;
+}
 
-HMEMORYMODULE AddLibray(const char* _sPath) {
+
+HMEMORYMODULE AddLibrary(const char* _sPath) {
 	_EXE_LOADER_DEBUG_("///===============================================================================================================///","");
-	_EXE_LOADER_DEBUG(0, "///========= AddLibray: %s", 
-						 "///========= AddLibray: %s", _sPath);
+	_EXE_LOADER_DEBUG(0, "///========= AddLibrary: %s", 
+						 "///========= AddLibrary: %s", _sPath);
 	_EXE_LOADER_DEBUG_("///===============================================================================================================///","");
 	// Charger le fichier en memoire
 	if(!fExeCpcDosLoadFile(_sPath)) return 0;
@@ -566,7 +586,7 @@ HMEMORYMODULE AddLibray(const char* _sPath) {
 	void* data = aExeFileData;
 	
 	HMEMORYMODULE handle = (HMEMORYMODULE)memory_module->MemoryLoadLibrary(data, filesize);
-	
+	aLibList_add(handle);
 
 	
 	_EXE_LOADER_DEBUG_("///===============================================================================================================///","");

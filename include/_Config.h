@@ -10,7 +10,7 @@
 /////////////  CUSTOM SETTINGS  ////////////////////
 ////////////////////////////////////////////////////
 
-//Use the Windows Stanard LoadLibraryA or undef to use the ExeLaoder AddLibray similar to loading .exe from memory
+//Use the Windows Stanard LoadLibraryA or undef to use the ExeLaoder AddLibrary similar to loading .exe from memory
 //#define USE_Windows_LoadLibrary
 
 //Some function are irrelevant and annoying, but sometime we need it for debugging purpose

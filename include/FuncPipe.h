@@ -11,7 +11,7 @@
 #include "_Config.h"
 #include "win.h"
 
-extern HMEMORYMODULE AddLibray(const char* _sPath); //ExeLoader.cpp
+extern HMEMORYMODULE AddLibrary(const char* _sPath); //ExeLoader.cpp
 extern DWORD My_GetLastError();
 
 #define showfunc_unimplt(name, ...) _EXE_LOADER_DEBUG(0, "\n-->Appel de Fonction non implémenté: " name, "\n-->Call not implemented func: " name , __VA_ARGS__);
@@ -41,7 +41,7 @@ inline HMODULE WINAPI pipe_LoadLibraryA(LPCSTR lpLibFileName){
 		HMODULE _ret = LoadLibraryA(lpLibFileName);
 		if(!_ret){My_GetLastError();}return _ret;
 	#else
-		return (HMODULE)AddLibray(lpLibFileName);
+		return (HMODULE)AddLibrary(lpLibFileName);
 	#endif
 }
 
