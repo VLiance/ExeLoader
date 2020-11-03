@@ -18,6 +18,7 @@ extern DWORD My_GetLastError();
 #define showfunc(name, ...) _EXE_LOADER_DEBUG(0, "\n-->Appel de: " name, "\n-->Call: " name , __VA_ARGS__);
 #define showfunc_ret(name, ...) _EXE_LOADER_DEBUG(0, "\n-->Retour: " name, "\n-->Return: " name , __VA_ARGS__);
 
+//#define Pipe_Show_AllFunc
 #ifdef Pipe_Show_AllFunc
 #define showfunc_opt showfunc
 #else
@@ -45,9 +46,15 @@ inline HMODULE WINAPI pipe_LoadLibraryA(LPCSTR lpLibFileName){
 	#endif
 }
 
+
+extern funcPtrIntPtr_bool _dFunc_wglSetPixelFormat;
 //!BOOL SetPixelFormat(HDC hdc, int format, const PIXELFORMATDESCRIPTOR *ppfd)
 inline BOOL WINAPI pipe_SetPixelFormat(void* hdc, int format, void* ppfd){
 	showfunc("SetPixelFormat( hdc: %p, format: %d, ppfd: %p )", hdc, format, ppfd);
+	if(_dFunc_wglSetPixelFormat != 0){
+		return _dFunc_wglSetPixelFormat(hdc, format, ppfd);
+	}
+	
 	#ifdef Func_Win
 		return SetPixelFormat((HDC)hdc, format, (PIXELFORMATDESCRIPTOR*)ppfd);
 	#else
@@ -96,10 +103,13 @@ O> Warning, :  ---------   wglChoosePixelFormat
 
 
 
-
+extern funcPtrPtr_int _dFunc_wglChoosePixelFormat;
 //!int ChoosePixelFormat( HDC hdc, const PIXELFORMATDESCRIPTOR *ppfd)
 inline int WINAPI pipe_ChoosePixelFormat(void* hdc, void* ppfd){
 	showfunc("ChoosePixelFormat( hdc: %p, ppfd: %p )", hdc, ppfd);
+	if(_dFunc_wglChoosePixelFormat != 0){
+//		return _dFunc_wglChoosePixelFormat(hdc, ppfd);
+	}
 	
 	//Check if we have wglChoosePixelFormat which is a better replacement
 	//////////////////////////////////
@@ -172,7 +182,7 @@ inline int pipe_initterm_e(_PIFV* ppfn,_PIFV* end){
     return 0;
 }
 
-//!HANDLE My_CreateSemaphore(_In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,_In_ LONG lInitialCount, _In_ LONG lMaximumCount, _In_opt_ LPCTSTR lpName)
+//!HANDLE CreateSemaphore(_In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,_In_ LONG lInitialCount, _In_ LONG lMaximumCount, _In_opt_ LPCTSTR lpName)
 HANDLE  WINAPI  pipe_CreateSemaphore( //Must have __stdcall
  _In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,
   _In_     LONG                  lInitialCount,
@@ -182,6 +192,39 @@ HANDLE  WINAPI  pipe_CreateSemaphore( //Must have __stdcall
 {
 	showfunc_unimplt("_CreateSemaphore(  )","");
 	return 0;
+}
+
+
+
+
+//!void GetSystemInfo( LPSYSTEM_INFO lpSystemInfo)
+inline void pipe_GetSystemInfo( LPSYSTEM_INFO lpSystemInfo){
+	//A pointer to a SYSTEM_INFO structure that receives the information.
+	showfunc("GetSystemInfo( lpSystemInfo:%p )",lpSystemInfo);
+	#ifdef Func_Win
+	GetSystemInfo(lpSystemInfo);
+	#else
+	#endif
+}
+
+//!HWND WindowFromDC(HDC hDC)
+inline WINAPI HWND pipe_WindowFromDC(HDC hDC){
+	showfunc("WindowFromDC( hDC:%p )",hDC);
+	#ifdef Func_Win
+	return WindowFromDC(hDC);
+	#else
+	return 0;
+	#endif
+}
+
+//!BOOL ClientToScreen(HWND    hWnd,LPPOINT lpPoint)
+inline WINAPI BOOL pipe_ClientToScreen(HWND hWnd,LPPOINT lpPoint){
+	showfunc("ClientToScreen( hWnd:%p, lpPoint.x:%d, lpPoint.y:%d )",hWnd, lpPoint->x, lpPoint->y);
+	#ifdef Func_Win
+	return ClientToScreen(hWnd, lpPoint);
+	#else
+	return true;
+	#endif
 }
 
 
@@ -202,7 +245,9 @@ inline void* pipe_aligned_malloc(size_t size,size_t alignment){
 //!void _aligned_free (void *memblock)
 inline void pipe_aligned_free(void *memblock){
 	showfunc_opt("aligned_free( memblock: %p )", memblock);
-	free(((void**)memblock)[-1]);
+	if(memblock != 0){
+		free(((void**)memblock)[-1]);
+	}
 }
 //! void * _aligned_realloc(void *memblock,size_t size,size_t alignment);
 inline void* pipe_aligned_realloc(void *memblock,size_t size,size_t alignment){
@@ -210,6 +255,15 @@ inline void* pipe_aligned_realloc(void *memblock,size_t size,size_t alignment){
 	pipe_aligned_free(memblock);
 	return pipe_aligned_malloc(size, alignment);
 }
+
+
+//!char *_strdup(const char *strSource)
+inline char* pipe_strdup(const char *strSource){
+	showfunc("_strdup( strSource: %s )", strSource);
+	return (char*)malloc(strlen(strSource) + 1);
+}
+
+
 
 
 /*

@@ -31,4 +31,9 @@ extern void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* form
 //#define _EXE_LOADER_DEBUG_S(_msg, ...)  _EXE_LOADER_DEBUG(0, _msg, _msg);
 #define _EXE_LOADER_DEBUG_(_msg, ...)  _EXE_LOADER_DEBUG(0, _msg, _msg,  __VA_ARGS__);
 
+
+typedef int (*funcPtrPtr_int)(void* a,void* b);
+typedef bool (*funcPtrIntPtr_bool)(void* a, int b, void* c);
+
+
 #endif

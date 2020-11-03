@@ -105,9 +105,25 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 //#include <shellscalingapi.h>
 #ifdef UseWinFunc
 
+/*
+O> Out of table: USER32.dll : WindowFromDC(), 140
+O> Out of table: GDI32.dll : GetPixelFormat(), 47
+O> Out of table: GDI32.dll : DescribePixelFormat(), 46
+
+Out of table: KERNEL32.dll : GetSystemInfo(), 54
+O> Out of table: USER32.dll : WindowFromDC(), 140
+O> Out of table: GDI32.dll : GetPixelFormat(), 47
+O> Out of table: GDI32.dll : DescribePixelFormat(), 46
+*/
+
+
 ///////////////
 	{"LoadLibraryA"  ,(FUNC_) pipe_LoadLibraryA },
 	{"RegisterClassW"  ,(FUNC_) pipe_RegisterClassW }, 
+	
+	{"GetSystemInfo"  ,(FUNC_) pipe_GetSystemInfo }, 
+	{"WindowFromDC"  ,(FUNC_) pipe_WindowFromDC }, 
+	{"ClientToScreen"  ,(FUNC_) pipe_ClientToScreen }, 
 	
 	
 	{"SetPixelFormat"  ,(FUNC_) pipe_SetPixelFormat }, 
@@ -121,6 +137,7 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 	{"_aligned_realloc"  ,(FUNC_) pipe_aligned_realloc },
 	{"_aligned_free"  ,(FUNC_) pipe_aligned_free },
 	
+	{"_strdup"  ,(FUNC_) pipe_strdup },
 	{"_lock"  ,(FUNC_) pipe_lock },
 	{"_unlock"  ,(FUNC_) pipe_unlock },
 	{"_initterm"  ,(FUNC_) pipe_initterm },
