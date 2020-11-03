@@ -108,7 +108,7 @@ extern funcPtrPtr_int _dFunc_wglChoosePixelFormat;
 inline int WINAPI pipe_ChoosePixelFormat(void* hdc, void* ppfd){
 	showfunc("ChoosePixelFormat( hdc: %p, ppfd: %p )", hdc, ppfd);
 	if(_dFunc_wglChoosePixelFormat != 0){
-//		return _dFunc_wglChoosePixelFormat(hdc, ppfd);
+		return _dFunc_wglChoosePixelFormat(hdc, ppfd);
 	}
 	
 	//Check if we have wglChoosePixelFormat which is a better replacement
