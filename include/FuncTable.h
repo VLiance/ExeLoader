@@ -115,6 +115,12 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 	
 //	{"wglMakeCurrent"  ,(FUNC_) pipe_wglMakeCurrent },
 	
+	
+	
+	{"_aligned_malloc"  ,(FUNC_) pipe_aligned_malloc },
+	{"_aligned_realloc"  ,(FUNC_) pipe_aligned_realloc },
+	{"_aligned_free"  ,(FUNC_) pipe_aligned_free },
+	
 	{"_lock"  ,(FUNC_) pipe_lock },
 	{"_unlock"  ,(FUNC_) pipe_unlock },
 	{"_initterm"  ,(FUNC_) pipe_initterm },

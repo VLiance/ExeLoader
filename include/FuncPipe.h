@@ -104,7 +104,6 @@ inline int WINAPI pipe_ChoosePixelFormat(void* hdc, void* ppfd){
 	//Check if we have wglChoosePixelFormat which is a better replacement
 	//////////////////////////////////
 	#ifdef Func_Win
-
 		//_sapp.wgl.ChoosePixelFormat(_sapp.wgl.msg_dc, &pfd);
 		int _ret = ChoosePixelFormat((HDC)hdc, (PIXELFORMATDESCRIPTOR*)ppfd);
 		showfunc_ret("ChoosePixelFormat[ int: %d ]", _ret);return _ret;
@@ -186,6 +185,31 @@ HANDLE  WINAPI  pipe_CreateSemaphore( //Must have __stdcall
 }
 
 
+//! void * _aligned_malloc(size_t size,size_t alignment)
+inline void* pipe_aligned_malloc(size_t size,size_t alignment){
+	showfunc_opt("aligned_malloc( size: %d, alignment: %d )", size,alignment);
+	void* p1; // original block
+    void** p2; // aligned block
+    int offset = alignment - 1 + sizeof(void*);
+    if ((p1 = (void*)malloc(size + offset)) == NULL)
+    {
+       return NULL;
+    }
+    p2 = (void**)(((size_t)(p1) + offset) & ~(alignment - 1));
+    p2[-1] = p1;
+    return p2;
+}
+//!void _aligned_free (void *memblock)
+inline void pipe_aligned_free(void *memblock){
+	showfunc_opt("aligned_free( memblock: %p )", memblock);
+	free(((void**)memblock)[-1]);
+}
+//! void * _aligned_realloc(void *memblock,size_t size,size_t alignment);
+inline void* pipe_aligned_realloc(void *memblock,size_t size,size_t alignment){
+	showfunc_opt("aligned_realloc( size: %d, alignment: %d )", size,alignment);
+	pipe_aligned_free(memblock);
+	return pipe_aligned_malloc(size, alignment);
+}
 
 
 /*
