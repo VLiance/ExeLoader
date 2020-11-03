@@ -613,6 +613,10 @@ HMEMORYMODULE AddLibrary(const char* _sPath) {
 		fprintf(stdout, "ARF.....\n");
 		return 0;
 	}
+	
+	if(((MEMORYMODULE*)handle)->section_text != 0){
+		GDB_Send_AddSymbolFile((char*)_sPath, ((MEMORYMODULE*)handle)->section_text );
+	}
 
 	fprintf(stdout, "EXECUTION DllMain..... %p \n", module->dllEntry);
 	//!BOOL WINAPI DllMain(HINSTANCE hinstDLL,/*handle to DLL module*/DWORD fdwReason,/*reason for calling function*/LPVOID lpReserved ) /*reserved*/
