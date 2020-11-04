@@ -380,7 +380,7 @@ LRESULT WINAPI My_DefWindowProcW(
 _EXE_LOADER_DEBUG(3, "DefWindowProc non implemente!", "DefWindowProc not implemented!");
     return 0;
 }
-
+/*
 #define HCURSOR void*
 HCURSOR WINAPI  My_LoadCursorW(
   _In_opt_ HINSTANCE hInstance,
@@ -397,7 +397,7 @@ HICON WINAPI My_LoadIconW(
 _EXE_LOADER_DEBUG(3, "LoadIcon non implemente!", "LoadIcon not implemented!");
     return 0;
 }
-
+*/
 int WINAPI My_MessageBoxW(
   _In_opt_ HWND    hWnd,
   _In_opt_ LPCTSTR lpText,

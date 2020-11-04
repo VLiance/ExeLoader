@@ -120,12 +120,14 @@ O> Out of table: GDI32.dll : DescribePixelFormat(), 46
 ///////////////
 	{"LoadLibraryA"  ,(FUNC_) pipe_LoadLibraryA },
 	{"RegisterClassW"  ,(FUNC_) pipe_RegisterClassW }, 
+	{"AdjustWindowRectEx"  ,(FUNC_) pipe_AdjustWindowRectEx }, 
 	
 	{"GetSystemInfo"  ,(FUNC_) pipe_GetSystemInfo }, 
 	{"WindowFromDC"  ,(FUNC_) pipe_WindowFromDC }, 
 	{"ClientToScreen"  ,(FUNC_) pipe_ClientToScreen }, 
 	
 	
+	{"SetPixelFormat"  ,(FUNC_) pipe_GetPixelFormat }, 
 	{"SetPixelFormat"  ,(FUNC_) pipe_SetPixelFormat }, 
 	{"ChoosePixelFormat"  ,(FUNC_) pipe_ChoosePixelFormat },
 	
@@ -146,6 +148,22 @@ O> Out of table: GDI32.dll : DescribePixelFormat(), 46
 	{"CreateToolhelp32Snapshot"  ,(FUNC_) pipe_CreateToolhelp32Snapshot },
 	{"Thread32First"  ,(FUNC_) pipe_Thread32First },
 	{"Thread32Next"  ,(FUNC_) pipe_Thread32Next },
+	
+	
+	{"ShowWindow"  ,(FUNC_) pipe_ShowWindow },
+	
+	
+	{"GetModuleHandleA" ,(FUNC_)  pipe_GetModuleHandleA },
+    {"GetModuleHandleW"  ,(FUNC_) pipe_GetModuleHandleW },
+	
+	{"GetDC"  ,(FUNC_) pipe_GetDC },
+	
+	
+	{"LoadCursorA" ,(FUNC_) pipe_LoadCursorA },
+	{"LoadCursorW" ,(FUNC_) pipe_LoadCursorW },
+ 	{"LoadIconA"   ,(FUNC_) pipe_LoadIconA },
+ 	{"LoadIconW"   ,(FUNC_) pipe_LoadIconW },
+	
 	
 	
 	
@@ -173,7 +191,6 @@ O> Out of table: GDI32.dll : DescribePixelFormat(), 46
 	{"InitializeCriticalSectionEx" ,(FUNC_) My_InitializeCriticalSectionEx },
 	{"IsProcessorFeaturePresent" ,(FUNC_) My_IsProcessorFeaturePresent },
 
-    {"LoadLibraryExW"  ,(FUNC_) LoadLibraryExW },
   //  {"GetProcAddress"  ,(FUNC_) GetProcAddress },
     {"IsProcessorFeaturePresent"  ,(FUNC_) IsProcessorFeaturePresent },
     {"InitializeCriticalSectionAndSpinCount"  ,(FUNC_) InitializeCriticalSectionAndSpinCount },
@@ -219,13 +236,14 @@ O> Out of table: GDI32.dll : DescribePixelFormat(), 46
     {"LoadLibraryExW" ,(FUNC_) LoadLibraryExW },
     {"GetSystemTimeAsFileTime" ,(FUNC_) GetSystemTimeAsFileTime },
     {"IsProcessorFeaturePresent" ,(FUNC_) IsProcessorFeaturePresent },
-    {"GetModuleHandleA" ,(FUNC_) GetModuleHandleA },
+
+		
     {"InitializeCriticalSection" ,(FUNC_) InitializeCriticalSection },
   //  {"InitializeCriticalSectionEx" ,(FUNC_) InitializeCriticalSectionEx },
 
 
     {"GetCurrentProcessId"  ,(FUNC_) GetCurrentProcessId },
-    {"GetModuleHandleW"  ,(FUNC_) GetModuleHandleW },
+
     {"CreateEventW"  ,(FUNC_) CreateEventW },
     {"IsDBCSLeadByte"  ,(FUNC_) IsDBCSLeadByte },
     {"GetConsoleMode"  ,(FUNC_) GetConsoleMode },
@@ -270,11 +288,13 @@ O> Out of table: GDI32.dll : DescribePixelFormat(), 46
 	{"SetWindowLongW"  ,(FUNC_) SetWindowLongW },
 	{"RegisterClassExW"  ,(FUNC_) RegisterClassExW },
 	{"CreateWindowExW"  ,(FUNC_) CreateWindowExW },
-	{"ShowWindow"  ,(FUNC_) ShowWindow },
+	
+
+	
 	{"CreateCompatibleDC"  ,(FUNC_) CreateCompatibleDC },
 	{"CreateDIBSection"  ,(FUNC_) CreateDIBSection },
 	{"SelectObject"  ,(FUNC_) SelectObject },
-	{"GetDC"  ,(FUNC_) GetDC },
+
 
 
 
@@ -294,8 +314,8 @@ O> Out of table: GDI32.dll : DescribePixelFormat(), 46
 	{"GetWindowLongW"  ,(FUNC_) GetWindowLongW },
 	{"DefWindowProcW"  ,(FUNC_) DefWindowProcW },
 
-	{"LoadCursorW"  ,(FUNC_) LoadCursorW },
-	{"LoadIconW"  ,(FUNC_) LoadIconW },
+	//{"LoadCursorW"  ,(FUNC_) LoadCursorW },
+	//{"LoadIconW"  ,(FUNC_) LoadIconW },
 	{"MessageBoxW"  ,(FUNC_) MessageBoxW },
 
 	
@@ -368,8 +388,8 @@ O> Out of table: GDI32.dll : DescribePixelFormat(), 46
 	{"GetWindowLongW"  ,(FUNC_) My_GetWindowLongW },
 	{"DefWindowProcW"  ,(FUNC_) My_DefWindowProcW },
 
-	{"LoadCursorW"  ,(FUNC_) My_LoadCursorW },
-	{"LoadIconW"  ,(FUNC_) My_LoadIconW },
+//	{"LoadCursorW"  ,(FUNC_) My_LoadCursorW },
+// 	{"LoadIconW"  ,(FUNC_) My_LoadIconW },
 	{"MessageBoxW"  ,(FUNC_) My_MessageBoxW },
 	
 	

@@ -501,6 +501,9 @@ bool fMainExeLoader(const char* _sPath){
 
 funcPtrPtr_int _dFunc_wglChoosePixelFormat = 0;
 funcPtrIntPtr_bool _dFunc_wglSetPixelFormat = 0;
+funcPtr_int _dFunc_wglGetPixelFormat = 0;
+
+
 void GetLibraryExportTable(PMEMORYMODULE module){
 
 	unsigned char *codeBase = ((PMEMORYMODULE)module)->codeBase;
@@ -541,7 +544,11 @@ void GetLibraryExportTable(PMEMORYMODULE module){
 			_EXE_LOADER_DEBUG_("FOUND Special function:%s",funcName);
 			_dFunc_wglSetPixelFormat = (funcPtrIntPtr_bool)_dFunc;
 		}
-		
+		if (strcmp("wglSetPixelFormat", funcName) == 0) {
+			FARPROC _dFunc = (FARPROC)(LPVOID)(codeBase + (*(DWORD *) (codeBase + exports->AddressOfFunctions + ((*ordinal)*4))));
+			_EXE_LOADER_DEBUG_("FOUND Special function:%s",funcName);
+			_dFunc_wglGetPixelFormat = (funcPtr_int)_dFunc;
+		}
 		
 		//////////////////////////
 	}

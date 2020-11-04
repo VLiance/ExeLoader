@@ -47,6 +47,20 @@ inline HMODULE WINAPI pipe_LoadLibraryA(LPCSTR lpLibFileName){
 }
 
 
+extern funcPtr_int _dFunc_wglGetPixelFormat;
+//!int GetPixelFormat(HDC hdc)
+inline BOOL WINAPI pipe_GetPixelFormat(HDC hdc){
+	showfunc("GetPixelFormat( hdc: %p )", hdc);
+	if(_dFunc_wglGetPixelFormat != 0){
+		return _dFunc_wglGetPixelFormat(hdc);
+	}
+	
+	#ifdef Func_Win
+		return GetPixelFormat(hdc);
+	#else
+		return true;
+	#endif
+}
 extern funcPtrIntPtr_bool _dFunc_wglSetPixelFormat;
 //!BOOL SetPixelFormat(HDC hdc, int format, const PIXELFORMATDESCRIPTOR *ppfd)
 inline BOOL WINAPI pipe_SetPixelFormat(void* hdc, int format, void* ppfd){
@@ -62,6 +76,98 @@ inline BOOL WINAPI pipe_SetPixelFormat(void* hdc, int format, void* ppfd){
 	#endif
 }
 
+  //WINUSERAPI WINBOOL WINAPI AdjustWindowRectEx(LPRECT lpRect,DWORD dwStyle,WINBOOL bMenu,DWORD dwExStyle);
+//!BOOL AdjustWindowRectEx(LPRECT lpRect,DWORD  dwStyle,BOOL bMenu,DWORD  dwExStyle)
+inline BOOL WINAPI pipe_AdjustWindowRectEx(LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle){
+	showfunc("AdjustWindowRectEx( lpRect: %p, dwStyle: %d, bMenu: %d, dwExStyle: %p )", lpRect, dwStyle, bMenu, dwExStyle);
+	#ifdef Func_Win
+		return AdjustWindowRectEx(lpRect, dwStyle, bMenu, dwExStyle);
+	#else
+		return true;
+	#endif
+}
+
+//!BOOL ShowWindow(HWND hWnd,int nCmdShow);
+inline BOOL WINAPI  pipe_ShowWindow(HWND hWnd,int nCmdShow){
+	showfunc("ShowWindow( hWnd: %p, nCmdShow: %d)", hWnd, nCmdShow);
+	#ifdef Func_Win
+		return ShowWindow(hWnd, nCmdShow);
+	#else
+		return true;
+	#endif
+}
+
+
+//!HMODULE GetModuleHandleA(LPCSTR  lpModuleName)
+//!HMODULE GetModuleHandleW(LPCWSTR lpModuleName)
+inline HMODULE  WINAPI pipe_GetModuleHandleA(LPCSTR lpModuleName){
+	showfunc("GetModuleHandleA( lpModuleName: %s)", lpModuleName);
+	#ifdef Func_Win
+		return GetModuleHandleA(lpModuleName);
+	#else
+		return 0;
+	#endif
+}
+inline HMODULE  WINAPI pipe_GetModuleHandleW(LPCWSTR lpModuleName){
+	showfunc("GetModuleHandleW( lpModuleName: %s)", lpModuleName); //TODO ewide str
+	#ifdef Func_Win
+		return GetModuleHandleW(lpModuleName);
+	#else
+		return 0;
+	#endif
+}
+
+//!HCURSOR LoadCursorA(HINSTANCE hInstance,LPCSTR lpCursorName)
+//!HCURSOR LoadCursorW(HINSTANCE hInstance,LPCWSTR lpCursorName)
+HCURSOR WINAPI pipe_LoadCursorA(HINSTANCE hInstance, LPCSTR lpCursorName){
+	//showfunc("LoadCursorA( hInstance: %p, lpCursorName: %s)", hInstance, lpCursorName);
+	showfunc("LoadCursorA( hInstance: %p, lpCursorName: %p)", hInstance, lpCursorName);
+	#ifdef Func_Win
+		return LoadCursorA(hInstance, lpCursorName);
+	#else
+		return 0;
+	#endif
+}
+HCURSOR WINAPI pipe_LoadCursorW(HINSTANCE hInstance, LPCWSTR lpCursorName){
+	showfunc("LoadCursorW( hInstance: %p, lpCursorName: %p)", hInstance, lpCursorName);//TODO ewide str
+	#ifdef Func_Win
+		return LoadCursorW(hInstance, lpCursorName);
+	#else
+		return 0;
+	#endif
+}
+
+//!HICON LoadIconA(HINSTANCE hInstance, LPCSTR lpIconName)
+//!HICON LoadIconW(HINSTANCE hInstance, LPCWSTR lpIconName)
+HICON WINAPI pipe_LoadIconA(HINSTANCE hInstance, LPCSTR lpIconName){
+	showfunc("LoadIconA( hInstance: %p, lpIconName: %p)", hInstance, lpIconName);
+	#ifdef Func_Win
+		return LoadIconA(hInstance, lpIconName);
+	#else
+		return 0;
+	#endif
+}
+HICON WINAPI pipe_LoadIconW(HINSTANCE hInstance, LPCWSTR lpIconName){
+	showfunc("LoadIconW( hInstance: %p, lpIconName: %p)", hInstance, lpIconName);//TODO ewide str
+	#ifdef Func_Win
+		return LoadIconW(hInstance, lpIconName);
+	#else
+		return 0;
+	#endif
+}
+
+
+
+
+//!HDC GetDC(HWND hWnd)
+inline HDC WINAPI pipe_GetDC(HWND hWnd){
+	showfunc("GetDC( lpModuleName: %p)", hWnd); 
+	#ifdef Func_Win
+		return GetDC(hWnd);
+	#else
+		return 0;
+	#endif
+}
 
 
 /*
@@ -121,6 +227,21 @@ inline int WINAPI pipe_ChoosePixelFormat(void* hdc, void* ppfd){
 		return 0;
 	#endif
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //!void __cdecl _lock(int locknum)
