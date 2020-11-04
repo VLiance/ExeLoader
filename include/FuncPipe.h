@@ -46,6 +46,16 @@ inline HMODULE WINAPI pipe_LoadLibraryA(LPCSTR lpLibFileName){
 	#endif
 }
 
+//!LRESULT DispatchMessageA(const MSG *lpMsg)
+inline LRESULT WINAPI pipe_DispatchMessageA(const MSG *lpMsg){
+	showfunc_opt("DispatchMessageA( lpMsg: %s )", lpMsg);
+	#ifdef Func_Win
+		return DispatchMessageA(lpMsg);
+	#else
+		return 0;
+	#endif
+}
+
 
 extern funcPtr_int _dFunc_wglGetPixelFormat;
 //!int GetPixelFormat(HDC hdc)
@@ -403,6 +413,21 @@ inline WINAPI BOOL pipe_ClientToScreen(HWND hWnd,LPPOINT lpPoint){
 }
 
 
+//!int _vscprintf(const char *format,va_list argptr)
+inline int pipe_vscprintf(const char *format,va_list argptr){
+	showfunc_opt("_vscprintf( )");
+    int retval = 0; 
+    va_list argcopy;
+    va_copy(argcopy, argptr); 
+	#ifdef Func_Win
+    retval = vsnprintf(NULL, 0, format, argcopy); 
+	#else
+	//TOODO
+	#endif
+    va_end(argcopy); 
+    return retval;
+ }
+
 //! void * _aligned_malloc(size_t size,size_t alignment)
 inline void* pipe_aligned_malloc(size_t size,size_t alignment){
 	showfunc_opt("aligned_malloc( size: %d, alignment: %d )", size,alignment);
@@ -439,8 +464,12 @@ inline char* pipe_strdup(const char *strSource){
 }
 
 
-
-
+//!char * strncpy( char * destination, const char * source, size_t num )
+char* pipe_strncpy( char * destination, const char * source, size_t num ){
+	showfunc_opt("strncpy( destination: %p, source: %p, num: %d )", destination, source, num);
+	size_t i = 0;
+	while(i++ != num && (*destination++ = *source++));
+}
 /*
 //!BOOL wglMakeCurrent(HDC,HGLRC)
 BOOL pipe_wglMakeCurrent(void* hdc, HGLRC hglrc) {

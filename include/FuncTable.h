@@ -128,11 +128,17 @@ O> Out of table: USER32.dll : SetWindowsHookExA(), 131
 
 ///////////////
 	{"setvbuf"  ,(FUNC_) pipe_setvbuf },
+	{"_vscprintf"  ,(FUNC_) pipe_vscprintf },
 	
 	
 	{"LoadLibraryA"  ,(FUNC_) pipe_LoadLibraryA },
 	{"RegisterClassW"  ,(FUNC_) pipe_RegisterClassW }, 
 	{"AdjustWindowRectEx"  ,(FUNC_) pipe_AdjustWindowRectEx }, 
+	
+	
+	{"DispatchMessageA"  ,(FUNC_) pipe_DispatchMessageA }, 
+	
+	
 	
 	{"GetSystemInfo"  ,(FUNC_) pipe_GetSystemInfo }, 
 	{"WindowFromDC"  ,(FUNC_) pipe_WindowFromDC }, 
@@ -153,7 +159,13 @@ O> Out of table: USER32.dll : SetWindowsHookExA(), 131
 	{"_aligned_realloc"  ,(FUNC_) pipe_aligned_realloc },
 	{"_aligned_free"  ,(FUNC_) pipe_aligned_free },
 	
+	
+	
+	
+	
 	{"_strdup"  ,(FUNC_) pipe_strdup },
+	{"strncpy"  ,(FUNC_) pipe_strncpy },
+	
 	{"_lock"  ,(FUNC_) pipe_lock },
 	{"_unlock"  ,(FUNC_) pipe_unlock },
 	{"_initterm"  ,(FUNC_) pipe_initterm },
