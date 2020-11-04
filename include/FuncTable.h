@@ -114,10 +114,22 @@ Out of table: KERNEL32.dll : GetSystemInfo(), 54
 O> Out of table: USER32.dll : WindowFromDC(), 140
 O> Out of table: GDI32.dll : GetPixelFormat(), 47
 O> Out of table: GDI32.dll : DescribePixelFormat(), 46
+
+
+
+///////////////////////
+
+O> Out of table: KERNEL32.dll : CloseHandle(), 49
+O> Out of table: USER32.dll : EnumDisplaySettingsA(), 128
+O> Out of table: USER32.dll : SetWindowsHookExA(), 131
+
 */
 
 
 ///////////////
+	{"setvbuf"  ,(FUNC_) pipe_setvbuf },
+	
+	
 	{"LoadLibraryA"  ,(FUNC_) pipe_LoadLibraryA },
 	{"RegisterClassW"  ,(FUNC_) pipe_RegisterClassW }, 
 	{"AdjustWindowRectEx"  ,(FUNC_) pipe_AdjustWindowRectEx }, 
@@ -127,9 +139,11 @@ O> Out of table: GDI32.dll : DescribePixelFormat(), 46
 	{"ClientToScreen"  ,(FUNC_) pipe_ClientToScreen }, 
 	
 	
-	{"SetPixelFormat"  ,(FUNC_) pipe_GetPixelFormat }, 
+	{"GetPixelFormat"  ,(FUNC_) pipe_GetPixelFormat }, 
 	{"SetPixelFormat"  ,(FUNC_) pipe_SetPixelFormat }, 
 	{"ChoosePixelFormat"  ,(FUNC_) pipe_ChoosePixelFormat },
+	{"CallNextHookEx"  ,(FUNC_) pipe_CallNextHookEx },
+	{"EnumDisplaySettingsA"  ,(FUNC_) pipe_EnumDisplaySettingsA },
 	
 //	{"wglMakeCurrent"  ,(FUNC_) pipe_wglMakeCurrent },
 	
@@ -153,10 +167,12 @@ O> Out of table: GDI32.dll : DescribePixelFormat(), 46
 	{"ShowWindow"  ,(FUNC_) pipe_ShowWindow },
 	
 	
+	{"SetWindowsHookExA" ,(FUNC_) pipe_SetWindowsHookExA },
 	{"GetModuleHandleA" ,(FUNC_)  pipe_GetModuleHandleA },
     {"GetModuleHandleW"  ,(FUNC_) pipe_GetModuleHandleW },
 	
 	{"GetDC"  ,(FUNC_) pipe_GetDC },
+	{"CloseHandle"  ,(FUNC_) pipe_CloseHandle },
 	
 	
 	{"LoadCursorA" ,(FUNC_) pipe_LoadCursorA },

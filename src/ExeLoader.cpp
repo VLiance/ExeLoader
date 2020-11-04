@@ -544,7 +544,7 @@ void GetLibraryExportTable(PMEMORYMODULE module){
 			_EXE_LOADER_DEBUG_("FOUND Special function:%s",funcName);
 			_dFunc_wglSetPixelFormat = (funcPtrIntPtr_bool)_dFunc;
 		}
-		if (strcmp("wglSetPixelFormat", funcName) == 0) {
+		if (strcmp("wglGetPixelFormat", funcName) == 0) {
 			FARPROC _dFunc = (FARPROC)(LPVOID)(codeBase + (*(DWORD *) (codeBase + exports->AddressOfFunctions + ((*ordinal)*4))));
 			_EXE_LOADER_DEBUG_("FOUND Special function:%s",funcName);
 			_dFunc_wglGetPixelFormat = (funcPtr_int)_dFunc;

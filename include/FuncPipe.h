@@ -170,6 +170,48 @@ inline HDC WINAPI pipe_GetDC(HWND hWnd){
 }
 
 
+//!BOOL WINAPI CloseHandle(HANDLE hObject)
+inline BOOL WINAPI pipe_CloseHandle(HANDLE hObject){
+	showfunc("CloseHandle( hObject: %p)", hObject); 
+	#ifdef Func_Win
+		return CloseHandle(hObject);
+	#else
+		return true;
+	#endif
+}
+
+
+
+//!SetWindowsHookExA(int idHook,HOOKPROC lpfn,HINSTANCE hmod,DWORD     dwThreadId)
+inline HHOOK WINAPI pipe_SetWindowsHookExA(int idHook,HOOKPROC lpfn,HINSTANCE hmod,DWORD     dwThreadId){
+	showfunc("SetWindowsHookExA( idHook: %d, lpfn:%p, hmod:%p, dwThreadId:%p )", idHook, lpfn, hmod, dwThreadId);
+	#ifdef Func_Win
+		return SetWindowsHookExA(idHook,lpfn,hmod,dwThreadId);
+	#else
+		return 0;
+	#endif
+}
+
+//!LRESULT CallNextHookEx(HHOOK hhk, int nCode, WPARAM wParam,LPARAM lParam)
+inline LRESULT WINAPI pipe_CallNextHookEx(HHOOK hhk, int nCode, WPARAM wParam,LPARAM lParam){
+	showfunc("CallNextHookEx( hhk: %d, nCode:%d, wParam:%p, lParam:%p )", hhk, nCode, wParam, lParam);
+	#ifdef Func_Win
+		return CallNextHookEx(hhk,nCode,wParam,lParam);
+	#else
+		return 0;
+	#endif
+}
+
+//!BOOL EnumDisplaySettingsA(LPCSTR lpszDeviceName,DWORD ModeNum,DEVMODEA *lpDevMode)
+inline BOOL WINAPI pipe_EnumDisplaySettingsA(LPCSTR lpszDeviceName,DWORD ModeNum,DEVMODEA *lpDevMode){
+	showfunc("EnumDisplaySettingsA( lpszDeviceName: %p, ModeNum: %d, lpDevMode: %d)", lpszDeviceName, ModeNum, lpDevMode);
+	#ifdef Func_Win
+		return EnumDisplaySettingsA(lpszDeviceName,ModeNum,lpDevMode);
+	#else
+		return 0;
+	#endif
+
+}
 /*
 inline int wglChoosePixelFormat(HDC hdc, CONST PIXELFORMATDESCRIPTOR *ppfd ){
 printf("\n wglChoosePixelFormat!\n");
@@ -195,13 +237,13 @@ _sapp.wgl.ChoosePixelFormat = (PFN_wglChoosePixelFormat) GetProcAddress(_sapp.wg
 SOKOL_ASSERT(_sapp.wgl.ChoosePixelFormat);
 */
 /*
-O> GetProcAddress[unknow] --> wglDeleteContext() ...
+O>kii GetProcAddress[unknow] --> wglDeleteContext() ...
 O> Warning, :  ---------   wglDeleteContext 
-O> GetProcAddress[unknow] --> wglGetProcAddress() ...
-O> Warning, :  ---------   wglGetProcAddress 
+O> GetProcAdidress[unknow] --> wglGetProcAddress() ...
+O> Warning, :  ------jij---   wglGetProcAddress 
 O> GetProcAddress[unknow] --> wglGetCurrentDC() ...
 O> Warning, :  ---------   wglGetCurrentDC 
-O> GetProcAddress[unknow] --> wglMakeCurrent() ...
+TETststO>Jl sfJGetProcAddress[unknow] --> wglMakeCurrent() ...
 O> Warning, :  ---------   wglMakeCurrent 
 O> GetProcAddress[unknow] --> wglChoosePixelFormat() ...
 O> Warning, :  ---------   wglChoosePixelFormat 
@@ -235,6 +277,18 @@ inline int WINAPI pipe_ChoosePixelFormat(void* hdc, void* ppfd){
 
 
 
+//!int setvbuf ( FILE * stream, char * buffer, int mode, size_t size );
+inline int pipe_setvbuf( FILE * stream, char * buffer, int mode, size_t size ){
+	showfunc("pipe_setvbuf( stream: %p, buffer: %p, mode: %d, size:%d )", stream, buffer, mode, size);
+	return 0; //TODO crash?
+//	#ifdef Func_Win
+//		return setvbuf(stream, buffer, mode, size);
+	/*
+	#else
+	return 0;
+	#endif
+	*/
+}
 
 
 
