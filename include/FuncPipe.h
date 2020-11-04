@@ -86,6 +86,27 @@ inline BOOL WINAPI pipe_SetPixelFormat(void* hdc, int format, void* ppfd){
 	#endif
 }
 
+
+extern funcPtrPtr_int _dFunc_wglChoosePixelFormat;
+//!int ChoosePixelFormat( HDC hdc, const PIXELFORMATDESCRIPTOR *ppfd)
+inline int WINAPI pipe_ChoosePixelFormat(void* hdc, void* ppfd){
+	showfunc("ChoosePixelFormat( hdc: %p, ppfd: %p )", hdc, ppfd);
+	if(_dFunc_wglChoosePixelFormat != 0){
+		return _dFunc_wglChoosePixelFormat(hdc, ppfd);
+	}
+	
+	//Check if we have wglChoosePixelFormat which is a better replacement
+	//////////////////////////////////
+	#ifdef Func_Win
+		//_sapp.wgl.ChoosePixelFormat(_sapp.wgl.msg_dc, &pfd);
+		int _ret = ChoosePixelFormat((HDC)hdc, (PIXELFORMATDESCRIPTOR*)ppfd);
+		showfunc_ret("ChoosePixelFormat[ int: %d ]", _ret);return _ret;
+	#else
+		return 0;
+	#endif
+}
+
+
   //WINUSERAPI WINBOOL WINAPI AdjustWindowRectEx(LPRECT lpRect,DWORD dwStyle,WINBOOL bMenu,DWORD dwExStyle);
 //!BOOL AdjustWindowRectEx(LPRECT lpRect,DWORD  dwStyle,BOOL bMenu,DWORD  dwExStyle)
 inline BOOL WINAPI pipe_AdjustWindowRectEx(LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle){
@@ -261,25 +282,6 @@ O> Warning, :  ---------   wglChoosePixelFormat
 
 
 
-extern funcPtrPtr_int _dFunc_wglChoosePixelFormat;
-//!int ChoosePixelFormat( HDC hdc, const PIXELFORMATDESCRIPTOR *ppfd)
-inline int WINAPI pipe_ChoosePixelFormat(void* hdc, void* ppfd){
-	showfunc("ChoosePixelFormat( hdc: %p, ppfd: %p )", hdc, ppfd);
-	if(_dFunc_wglChoosePixelFormat != 0){
-		return _dFunc_wglChoosePixelFormat(hdc, ppfd);
-	}
-	
-	//Check if we have wglChoosePixelFormat which is a better replacement
-	//////////////////////////////////
-	#ifdef Func_Win
-		//_sapp.wgl.ChoosePixelFormat(_sapp.wgl.msg_dc, &pfd);
-		int _ret = ChoosePixelFormat((HDC)hdc, (PIXELFORMATDESCRIPTOR*)ppfd);
-		showfunc_ret("ChoosePixelFormat[ int: %d ]", _ret);return _ret;
-	#else
-		return 0;
-	#endif
-}
-
 
 
 
@@ -376,6 +378,11 @@ HANDLE  WINAPI  pipe_CreateSemaphore( //Must have __stdcall
 )
 {
 	showfunc_unimplt("_CreateSemaphore(  )","");
+	#ifdef Func_Win
+	return CreateSemaphoreA(lpSemaphoreAttributes, lInitialCount, lMaximumCount, lpName);
+	#else
+	#endif
+	
 	return 0;
 }
 
