@@ -128,6 +128,7 @@ O> Out of table: USER32.dll : SetWindowsHookExA(), 131
 
 ///////////////
 	{"setvbuf"  ,(FUNC_) pipe_setvbuf },
+	{"_set_error_mode"  ,(FUNC_) pipe_set_error_mode },
 	{"_vscprintf"  ,(FUNC_) pipe_vscprintf },
 	
 	
@@ -145,9 +146,14 @@ O> Out of table: USER32.dll : SetWindowsHookExA(), 131
 	{"ClientToScreen"  ,(FUNC_) pipe_ClientToScreen }, 
 	
 	
+	//WGL
 	{"GetPixelFormat"  ,(FUNC_) pipe_GetPixelFormat }, 
 	{"SetPixelFormat"  ,(FUNC_) pipe_SetPixelFormat }, 
 	{"ChoosePixelFormat"  ,(FUNC_) pipe_ChoosePixelFormat },
+	{"DescribePixelFormat"  ,(FUNC_) pipe_DescribePixelFormat },
+	
+	
+	
 	{"CallNextHookEx"  ,(FUNC_) pipe_CallNextHookEx },
 	{"EnumDisplaySettingsA"  ,(FUNC_) pipe_EnumDisplaySettingsA },
 	
@@ -165,6 +171,7 @@ O> Out of table: USER32.dll : SetWindowsHookExA(), 131
 	
 	{"_strdup"  ,(FUNC_) pipe_strdup },
 	{"strncpy"  ,(FUNC_) pipe_strncpy },
+	{"isspace"  ,(FUNC_) pipe_isspace },
 	
 	{"_lock"  ,(FUNC_) pipe_lock },
 	{"_unlock"  ,(FUNC_) pipe_unlock },

@@ -106,6 +106,25 @@ inline int WINAPI pipe_ChoosePixelFormat(void* hdc, void* ppfd){
 	#endif
 }
 
+extern funcPtrIntIntPtr_int _dFunc_wglDescribePixelFormat;
+//!int DescribePixelFormat(HDC hdc,int iPixelFormat,UINT nBytes,LPPIXELFORMATDESCRIPTOR ppfd)
+inline int WINAPI pipe_DescribePixelFormat(HDC hdc,int iPixelFormat,UINT nBytes,LPPIXELFORMATDESCRIPTOR ppfd){
+	showfunc("DescribePixelFormat( hdc: %p, iPixelFormat: %d, nBytes: %d, ppfd: %p )", hdc, iPixelFormat, nBytes, ppfd);
+	if(_dFunc_wglDescribePixelFormat != 0){
+		return _dFunc_wglDescribePixelFormat(hdc, iPixelFormat, nBytes, ppfd);
+	}
+	#ifdef Func_Win
+		//_sapp.wgl.ChoosePixelFormat(_sapp.wgl.msg_dc, &pfd);
+		return DescribePixelFormat((HDC)hdc, iPixelFormat, nBytes, ppfd);
+	#else
+		return 0;
+	#endif
+	
+}
+
+
+
+
 
   //WINUSERAPI WINBOOL WINAPI AdjustWindowRectEx(LPRECT lpRect,DWORD dwStyle,WINBOOL bMenu,DWORD dwExStyle);
 //!BOOL AdjustWindowRectEx(LPRECT lpRect,DWORD  dwStyle,BOOL bMenu,DWORD  dwExStyle)
@@ -285,8 +304,11 @@ O> Warning, :  ---------   wglChoosePixelFormat
 
 
 
-
-
+//!int _set_error_mode(int mode_val)
+int pipe_set_error_mode(int mode_val){
+	showfunc("_set_error_mode( mode_val: %d )", mode_val);
+	return 0;
+}
 
 
 //!int setvbuf ( FILE * stream, char * buffer, int mode, size_t size );
@@ -467,16 +489,26 @@ inline void* pipe_aligned_realloc(void *memblock,size_t size,size_t alignment){
 //!char *_strdup(const char *strSource)
 inline char* pipe_strdup(const char *strSource){
 	showfunc("_strdup( strSource: %s )", strSource);
-	return (char*)malloc(strlen(strSource) + 1);
+	size_t size = strlen(strSource) + 1;
+	char* str = (char*)malloc(size);
+	if (str) {memcpy(str, strSource, size);}
+	return str;
 }
 
 
 //!char * strncpy( char * destination, const char * source, size_t num )
-char* pipe_strncpy( char * destination, const char * source, size_t num ){
+inline char* pipe_strncpy( char * destination, const char * source, size_t num ){
 	showfunc_opt("strncpy( destination: %p, source: %p, num: %d )", destination, source, num);
 	size_t i = 0;
 	while(i++ != num && (*destination++ = *source++));
 }
+
+//!int isspace ( int c )
+inline int pipe_isspace( int c ){
+	showfunc_opt("isspace( c %d )", c);
+	return c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r'; // || whatever other char you consider space
+}
+
 /*
 //!BOOL wglMakeCurrent(HDC,HGLRC)
 BOOL pipe_wglMakeCurrent(void* hdc, HGLRC hglrc) {
