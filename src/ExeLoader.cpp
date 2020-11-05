@@ -498,7 +498,7 @@ bool fMainExeLoader(const char* _sPath){
 
 }
 
-
+funcPtr_bool _dFunc_wglSwapBuffers = 0;
 funcPtrPtr_int _dFunc_wglChoosePixelFormat = 0;
 funcPtrIntPtr_bool _dFunc_wglSetPixelFormat = 0;
 funcPtr_int _dFunc_wglGetPixelFormat = 0;
@@ -555,7 +555,11 @@ void GetLibraryExportTable(PMEMORYMODULE module){
 			_EXE_LOADER_DEBUG_("FOUND Special function:%s",funcName);
 			_dFunc_wglDescribePixelFormat = (funcPtrIntIntPtr_int)_dFunc;
 		}
-		
+		if (strcmp("wglSwapBuffers", funcName) == 0) {
+			FARPROC _dFunc = (FARPROC)(LPVOID)(codeBase + (*(DWORD *) (codeBase + exports->AddressOfFunctions + ((*ordinal)*4))));
+			_EXE_LOADER_DEBUG_("FOUND Special function:%s",funcName);
+			_dFunc_wglSwapBuffers = (funcPtr_bool)_dFunc;
+		}
 		
 		//////////////////////////
 	}

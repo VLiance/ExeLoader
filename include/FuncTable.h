@@ -127,6 +127,10 @@ O> Out of table: USER32.dll : SetWindowsHookExA(), 131
 
 
 ///////////////
+	{"VirtualAlloc"  ,(FUNC_) pipe_VirtualAlloc },
+	{"VirtualFree"  ,(FUNC_) pipe_VirtualFree },
+	
+	
 	{"setvbuf"  ,(FUNC_) pipe_setvbuf },
 	{"_set_error_mode"  ,(FUNC_) pipe_set_error_mode },
 	{"_vscprintf"  ,(FUNC_) pipe_vscprintf },
@@ -146,11 +150,16 @@ O> Out of table: USER32.dll : SetWindowsHookExA(), 131
 	{"ClientToScreen"  ,(FUNC_) pipe_ClientToScreen }, 
 	
 	
-	//WGL
+	////// Special func WGL /////
 	{"GetPixelFormat"  ,(FUNC_) pipe_GetPixelFormat }, 
 	{"SetPixelFormat"  ,(FUNC_) pipe_SetPixelFormat }, 
 	{"ChoosePixelFormat"  ,(FUNC_) pipe_ChoosePixelFormat },
 	{"DescribePixelFormat"  ,(FUNC_) pipe_DescribePixelFormat },
+	{"SwapBuffers"  ,(FUNC_) pipe_SwapBuffers },
+	////////////////////////////
+	
+	{"StretchDIBits"  ,(FUNC_) pipe_StretchDIBits },
+	
 	
 	
 	
@@ -166,12 +175,17 @@ O> Out of table: USER32.dll : SetWindowsHookExA(), 131
 	{"_aligned_free"  ,(FUNC_) pipe_aligned_free },
 	
 	
+	 
+
+	
 	
 	
 	
 	{"_strdup"  ,(FUNC_) pipe_strdup },
 	{"strncpy"  ,(FUNC_) pipe_strncpy },
 	{"isspace"  ,(FUNC_) pipe_isspace },
+	{"isupper"  ,(FUNC_) pipe_isupper },
+	{"islower"  ,(FUNC_) pipe_islower },
 	
 	{"_lock"  ,(FUNC_) pipe_lock },
 	{"_unlock"  ,(FUNC_) pipe_unlock },
@@ -593,12 +607,21 @@ O> Out of table: USER32.dll : SetWindowsHookExA(), 131
 {"localeconv"  ,(FUNC_) localeconv },
 
 
-//Math
+//////////// MATH ////////////
 {"floor"  ,(FUNC_) floor },
 {"ceil"  ,(FUNC_) ceil },
 {"abs"  ,(FUNC_) My_abs  }, 
 {"fabs"  ,(FUNC_) fabs  }, 
 {"qsort"  ,(FUNC_) qsort },
+{"tan"  ,(FUNC_) tan },
+
+
+////////////////////////////
+
+
+
+{"strncpy"  ,(FUNC_) pipe_strncpy },
+
 
 
 ///// Thread local Important? ///////

@@ -122,6 +122,35 @@ inline int WINAPI pipe_DescribePixelFormat(HDC hdc,int iPixelFormat,UINT nBytes,
 	
 }
 
+extern funcPtr_bool _dFunc_wglSwapBuffers;
+//!BOOL SwapBuffers(HDC Arg1)
+inline BOOL WINAPI pipe_SwapBuffers(HDC hdc){
+	showfunc("SwapBuffers( hdc: %p )", hdc);
+	if(_dFunc_wglSwapBuffers != 0){
+		return _dFunc_wglSwapBuffers(hdc);
+	}
+	#ifdef Func_Win
+		//_sapp.wgl.ChoosePixelFormat(_sapp.wgl.msg_dc, &pfd);
+		return SwapBuffers((HDC)hdc);
+	#else
+		return false;
+	#endif
+}
+
+
+
+//!int StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int DestHeight,int xSrc,int ySrc, int SrcWidth, int SrcHeight, const VOID *lpBits, const BITMAPINFO *lpbmi, UINT iUsage, DWORD rop)
+int WINAPI pipe_StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int DestHeight,int xSrc,int ySrc, int SrcWidth, int SrcHeight, const VOID *lpBits, const BITMAPINFO *lpbmi, UINT iUsage, DWORD rop){
+	showfunc("StretchDIBits( hdc: %p )", hdc);
+	#ifdef Func_Win
+		//_sapp.wgl.ChoosePixelFormat(_sapp.wgl.msg_dc, &pfd);
+		return StretchDIBits(hdc, xDest, yDest, DestWidth, DestHeight, xSrc, ySrc, SrcWidth, SrcHeight, lpBits, lpbmi, iUsage, rop);
+	#else
+		return false;
+	#endif
+}
+
+
 
 
 
@@ -501,6 +530,7 @@ inline char* pipe_strncpy( char * destination, const char * source, size_t num )
 	showfunc_opt("strncpy( destination: %p, source: %p, num: %d )", destination, source, num);
 	size_t i = 0;
 	while(i++ != num && (*destination++ = *source++));
+	return destination;
 }
 
 //!int isspace ( int c )
@@ -508,6 +538,43 @@ inline int pipe_isspace( int c ){
 	showfunc_opt("isspace( c %d )", c);
 	return c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r'; // || whatever other char you consider space
 }
+
+//!int isupper ( int c )
+inline int  pipe_isupper( int c ){
+	showfunc_opt("isupper( c %d )", c);
+	return (c >= 'A' && c <= 'Z');
+}
+
+//!int islower ( int c )
+inline int  pipe_islower( int c ){
+	showfunc_opt("islower( c %d )", c);
+	return (c >= 'a' && c <= 'z');
+}
+
+
+//!LPVOID VirtualAlloc(LPVOID lpAddress,SIZE_T dwSize,DWORD flAllocationType,DWORD flProtect)
+inline LPVOID pipe_VirtualAlloc(LPVOID lpAddress,SIZE_T dwSize,DWORD flAllocationType,DWORD flProtect){
+	showfunc_opt("VirtualAlloc( lpAddress %p, dwSize: %d, flAllocationType: %d, flProtect:%d )", lpAddress, dwSize, flAllocationType, flProtect);
+	#ifdef Func_Win
+    return VirtualAlloc(lpAddress, dwSize, flAllocationType, flProtect); 
+	#else
+	//TOODO
+	#endif
+}
+
+//!BOOL VirtualFree(LPVOID lpAddress,SIZE_T dwSize,DWORD  dwFreeType)
+inline BOOL pipe_VirtualFree(LPVOID lpAddress,SIZE_T dwSize,DWORD  dwFreeType){
+	showfunc_opt("VirtualFree( lpAddress %p, dwSize: %d, dwFreeType:%d )", lpAddress, dwSize, dwFreeType);
+	#ifdef Func_Win
+    return VirtualFree(lpAddress, dwSize, dwFreeType); 
+	#else
+	//TOODO
+	#endif
+}
+
+
+
+
 
 /*
 //!BOOL wglMakeCurrent(HDC,HGLRC)
