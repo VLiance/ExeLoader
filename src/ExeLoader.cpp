@@ -24,7 +24,6 @@
 #include <iostream>
 
 #include "win.h"
-#include "Lib_GZ/GZ.h"
 #ifdef CpcDos
 	#include "Lib_GZ/SysUtils/CpcDosHeader.h"
 #endif
@@ -179,7 +178,7 @@ long nExeFileSize;
 	);
 	*/
 	//#define MAX_PATH 255
-	gzBool fExeCpcDosLoadFile(const char* _sFullPath)
+	bool fExeCpcDosLoadFile(const char* _sFullPath)
 	{
 	
 		if(_sFullPath == 0){
@@ -192,7 +191,7 @@ long nExeFileSize;
 
 		//  gzUTF16 _wcFile(gzStrC(_sFullPath));
 		//   FILE*  f = _wfopen((wchar_t*)(gzUInt16*)_wcFile, L"rb+");
-		FILE*  f = fopen((char*)(gzUInt8*)_sFullPath, "rb+");
+		FILE*  f = fopen((char*)_sFullPath, "rb+");
 		unsigned char *result;
 
 		if (f != NULL)
@@ -214,9 +213,9 @@ long nExeFileSize;
 			lSize = ftell (f);
 			rewind (f);
 			// gzUIntX _nSize =   ((gzUInt64)fa.nFileSizeHigh << 32) | fa.nFileSizeLow;
-			gzUIntX _nSize = lSize;
+			size_t _nSize = lSize;
 
-			gzUInt8* _aData = new gzUInt8[_nSize];
+			uint8_t* _aData = new uint8_t[_nSize];
 			fread(_aData, 1, _nSize, f);
 
 			nExeFileSize = _nSize;
