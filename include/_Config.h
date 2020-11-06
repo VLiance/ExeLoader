@@ -37,6 +37,8 @@
 //Some function are irrelevant and annoying, but sometime we need it for debugging purpose
 //#define Pipe_Show_AllFunc
 
+//Use the standard Widows VirtualAlloc allocation or the more portable ExeLoader version
+//#define USE_Windows_VirtualAlloc
 
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
@@ -44,6 +46,7 @@
 
 #ifndef Func_Win
 #undef USE_Windows_LoadLibrary
+#undef USE_Windows_VirtualAlloc
 #endif
 
 #ifdef InCpcDosCore

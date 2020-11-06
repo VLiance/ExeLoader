@@ -468,7 +468,7 @@ inline void* pipe_aligned_realloc(void *memblock,size_t size,size_t alignment){
 
 //!char *_strdup(const char *strSource)
 inline char* pipe_strdup(const char *strSource){
-	showfunc("_strdup( strSource: %s )", strSource);
+	showfunc_opt("_strdup( strSource: %s )", strSource);
 	size_t size = strlen(strSource) + 1;
 	char* str = (char*)malloc(size);
 	if (str) {memcpy(str, strSource, size);}
@@ -506,22 +506,25 @@ inline int  pipe_islower( int c ){
 inline LPVOID pipe_VirtualAlloc(LPVOID lpAddress,SIZE_T dwSize,DWORD flAllocationType,DWORD flProtect){
 	showfunc("VirtualAlloc( lpAddress %p, dwSize: %d, flAllocationType: %d, flProtect:%d )", lpAddress, dwSize, flAllocationType, flProtect);
 	
-	
-	#ifdef Func_Win
-    return VirtualAlloc(lpAddress, dwSize, flAllocationType, flProtect); 
+	#ifdef USE_Windows_VirtualAlloc
+	return VirtualAlloc(lpAddress, dwSize, flAllocationType, flProtect); 
 	#else
-	//TOODO
+	if(flAllocationType == 0x01000){
+		return instance_AllocManager.ManagedCalloc(dwSize, sizeof(char));
+	}
 	#endif
+	
 }
 
 //!BOOL VirtualFree(LPVOID lpAddress,SIZE_T dwSize,DWORD  dwFreeType)
 inline BOOL pipe_VirtualFree(LPVOID lpAddress,SIZE_T dwSize,DWORD  dwFreeType){
 	showfunc("VirtualFree( lpAddress %p, dwSize: %d, dwFreeType:%d )", lpAddress, dwSize, dwFreeType);
-	
-	
-	#ifdef Func_Win
+
+	#ifdef USE_Windows_VirtualAlloc
     return VirtualFree(lpAddress, dwSize, dwFreeType); 
 	#else
-	//TOODO
+	if(dwFreeType == 0x08000){
+		return instance_AllocManager.ManagedFree(lpAddress);
+	}
 	#endif
 }
