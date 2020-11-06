@@ -481,10 +481,9 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 	LPVOID MyMemoryDefaultAlloc(LPVOID address, SIZE_T size, DWORD allocationType, DWORD protect, void* userdata, ManagedAlloc &AllocManager) 
 	{
 		UNREFERENCED_PARAMETER(userdata);
-		//  return VirtualAlloc(address, size, allocationType, protect);
+		// return VirtualAlloc(address, size, allocationType, protect);
 		// return calloc(1, size);
-		return AllocManager.ManagedCalloc(1, size);
-		// return malloc(size);
+		return AllocManager.ManagedCalloc(1, size); //Must initialised to zero
 	}
 
 	BOOL MyMemoryDefaultFree(LPVOID lpAddress, SIZE_T dwSize, DWORD dwFreeType, void* userdata, ManagedAlloc& AllocManager)  

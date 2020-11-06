@@ -20,6 +20,12 @@
 
 #include "_Config.h"
 
+#include <cstdlib> 
+#include <cstdio> 
+#include <cstring>
+#include <cstdarg>
+#include <csignal>
+#include <memory>
 
 
 #ifdef CpcDos
