@@ -15,18 +15,15 @@
  * You can obtain one at https://www.apache.org/licenses/LICENSE-2.0.html
  */
  
-#include "_Config.h"
+#include "ExeLoader.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
-//#include <internal.h>
 
 void fPrintWho(int _nID);
 
-
 void func_Unknow(){printf("Not Impl Unknow \n" );}
-
 
 void func_0(){fPrintWho(0);}
 void func_1(){fPrintWho(1);}
@@ -2241,13 +2238,8 @@ sDummyFunc aDummyFunc[] = {
 {"","",(FUNC_) func_Unknow },
 {"","",(FUNC_) func_Unknow }
 
-
-
 };
-
 
 void fPrintWho(int _nID){
 _EXE_LOADER_DEBUG(3, "Hors de la table: %s : %s()", "Out of table: %s : %s(), %d", aDummyFunc[_nID].DLL,  aDummyFunc[_nID].Who, _nID );
-
 }
-

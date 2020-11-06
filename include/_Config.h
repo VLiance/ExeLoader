@@ -19,7 +19,6 @@
 * Here you can change the behavior of ExeLoader 
 *
 */
-
 #ifndef EXELOADER_Config_H
 #define EXELOADER_Config_H
 
@@ -39,8 +38,6 @@
 //#define Pipe_Show_AllFunc
 
 
-
-
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
@@ -49,16 +46,5 @@
 #undef USE_Windows_LoadLibrary
 #endif
 
-extern void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...);
-//#define _EXE_LOADER_DEBUG_S(_msg, ...)  _EXE_LOADER_DEBUG(0, _msg, _msg);
-#define _EXE_LOADER_DEBUG_(_msg, ...)  _EXE_LOADER_DEBUG(0, _msg, _msg,  __VA_ARGS__);
 
-
-typedef bool (*funcPtr_bool)(void*);
-typedef int  (*funcPtr_int)(void*);
-typedef int  (*funcPtrPtr_int)(void*,void*);
-typedef bool (*funcPtrIntPtr_bool)(void*,int,void*);
-typedef int  (*funcPtrIntIntPtr_int)(void*,int,int,void*);
-
-
-#endif
+#endif //EXELOADER_Config_H

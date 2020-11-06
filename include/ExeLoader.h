@@ -13,21 +13,51 @@
  * you may not use this file except in compliance with the License.
  * If a copy of the Apache License Version 2.0 was not distributed with this file,
  * You can obtain one at https://www.apache.org/licenses/LICENSE-2.0.html
+ *
  */
+#ifndef EXELOADER_Exeloader_H
+#define EXELOADER_Exeloader_H
 
-#ifndef EXELOADER_H
-#define EXELOADER_H 1
+#include "_Config.h"
+
+
+extern void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...);
+//#define _EXE_LOADER_DEBUG_S(_msg, ...)  _EXE_LOADER_DEBUG(0, _msg, _msg);
+#define _EXE_LOADER_DEBUG_(_msg, ...)  _EXE_LOADER_DEBUG(0, _msg, _msg,  __VA_ARGS__);
+
+
+
+#include "win.h"
+#include "MemoryModule.h"
+
+
 
 #define Func(_func) (void*)(&_func)
 #define DEREF_32(name) *(DWORD *)(name)
 #define BLOCKSIZE 100
 
+
+extern HMEMORYMODULE AddLibrary(const char* _sPath); //ExeLoader.cpp
+extern DWORD My_GetLastError();
+
+
+extern "C" bool fStartExeLoader(const char* Source_File);
+
+
+
+/// Main Func Ptr ///
 typedef int (*addNumberProc)(int, int);
 typedef void (*testFunc)();
 typedef int (*mainFunc)();
 typedef int (*mainFunc2)(int argc, char* argv[]);
 typedef void (*FUNC_Version)(int _nMajor, int _nMinor);
 
-extern "C" bool fStartExeLoader(const char* Source_File);
+/// Generic Func Ptr ///
+typedef bool (*funcPtr_bool)(void*);
+typedef int  (*funcPtr_int)(void*);
+typedef int  (*funcPtrPtr_int)(void*,void*);
+typedef bool (*funcPtrIntPtr_bool)(void*,int,void*);
+typedef int  (*funcPtrIntIntPtr_int)(void*,int,int,void*);
 
-#endif /* !EXELOADER_H */
+
+#endif //EXELOADER_Exeloader_H

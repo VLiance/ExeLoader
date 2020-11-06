@@ -15,7 +15,7 @@
  * You can obtain one at https://www.apache.org/licenses/LICENSE-2.0.html
  */
  
-#include "_Config.h"
+#include "ExeLoader.h"
 #ifndef ImWin
 
 	{"cpc_Creer_Contexte", 				(FUNC_)cpc_Creer_Contexte },

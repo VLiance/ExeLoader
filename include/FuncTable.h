@@ -18,9 +18,24 @@
 * 
 * Remap system function to custom ones 
 *
+*
+* Usefull declaration                ------------------------    decorated
+//void __cdecl foo(void);            ----------------------->    _foo
+//void __cdecl foo(int a);           ----------------------->    _foo
+//void __cdecl foo(int a, int b);    ----------------------->    _foo
+//void __stdcall foo(void);          ----------------------->    _foo@0
+//void __stdcall foo(int a);         ----------------------->    _foo@4
+//void __stdcall foo(int a, int b);  ----------------------->    _foo@8
+//void __fastcall foo(void);         ----------------------->    @foo@0
+//void __fastcall foo(int a);        ----------------------->    @foo@4
+//void __fastcall foo(int a, int b); ----------------------->    @foo@8
+*
 */
+#ifndef EXELOADER_FuncTable_H
+#define EXELOADER_FuncTable_H
 
-#include "_Config.h"
+
+#include "ExeLoader.h"
 #include "win.h"
 
 //#define InCpcDosCore
@@ -32,14 +47,6 @@
 
 #endif // ImWin
 
-#include "FuncPipe.h"
-
-
-//#define InCpcDosCore
-
-
-
-//#define WinLastError
 
 #include <cstdio>
 #include <cstdlib>
@@ -47,22 +54,21 @@
 #include <cstring>
 #include <errno.h>
 #include <conio.h>
-
-//#include <internal.h>
 #include <cassert>
 #include <cstdarg>
 #include <setjmp.h>
 #include <stdlib.h>  
- 
 
 #ifdef InCpcDosCore
 	#define Use_Custom_ThreadStorage
 #endif
 
-
+#include "FuncPipe.h"
 #include "FuncTableRemap_Common.h"
 #include "FuncTableRemap_Windows.h"
 	
+	
+
 #ifndef UseWinFunc
 	//onCpcDos
 	#include "FuncTableRemap_CpcDos.h"
@@ -72,16 +78,6 @@
 //#include "..\..\..\OS2.1\CPinti\include\leakchk.h"
 
 
-//Declaration                        ----------------------->    decorated name
-//void __cdecl foo(void);            ----------------------->    _foo
-//void __cdecl foo(int a);           ----------------------->    _foo
-//void __cdecl foo(int a, int b);    ----------------------->    _foo
-//void __stdcall foo(void);          ----------------------->    _foo@0
-//void __stdcall foo(int a);         ----------------------->    _foo@4
-//void __stdcall foo(int a, int b);  ----------------------->    _foo@8
-//void __fastcall foo(void);         ----------------------->    @foo@0
-//void __fastcall foo(int a);        ----------------------->    @foo@4
-//void __fastcall foo(int a, int b); ----------------------->    @foo@8
 
 
 
@@ -123,28 +119,6 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 //#include <shellscalingapi.h>
 #ifdef UseWinFunc
 
-/*
-O> Out of table: USER32.dll : WindowFromDC(), 140
-O> Out of table: GDI32.dll : GetPixelFormat(), 47
-O> Out of table: GDI32.dll : DescribePixelFormat(), 46
-
-Out of table: KERNEL32.dll : GetSystemInfo(), 54
-O> Out of table: USER32.dll : WindowFromDC(), 140
-O> Out of table: GDI32.dll : GetPixelFormat(), 47
-O> Out of table: GDI32.dll : DescribePixelFormat(), 46
-
-
-
-///////////////////////
-
-O> Out of table: KERNEL32.dll : CloseHandle(), 49
-O> Out of table: USER32.dll : EnumDisplaySettingsA(), 128
-O> Out of table: USER32.dll : SetWindowsHookExA(), 131
-
-*/
-
-
-///////////////
 	{"VirtualAlloc"  ,(FUNC_) pipe_VirtualAlloc },
 	{"VirtualFree"  ,(FUNC_) pipe_VirtualFree },
 	
@@ -655,7 +629,6 @@ O> Out of table: USER32.dll : SetWindowsHookExA(), 131
 {"atoi"  ,(FUNC_) atoi },
 
 
-
 ////////// CPC DOS ///////////////////
 #include "CpcDosFuncTable.h"
 //////////////////////////////////////
@@ -665,12 +638,4 @@ O> Out of table: USER32.dll : SetWindowsHookExA(), 131
 {"puts"  ,(FUNC_) puts } //Must be End
 };
 
-
-
-
-
-
-
-
-
-
+#endif //EXELOADER_FuncTable_H

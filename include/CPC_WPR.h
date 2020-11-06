@@ -30,7 +30,7 @@
 		Mise a jour le 16 JUILLET 2019
 
 */
-#include "_Config.h"
+#include "ExeLoader.h"
 extern bool bOnCpcDos;
 extern int nCpcVerMajor;
 extern int nCpcVerMinor;

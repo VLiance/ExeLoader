@@ -21,14 +21,10 @@
 *
 * Warning: Windows WINAPI function are __stdcall instead of __cdecl. 
 * __stdcall remapped function must have the EXACT same paramters and must be specified as __stdcall
-*  If not, your app will crash when the fucntion return. 
+*  If not, your app will likely crash when the function return.
+*
 */
 
-#include "_Config.h"
-#include "win.h"
-
-extern HMEMORYMODULE AddLibrary(const char* _sPath); //ExeLoader.cpp
-extern DWORD My_GetLastError();
 
 #define showfunc_unimplt(name, ...) _EXE_LOADER_DEBUG(0, "\n-->Appel de Fonction non implémenté: " name, "\n-->Call not implemented func: " name , __VA_ARGS__);
 #define showfunc(name, ...) _EXE_LOADER_DEBUG(0, "\n-->Appel de: " name, "\n-->Call: " name , __VA_ARGS__);
@@ -153,8 +149,6 @@ inline BOOL WINAPI pipe_SwapBuffers(HDC hdc){
 	#endif
 }
 
-
-
 //!int StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int DestHeight,int xSrc,int ySrc, int SrcWidth, int SrcHeight, const VOID *lpBits, const BITMAPINFO *lpbmi, UINT iUsage, DWORD rop)
 int WINAPI pipe_StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int DestHeight,int xSrc,int ySrc, int SrcWidth, int SrcHeight, const VOID *lpBits, const BITMAPINFO *lpbmi, UINT iUsage, DWORD rop){
 	showfunc("StretchDIBits( hdc: %p )", hdc);
@@ -167,11 +161,6 @@ int WINAPI pipe_StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int Dest
 }
 
 
-
-
-
-
-  //WINUSERAPI WINBOOL WINAPI AdjustWindowRectEx(LPRECT lpRect,DWORD dwStyle,WINBOOL bMenu,DWORD dwExStyle);
 //!BOOL AdjustWindowRectEx(LPRECT lpRect,DWORD  dwStyle,BOOL bMenu,DWORD  dwExStyle)
 inline BOOL WINAPI pipe_AdjustWindowRectEx(LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle){
 	showfunc("AdjustWindowRectEx( lpRect: %p, dwStyle: %d, bMenu: %d, dwExStyle: %p )", lpRect, dwStyle, bMenu, dwExStyle);
@@ -251,9 +240,6 @@ HICON WINAPI pipe_LoadIconW(HINSTANCE hInstance, LPCWSTR lpIconName){
 	#endif
 }
 
-
-
-
 //!HDC GetDC(HWND hWnd)
 inline HDC WINAPI pipe_GetDC(HWND hWnd){
 	showfunc("GetDC( lpModuleName: %p)", hWnd); 
@@ -263,7 +249,6 @@ inline HDC WINAPI pipe_GetDC(HWND hWnd){
 		return 0;
 	#endif
 }
-
 
 //!BOOL WINAPI CloseHandle(HANDLE hObject)
 inline BOOL WINAPI pipe_CloseHandle(HANDLE hObject){
@@ -307,54 +292,12 @@ inline BOOL WINAPI pipe_EnumDisplaySettingsA(LPCSTR lpszDeviceName,DWORD ModeNum
 	#endif
 
 }
-/*
-inline int wglChoosePixelFormat(HDC hdc, CONST PIXELFORMATDESCRIPTOR *ppfd ){
-printf("\n wglChoosePixelFormat!\n");
-   if (ppfd->nSize != sizeof( PIXELFORMATDESCRIPTOR ) || ppfd->nVersion != 1)
-      return 0;
-   if (ppfd->iPixelType != PFD_TYPE_RGBA)
-      return 0;
-   if (!(ppfd->dwFlags & PFD_DRAW_TO_WINDOW))
-      return 0;
-   if (!(ppfd->dwFlags & PFD_SUPPORT_OPENGL))
-      return 0;
-   if (ppfd->dwFlags & PFD_DRAW_TO_BITMAP)
-      return 0;
-   if (!(ppfd->dwFlags & PFD_STEREO_DONTCARE) && (ppfd->dwFlags & PFD_STEREO))
-      return 0;
-
-printf("\n end!\n");
-   return stw_pixelformat_choose( hdc, ppfd );
-   
-}
-
-_sapp.wgl.ChoosePixelFormat = (PFN_wglChoosePixelFormat) GetProcAddress(_sapp.wgl.opengl32, "wglChoosePixelFormat");
-SOKOL_ASSERT(_sapp.wgl.ChoosePixelFormat);
-*/
-/*
-O>kii GetProcAddress[unknow] --> wglDeleteContext() ...
-O> Warning, :  ---------   wglDeleteContext 
-O> GetProcAdidress[unknow] --> wglGetProcAddress() ...
-O> Warning, :  ------jij---   wglGetProcAddress 
-O> GetProcAddress[unknow] --> wglGetCurrentDC() ...
-O> Warning, :  ---------   wglGetCurrentDC 
-TETststO>Jl sfJGetProcAddress[unknow] --> wglMakeCurrent() ...
-O> Warning, :  ---------   wglMakeCurrent 
-O> GetProcAddress[unknow] --> wglChoosePixelFormat() ...
-O> Warning, :  ---------   wglChoosePixelFormat 
-*/
-
-
-
-
-
 
 //!int _set_error_mode(int mode_val)
 int pipe_set_error_mode(int mode_val){
 	showfunc("_set_error_mode( mode_val: %d )", mode_val);
 	return 0;
 }
-
 
 //!int setvbuf ( FILE * stream, char * buffer, int mode, size_t size );
 inline int pipe_setvbuf( FILE * stream, char * buffer, int mode, size_t size ){
@@ -368,14 +311,6 @@ inline int pipe_setvbuf( FILE * stream, char * buffer, int mode, size_t size ){
 	#endif
 	*/
 }
-
-
-
-
-
-
-
-
 
 //!void __cdecl _lock(int locknum)
 inline void  pipe_lock(int locknum){
@@ -567,7 +502,6 @@ inline int  pipe_islower( int c ){
 	return (c >= 'a' && c <= 'z');
 }
 
-
 //!LPVOID VirtualAlloc(LPVOID lpAddress,SIZE_T dwSize,DWORD flAllocationType,DWORD flProtect)
 inline LPVOID pipe_VirtualAlloc(LPVOID lpAddress,SIZE_T dwSize,DWORD flAllocationType,DWORD flProtect){
 	showfunc_opt("VirtualAlloc( lpAddress %p, dwSize: %d, flAllocationType: %d, flProtect:%d )", lpAddress, dwSize, flAllocationType, flProtect);
@@ -587,25 +521,3 @@ inline BOOL pipe_VirtualFree(LPVOID lpAddress,SIZE_T dwSize,DWORD  dwFreeType){
 	//TOODO
 	#endif
 }
-
-
-
-
-
-/*
-//!BOOL wglMakeCurrent(HDC,HGLRC)
-BOOL pipe_wglMakeCurrent(void* hdc, HGLRC hglrc) {
-	showfunc("ChoosePixelFormat( hdc: %p, hglrc: %p )", hdc, hglrc);
-	#ifdef Func_Win
-	return wglMakeCurrent((HDC)hdc, hglrc);
-	#else
-	return true;
-	#endif
-}
-
-*/
-
-
-
-
-

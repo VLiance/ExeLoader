@@ -15,8 +15,9 @@
  * You can obtain one at https://www.apache.org/licenses/LICENSE-2.0.html
  */
 
-#include "_Config.h"
-#ifndef ManagedAlloc
+#include "ExeLoader.h"
+#ifndef EXELOADER_ManagedAlloc
+#define EXELOADER_ManagedAlloc
 
 	class ManagedAlloc
 	{
@@ -31,4 +32,4 @@
 		void* ManagedMalloc			(size_t size__);
 		void* ManagedCalloc			(size_t size__, size_t sizeElem__);
 	};
-#endif
+#endif //EXELOADER_ManagedAlloc
