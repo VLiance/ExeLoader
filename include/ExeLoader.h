@@ -27,7 +27,6 @@
 #include <csignal>
 #include <memory>
 
-
 #ifdef CpcDos
 	#include "Lib_GZ/SysUtils/CpcDosHeader.h"
 #endif
@@ -36,11 +35,8 @@ extern void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* form
 //#define _EXE_LOADER_DEBUG_S(_msg, ...)  _EXE_LOADER_DEBUG(0, _msg, _msg);
 #define _EXE_LOADER_DEBUG_(_msg, ...)  _EXE_LOADER_DEBUG(0, _msg, _msg,  __VA_ARGS__);
 
-
-
 #include "FuncPrototype/win.h"
 #include "MemoryModule.h"
-
 
 #ifndef STDCALL
 	#define STDCALL __stdcall
@@ -65,12 +61,16 @@ extern void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* form
 extern HMEMORYMODULE AddLibrary(const char* _sPath); //ExeLoader.cpp
 extern DWORD My_GetLastError();
 
+extern  FARPROC MyMemoryDefaultGetProcAddress(HCUSTOMMODULE module, LPCSTR name, void *userdata);
+extern MemoryModule* memory_module;
+extern bool is_in_aLibList(HMEMORYMODULE _handle);
 
 extern "C" bool fStartExeLoader(const char* Source_File);
 
+typedef void* (*FUNC_)();
+typedef struct {const char* sFuncName;FUNC_ dFunc;} sFunc;
 
-
-/// Main Func Ptr ///
+/// Main Func Ptr ///s
 typedef int (*addNumberProc)(int, int);
 typedef void (*testFunc)();
 typedef int (*mainFunc)();
@@ -106,6 +106,5 @@ typedef int  (*funcPtrIntIntPtr_int)(void*,int,int,void*);
 #undef showfunc_opt
 #define showfunc_opt
 #endif
-
 
 #endif //EXELOADER_Exeloader_H

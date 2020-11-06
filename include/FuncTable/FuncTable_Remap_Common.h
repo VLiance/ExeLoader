@@ -24,34 +24,11 @@ extern  FARPROC MyMemoryDefaultGetProcAddress(HCUSTOMMODULE module, LPCSTR name,
 extern MemoryModule* memory_module;
 extern bool is_in_aLibList(HMEMORYMODULE _handle);
 
-//LoadLibraryA
 FARPROC WINAPI  My_GetProcAddress(  HMODULE hModule, LPCSTR  lpProcName){
 
 	char* _sDllName = (char*)"unknow";
 	bool bOurLib = is_in_aLibList((HMEMORYMODULE)hModule);
-	//IS it a loaded module?
-	
-	
-	
-	
-/*  //Not work if GetProcAddress is used on non-Exeloader LoadLibrary
-	#ifndef USE_Windows_LoadLibrary
-	PIMAGE_DATA_DIRECTORY directory = GET_HEADER_DICTIONARY((PMEMORYMODULE)hModule, IMAGE_DIRECTORY_ENTRY_EXPORT);
-	if(directory != 0){
-		if ( directory->Size == 0) {
-			 _EXE_LOADER_DEBUG(0, "no export table found", "no export table found" );
-		}
 
-		PIMAGE_EXPORT_DIRECTORY exports = (PIMAGE_EXPORT_DIRECTORY) ( ((MEMORYMODULE*)hModule)->codeBase + directory->VirtualAddress);
-		_sDllName =  (char*) ( ((MEMORYMODULE*)hModule)->codeBase + exports->Name);
-	}
-	#endif
-	*/
-	
-	
-	
-	//TODO CALL: FARPROC MemoryModule::MemoryGetProcAddress(HMEMORYMODULE module, LPCSTR name)
-	
 	FARPROC func = 0;
 	if(bOurLib){
 		PIMAGE_DATA_DIRECTORY directory = GET_HEADER_DICTIONARY((PMEMORYMODULE)hModule, IMAGE_DIRECTORY_ENTRY_EXPORT);
@@ -474,18 +451,13 @@ HMODULE  My_LoadLibraryEx(  LPCTSTR lpFileName, HANDLE  hFile, DWORD   dwFlags)
 
 
 #define GET_HEADER_DICTIONARYs(module, idx)  &(module)->headers->OptionalHeader.DataDirectory[idx]
-
+/*
 int WINAPI abs_CPC(int nombre)
 {
 	const int ret[2] = { nombre, -nombre };
     return ret [nombre<0];
 }
-int My_abs(int nombre){
-	if(nombre < 0){
-		return nombre*-1;
-	}
-    return nombre;
-}
+*/
 
 
 

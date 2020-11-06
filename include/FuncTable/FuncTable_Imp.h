@@ -20,6 +20,33 @@
 * 
 */
 
+//!FARPROC GetProcAddress(HMODULE hModule,LPCSTR  lpProcName)
+FARPROC WINAPI  imp_GetProcAddress(  HMODULE hModule, LPCSTR  lpProcName){
+
+	char* _sDllName = (char*)"unknow";
+	bool bOurLib = is_in_aLibList((HMEMORYMODULE)hModule);
+
+	FARPROC func = 0;
+	if(bOurLib){
+		PIMAGE_DATA_DIRECTORY directory = GET_HEADER_DICTIONARY((PMEMORYMODULE)hModule, IMAGE_DIRECTORY_ENTRY_EXPORT);
+		if(directory != 0){
+			if ( directory->Size == 0) {
+				 _EXE_LOADER_DEBUG(0, "no export table found", "no export table found" );
+			}
+			PIMAGE_EXPORT_DIRECTORY exports = (PIMAGE_EXPORT_DIRECTORY) ( ((MEMORYMODULE*)hModule)->codeBase + directory->VirtualAddress);
+			_sDllName =  (char*) ( ((MEMORYMODULE*)hModule)->codeBase + exports->Name);
+		}
+		func =  memory_module->MemoryGetProcAddress((HMEMORYMODULE)hModule, lpProcName);
+	}
+	if(func != 0){
+		_EXE_LOADER_DEBUG(0, "GetLibAddress[%s] --> %s() ...", "GetLibAddress[%s] --> %s() ...", _sDllName, lpProcName);
+		return func;
+	}else{
+		_EXE_LOADER_DEBUG(0, "GetTableAddress[%s] --> %s() ...", "GetTableAddress[%s] --> %s() ...", _sDllName, lpProcName);
+		return MyMemoryDefaultGetProcAddress(0, lpProcName, 0); //Look in our function table
+	}
+}
+
 //!void __cdecl _initterm(PVFV *,PVFV *);
 typedef void (__cdecl *_PVFV)();
 inline void imp_initterm(_PVFV* ppfn,_PVFV* end){
@@ -129,4 +156,10 @@ inline int  imp_isupper( int c ){
 inline int  imp_islower( int c ){
 	showfunc_opt("islower( c %d )", c);
 	return (c >= 'a' && c <= 'z');
+}
+
+//!int abs(int x)
+inline int imp_abs(int x){
+	showfunc_opt("abs( x %d )", x);
+	if(x < 0){return x*-1;}return x;
 }

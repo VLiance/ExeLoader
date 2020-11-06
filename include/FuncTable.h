@@ -39,9 +39,7 @@
 #ifndef ImWin
 #define InCpcDosCore
 #include "CPC_WPR.h"
-
 #endif // ImWin
-
 
 #include <cstdio>
 #include <cstdlib>
@@ -54,7 +52,6 @@
 #include <setjmp.h>
 #include <stdlib.h>  
 
-
 #include "FuncTable/DummyTable.h"
 #include "FuncTable/FuncTable_Imp.h"
 #include "FuncTable/FuncTable_Sys.h"
@@ -62,265 +59,205 @@
 #include "FuncTable/FuncTable_Remap_Common.h"
 #include "FuncTable/FuncTable_Remap_Windows.h"
 	
-	
-
 #ifndef UseWinFunc
 	//onCpcDos
 	#include "FuncTableRemap_CpcDos.h"
 #endif
 
 
-//#include "..\..\..\OS2.1\CPinti\include\leakchk.h"
-
-
-
-
-
-typedef void* (*FUNC_)();
-typedef struct {
-    const char* sFuncName;
-    FUNC_ dFunc;
-} sFunc;
-
-
-
-
-
-inline BOOL MySetProcessDPIAware(){return true;}
-inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
-///inline void __stdcall MyRegisterClassW(void* value){
-
-
-
-
 
  sFunc aTableFunc[] = {
-{"fNotImplemented" ,(FUNC_) fNotImplemented }, //Must be first
-
-{"GetProcAddress" ,(FUNC_) My_GetProcAddress }, //Special
+{"fNotImplemented" 	,(FUNC_) fNotImplemented },    //Must be first
+{"GetProcAddress" 	,(FUNC_) imp_GetProcAddress }, //Special
+{"LoadLibraryA"    	,(FUNC_) pipe_LoadLibraryA },  //Special
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////// FUNC TABLE /////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
-//#include <shellscalingapi.h>
-#ifdef UseWinFunc
 
-	{"VirtualAlloc"  ,(FUNC_) pipe_VirtualAlloc },
-	{"VirtualFree"  ,(FUNC_) pipe_VirtualFree },
-	
-	
-	{"setvbuf"  ,(FUNC_) pipe_setvbuf },
-	{"_set_error_mode"  ,(FUNC_) pipe_set_error_mode },
-	{"_vscprintf"  ,(FUNC_) imp_vscprintf },
-	
-	
-	{"LoadLibraryA"  ,(FUNC_) pipe_LoadLibraryA },
-	{"RegisterClassW"  ,(FUNC_) pipe_RegisterClassW }, 
-	{"AdjustWindowRectEx"  ,(FUNC_) pipe_AdjustWindowRectEx }, 
-	
-	
-	{"DispatchMessageA"  ,(FUNC_) pipe_DispatchMessageA }, 
-	
-	
-	
-	{"GetSystemInfo"  ,(FUNC_) pipe_GetSystemInfo }, 
-	{"WindowFromDC"  ,(FUNC_) pipe_WindowFromDC }, 
-	{"ClientToScreen"  ,(FUNC_) pipe_ClientToScreen }, 
-	
-	
-	////// Special func WGL /////
-	{"GetPixelFormat"  ,(FUNC_) pipe_GetPixelFormat }, 
-	{"SetPixelFormat"  ,(FUNC_) pipe_SetPixelFormat }, 
-	{"ChoosePixelFormat"  ,(FUNC_) pipe_ChoosePixelFormat },
-	{"DescribePixelFormat"  ,(FUNC_) pipe_DescribePixelFormat },
-	{"SwapBuffers"  ,(FUNC_) pipe_SwapBuffers },
-	////////////////////////////
-	
-	{"StretchDIBits"  ,(FUNC_) pipe_StretchDIBits },
-	
-	
-	
-	
-	{"CallNextHookEx"  ,(FUNC_) pipe_CallNextHookEx },
-	{"EnumDisplaySettingsA"  ,(FUNC_) pipe_EnumDisplaySettingsA },
-	
-//	{"wglMakeCurrent"  ,(FUNC_) pipe_wglMakeCurrent },
-	
-	
-	
-	{"_aligned_malloc"  ,(FUNC_) imp_aligned_malloc },
-	{"_aligned_realloc"  ,(FUNC_) imp_aligned_realloc },
-	{"_aligned_free"  ,(FUNC_) imp_aligned_free },
-	
-	
-	 
+//////// Implemented ////////////////////////////////////////
+{"_aligned_malloc"	,(FUNC_) imp_aligned_malloc },
+{"_aligned_realloc"	,(FUNC_) imp_aligned_realloc },
+{"_aligned_free"  	,(FUNC_) imp_aligned_free },
 
-	
-	
-	
-	
-	{"_strdup"  ,(FUNC_) imp_strdup },
-	{"strncpy"  ,(FUNC_) imp_strncpy },
-	{"isspace"  ,(FUNC_) imp_isspace },
-	{"isupper"  ,(FUNC_ )imp_isupper },
-	{"islower"  ,(FUNC_) imp_islower },
-	
-	{"_lock"  ,(FUNC_) imp_lock },
-	{"_unlock"  ,(FUNC_) imp_unlock },
-	{"_initterm"  ,(FUNC_) imp_initterm },
-	{"_initterm_e"  ,(FUNC_) imp_initterm_e },
-	
-	{"CreateToolhelp32Snapshot"  ,(FUNC_) pipe_CreateToolhelp32Snapshot },
-	{"Thread32First"  ,(FUNC_) pipe_Thread32First },
-	{"Thread32Next"  ,(FUNC_) pipe_Thread32Next },
-	
-	
-	{"ShowWindow"  ,(FUNC_) pipe_ShowWindow },
-	
-	
-	{"SetWindowsHookExA" ,(FUNC_) pipe_SetWindowsHookExA },
-	{"GetModuleHandleA" ,(FUNC_)  pipe_GetModuleHandleA },
-    {"GetModuleHandleW"  ,(FUNC_) pipe_GetModuleHandleW },
-	
-	{"GetDC"  ,(FUNC_) pipe_GetDC },
-	{"CloseHandle"  ,(FUNC_) pipe_CloseHandle },
-	
-	
-	{"LoadCursorA" ,(FUNC_) pipe_LoadCursorA },
-	{"LoadCursorW" ,(FUNC_) pipe_LoadCursorW },
- 	{"LoadIconA"   ,(FUNC_) pipe_LoadIconA },
- 	{"LoadIconW"   ,(FUNC_) pipe_LoadIconW },
-	
-	
-	
-	
-	
-	{"GetDpiForMonitor"  ,(FUNC_) sys_GetDpiForMonitor }, //Shcore.dll //shellscalingapi.h
-//	{"SetProcessDpiAwareness"  ,(FUNC_) SetProcessDpiAwareness }, //Shcore.dll //shellscalingapi.h
-	{"SetProcessDpiAwareness"  ,(FUNC_) MySetProcessDpiAwareness }, //Shcore.dll //shellscalingapi.h
-//	{"SetProcessDPIAware"  ,(FUNC_) SetProcessDPIAware },
-	{"SetProcessDPIAware"  ,(FUNC_) MySetProcessDPIAware },
-	{"CommandLineToArgvW"  ,(FUNC_) CommandLineToArgvW },
-	{"GetCommandLineW"  ,(FUNC_) GetCommandLineW },
-	{"LocalFree"  ,(FUNC_) LocalFree },
-	{"FreeLibrary"  ,(FUNC_) FreeLibrary },
+{"_strdup"  		,(FUNC_) imp_strdup },
+{"strncpy"  		,(FUNC_) imp_strncpy },
+{"isspace"  		,(FUNC_) imp_isspace },
+{"isupper"  		,(FUNC_ )imp_isupper },
+{"islower"  		,(FUNC_) imp_islower },
 
-	
-///////////////
+{"_lock"  			,(FUNC_) imp_lock },
+{"_unlock"  		,(FUNC_) imp_unlock },
+{"_initterm"  		,(FUNC_) imp_initterm },
+{"_initterm_e"  	,(FUNC_) imp_initterm_e },
+{"_vscprintf"  		,(FUNC_) imp_vscprintf },
+////////////////////////////////////////////////////////////
 
+////// Special func WGL ////////////////////////////////////
+{"GetPixelFormat"  		,(FUNC_) pipe_GetPixelFormat }, 
+{"SetPixelFormat"  		,(FUNC_) pipe_SetPixelFormat }, 
+{"ChoosePixelFormat"  	,(FUNC_) pipe_ChoosePixelFormat },
+{"DescribePixelFormat"  ,(FUNC_) pipe_DescribePixelFormat },
+{"SwapBuffers"  		,(FUNC_) pipe_SwapBuffers },
+////////////////////////////////////////////////////////////
 
-	{"ScreenToClient"  ,(FUNC_) ScreenToClient },
-	{"GetCursorInfo"  ,(FUNC_) GetCursorInfo },
-	{"SetWindowPos"  ,(FUNC_) SetWindowPos },
-	{"MonitorFromRect"  ,(FUNC_) MonitorFromRect },
-	{"GetMonitorInfoW"  ,(FUNC_) GetMonitorInfoW },
-	{"LoadLibraryExW"  ,(FUNC_) LoadLibraryExW },
-	{"InitializeCriticalSectionEx" ,(FUNC_) My_InitializeCriticalSectionEx },
-	{"IsProcessorFeaturePresent" ,(FUNC_) My_IsProcessorFeaturePresent },
+{"VirtualAlloc"  		,(FUNC_) pipe_VirtualAlloc },
+{"VirtualFree"  		,(FUNC_) pipe_VirtualFree },
 
-  //  {"GetProcAddress"  ,(FUNC_) GetProcAddress },
-    {"IsProcessorFeaturePresent"  ,(FUNC_) IsProcessorFeaturePresent },
-    {"InitializeCriticalSectionAndSpinCount"  ,(FUNC_) InitializeCriticalSectionAndSpinCount },
-    {"HeapAlloc"  ,(FUNC_) HeapAlloc },
-    {"GetProcessHeap"  ,(FUNC_) GetProcessHeap },
-    {"IsDebuggerPresent"  ,(FUNC_) IsDebuggerPresent },
-    {"IsDebuggerPresent"  ,(FUNC_) IsDebuggerPresent },
-    {"UnhandledExceptionFilter"  ,(FUNC_) UnhandledExceptionFilter },
-    {"GetCurrentProcess"  ,(FUNC_) GetCurrentProcess },
-    {"TerminateProcess"  ,(FUNC_) TerminateProcess },
-    {"GetStartupInfoW"  ,(FUNC_) GetStartupInfoW },
-    {"GetFileType"  ,(FUNC_) GetFileType },
-    {"GetStdHandle"  ,(FUNC_) GetStdHandle },
+{"setvbuf"  			,(FUNC_) pipe_setvbuf },
+{"_set_error_mode" 		,(FUNC_) pipe_set_error_mode },
 
-    {"GetACP"  ,(FUNC_) GetACP },
-    {"MultiByteToWideChar"  ,(FUNC_) MultiByteToWideChar },
-    {"WideCharToMultiByte"  ,(FUNC_) WideCharToMultiByte },
-    {"GetStringTypeW"  ,(FUNC_) GetStringTypeW },
-    {"GetCommandLineA"  ,(FUNC_) GetCommandLineA },
-    {"GetCommandLineW"  ,(FUNC_) GetCommandLineW },
-    {"GetCPInfo"  ,(FUNC_) GetCPInfo },
-    {"IsValidCodePage"  ,(FUNC_) IsValidCodePage },
-    {"InitializeSListHead"  ,(FUNC_) InitializeSListHead },
-    {"GetEnvironmentStringsW"  ,(FUNC_) GetEnvironmentStringsW },
-    {"FreeEnvironmentStringsW"  ,(FUNC_) FreeEnvironmentStringsW },
-    {"HeapFree"  ,(FUNC_) HeapFree },
-    {"GetModuleFileNameA"  ,(FUNC_) GetModuleFileNameA },
-    {"WriteFile"  ,(FUNC_) WriteFile },
+{"RegisterClassW"  		,(FUNC_) pipe_RegisterClassW }, 
+{"AdjustWindowRectEx"  	,(FUNC_) pipe_AdjustWindowRectEx }, 
 
-	{"GetCurrentProcessId"  ,(FUNC_)GetCurrentProcessId },
-	{"GetCurrentThreadId"  ,(FUNC_)GetCurrentThreadId },
-	{"GetTickCount"  ,(FUNC_) GetTickCount },
-	{"QueryPerformanceCounter"  ,(FUNC_) QueryPerformanceCounter },
-	{"GetSystemTimeAsFileTime"  ,(FUNC_) GetSystemTimeAsFileTime },
-	{"SetUnhandledExceptionFilter"  ,(FUNC_) SetUnhandledExceptionFilter },
+{"DispatchMessageA"  	,(FUNC_) pipe_DispatchMessageA }, 
+
+{"GetSystemInfo"  		,(FUNC_) pipe_GetSystemInfo }, 
+{"WindowFromDC"  		,(FUNC_) pipe_WindowFromDC }, 
+{"ClientToScreen"  		,(FUNC_) pipe_ClientToScreen }, 
+
+{"StretchDIBits"  		,(FUNC_) pipe_StretchDIBits },
+
+{"CallNextHookEx"  		,(FUNC_) pipe_CallNextHookEx },
+{"EnumDisplaySettingsA" ,(FUNC_) pipe_EnumDisplaySettingsA },
+
+{"CreateToolhelp32Snapshot"  ,(FUNC_) pipe_CreateToolhelp32Snapshot },
+{"Thread32First"  		,(FUNC_) pipe_Thread32First },
+{"Thread32Next"  		,(FUNC_) pipe_Thread32Next },
+
+{"ShowWindow"  			,(FUNC_) pipe_ShowWindow },
+
+{"SetWindowsHookExA" 	,(FUNC_) pipe_SetWindowsHookExA },
+{"GetModuleHandleA" 	,(FUNC_) pipe_GetModuleHandleA },
+{"GetModuleHandleW"  	,(FUNC_) pipe_GetModuleHandleW },
+
+{"GetDC"  				,(FUNC_) pipe_GetDC },
+{"CloseHandle"  		,(FUNC_) pipe_CloseHandle },
+
+{"LoadCursorA" 			,(FUNC_) pipe_LoadCursorA },
+{"LoadCursorW" 			,(FUNC_) pipe_LoadCursorW },
+{"LoadIconA"   			,(FUNC_) pipe_LoadIconA },
+{"LoadIconW"   			,(FUNC_) pipe_LoadIconW },
+
+///////////////// System //////////////
+{"GetDpiForMonitor"  		,(FUNC_) sys_GetDpiForMonitor }, //Shcore.dll
+{"SetProcessDpiAwareness"  	,(FUNC_) sys_SetProcessDpiAwareness }, //Shcore.dll
+{"SetProcessDPIAware"  		,(FUNC_) sys_SetProcessDPIAware }, //Shcore.dll
+
+{"CommandLineToArgvW"  	,(FUNC_) CommandLineToArgvW },
+{"GetCommandLineW"  	,(FUNC_) GetCommandLineW },
+{"LocalFree"  			,(FUNC_) LocalFree },
+{"FreeLibrary"  		,(FUNC_) FreeLibrary },
+
+////////////////////////////////////////
+
+{"ScreenToClient"  ,(FUNC_) ScreenToClient },
+{"GetCursorInfo"  ,(FUNC_) GetCursorInfo },
+{"SetWindowPos"  ,(FUNC_) SetWindowPos },
+{"MonitorFromRect"  ,(FUNC_) MonitorFromRect },
+{"GetMonitorInfoW"  ,(FUNC_) GetMonitorInfoW },
+{"LoadLibraryExW"  ,(FUNC_) LoadLibraryExW },
+{"InitializeCriticalSectionEx" ,(FUNC_) My_InitializeCriticalSectionEx },
+{"IsProcessorFeaturePresent" ,(FUNC_) My_IsProcessorFeaturePresent },
+
+{"InitializeCriticalSectionAndSpinCount"  ,(FUNC_) InitializeCriticalSectionAndSpinCount },
+{"HeapAlloc"  ,(FUNC_) HeapAlloc },
+{"GetProcessHeap"  ,(FUNC_) GetProcessHeap },
+{"IsDebuggerPresent"  ,(FUNC_) IsDebuggerPresent },
+{"UnhandledExceptionFilter"  ,(FUNC_) UnhandledExceptionFilter },
+{"GetCurrentProcess"  ,(FUNC_) GetCurrentProcess },
+{"TerminateProcess"  ,(FUNC_) TerminateProcess },
+{"GetStartupInfoW"  ,(FUNC_) GetStartupInfoW },
+{"GetFileType"  ,(FUNC_) GetFileType },
+{"GetStdHandle"  ,(FUNC_) GetStdHandle },
+
+{"GetACP"  ,(FUNC_) GetACP },
+{"MultiByteToWideChar"  ,(FUNC_) MultiByteToWideChar },
+{"WideCharToMultiByte"  ,(FUNC_) WideCharToMultiByte },
+{"GetStringTypeW"  ,(FUNC_) GetStringTypeW },
+{"GetCommandLineA"  ,(FUNC_) GetCommandLineA },
+{"GetCommandLineW"  ,(FUNC_) GetCommandLineW },
+{"GetCPInfo"  ,(FUNC_) GetCPInfo },
+{"IsValidCodePage"  ,(FUNC_) IsValidCodePage },
+{"InitializeSListHead"  ,(FUNC_) InitializeSListHead },
+{"GetEnvironmentStringsW"  ,(FUNC_) GetEnvironmentStringsW },
+{"FreeEnvironmentStringsW"  ,(FUNC_) FreeEnvironmentStringsW },
+{"HeapFree"  ,(FUNC_) HeapFree },
+{"GetModuleFileNameA"  ,(FUNC_) GetModuleFileNameA },
+{"WriteFile"  ,(FUNC_) WriteFile },
+
+{"GetCurrentProcessId"  ,(FUNC_)GetCurrentProcessId },
+{"GetCurrentThreadId"  ,(FUNC_)GetCurrentThreadId },
+{"GetTickCount"  ,(FUNC_) GetTickCount },
+{"QueryPerformanceCounter"  ,(FUNC_) QueryPerformanceCounter },
+{"GetSystemTimeAsFileTime"  ,(FUNC_) GetSystemTimeAsFileTime },
+{"SetUnhandledExceptionFilter"  ,(FUNC_) SetUnhandledExceptionFilter },
 
 
-	{"CreateThread" ,(FUNC_) CreateThread },
-	{"EnterCriticalSection" ,(FUNC_) EnterCriticalSection },//BUG
-    {"LeaveCriticalSection" ,(FUNC_) LeaveCriticalSection }, //BUG
-    {"DeleteCriticalSection" ,(FUNC_) DeleteCriticalSection },
-    {"ExitProcess" ,(FUNC_) ExitProcess },
-    {"LoadLibraryExW" ,(FUNC_) LoadLibraryExW },
-    {"GetSystemTimeAsFileTime" ,(FUNC_) GetSystemTimeAsFileTime },
-    {"IsProcessorFeaturePresent" ,(FUNC_) IsProcessorFeaturePresent },
-
-		
-    {"InitializeCriticalSection" ,(FUNC_) InitializeCriticalSection },
-  //  {"InitializeCriticalSectionEx" ,(FUNC_) InitializeCriticalSectionEx },
-
-
-    {"GetCurrentProcessId"  ,(FUNC_) GetCurrentProcessId },
-
-    {"CreateEventW"  ,(FUNC_) CreateEventW },
-    {"IsDBCSLeadByte"  ,(FUNC_) IsDBCSLeadByte },
-    {"GetConsoleMode"  ,(FUNC_) GetConsoleMode },
-    {"SetConsoleCtrlHandler"  ,(FUNC_) SetConsoleCtrlHandler },
-    {"LoadStringW"  ,(FUNC_) LoadStringW },
-    {"SetErrorMode"  ,(FUNC_) SetErrorMode },
-    {"RegOpenKeyExW"  ,(FUNC_) RegOpenKeyExW },
-    {"RegQueryValueExW"  ,(FUNC_) RegQueryValueExW },
-    {"RegCloseKey"  ,(FUNC_) RegCloseKey },
-    {"GetVersionExW"  ,(FUNC_) GetVersionExW },
-    {"GetVersionExW"  ,(FUNC_) GetVersionExW },
-    {"LoadLibraryW"  ,(FUNC_) LoadLibraryW },
-    {"CreateFileW"  ,(FUNC_) CreateFileW },
-    {"GetCurrentDirectoryW"  ,(FUNC_) GetCurrentDirectoryW },
-    {"CharUpperW"  ,(FUNC_) CharUpperW },
-	{"printf"  ,(FUNC_) printf },
-	{"Sleep", 	(FUNC_) Sleep },
-	{"GetStdHandle"  ,(FUNC_) GetStdHandle },
-	{"GetConsoleWindow"  ,(FUNC_) GetConsoleWindow },
-	{"SetConsoleWindowInfo"  ,(FUNC_) SetConsoleWindowInfo },
-	{"setlocale"  ,(FUNC_) setlocale },
-	{"SetConsoleOutputCP"  ,(FUNC_) SetConsoleOutputCP },
-	{"SetConsoleTextAttribute"  ,(FUNC_) SetConsoleTextAttribute },
-	{"SetConsoleScreenBufferSize"  ,(FUNC_) SetConsoleScreenBufferSize },
-	{"MoveWindow"  ,(FUNC_) MoveWindow },
-
-	{"GetModuleFileNameW"  ,(FUNC_) GetModuleFileNameW },
-	{"GetFileAttributesExW"  ,(FUNC_) GetFileAttributesExW },
-
-
-	{"_wfopen"  ,(FUNC_) _wfopen },
-
-	{"wprintf"  ,(FUNC_) wprintf },
-	{"wsprintfW"  ,(FUNC_) wsprintfW }, //Not work??
-
-	{"SetLastError"  ,(FUNC_) SetLastError }, //Required !?
-	{"fread"  ,(FUNC_) fread },
-	{"MoveWindow"  ,(FUNC_) MoveWindow },
-	{"GetModuleFileNameW"  ,(FUNC_) GetModuleFileNameW }, //useless?
-
-	//Windows
-	{"SetWindowLongW"  ,(FUNC_) SetWindowLongW },
-	{"RegisterClassExW"  ,(FUNC_) RegisterClassExW },
-	{"CreateWindowExW"  ,(FUNC_) CreateWindowExW },
-	
+{"CreateThread" ,(FUNC_) CreateThread },
+{"EnterCriticalSection" ,(FUNC_) EnterCriticalSection },//BUG
+{"LeaveCriticalSection" ,(FUNC_) LeaveCriticalSection }, //BUG
+{"DeleteCriticalSection" ,(FUNC_) DeleteCriticalSection },
+{"ExitProcess" ,(FUNC_) ExitProcess },
+{"LoadLibraryExW" ,(FUNC_) LoadLibraryExW },
+{"GetSystemTimeAsFileTime" ,(FUNC_) GetSystemTimeAsFileTime },
+{"IsProcessorFeaturePresent" ,(FUNC_) IsProcessorFeaturePresent },
 
 	
-	{"CreateCompatibleDC"  ,(FUNC_) CreateCompatibleDC },
-	{"CreateDIBSection"  ,(FUNC_) CreateDIBSection },
-	{"SelectObject"  ,(FUNC_) SelectObject },
+{"InitializeCriticalSection" ,(FUNC_) InitializeCriticalSection },
+//{"InitializeCriticalSectionEx" ,(FUNC_) InitializeCriticalSectionEx },
+
+{"GetCurrentProcessId"  ,(FUNC_) GetCurrentProcessId },
+
+{"CreateEventW"  ,(FUNC_) CreateEventW },
+{"IsDBCSLeadByte"  ,(FUNC_) IsDBCSLeadByte },
+{"GetConsoleMode"  ,(FUNC_) GetConsoleMode },
+{"SetConsoleCtrlHandler"  ,(FUNC_) SetConsoleCtrlHandler },
+{"LoadStringW"  ,(FUNC_) LoadStringW },
+{"SetErrorMode"  ,(FUNC_) SetErrorMode },
+{"RegOpenKeyExW"  ,(FUNC_) RegOpenKeyExW },
+{"RegQueryValueExW"  ,(FUNC_) RegQueryValueExW },
+{"RegCloseKey"  ,(FUNC_) RegCloseKey },
+{"GetVersionExW"  ,(FUNC_) GetVersionExW },
+{"GetVersionExW"  ,(FUNC_) GetVersionExW },
+{"LoadLibraryW"  ,(FUNC_) LoadLibraryW },
+{"CreateFileW"  ,(FUNC_) CreateFileW },
+{"GetCurrentDirectoryW"  ,(FUNC_) GetCurrentDirectoryW },
+{"CharUpperW"  ,(FUNC_) CharUpperW },
+{"printf"  ,(FUNC_) printf },
+{"Sleep", 	(FUNC_) Sleep },
+{"GetStdHandle"  ,(FUNC_) GetStdHandle },
+{"GetConsoleWindow"  ,(FUNC_) GetConsoleWindow },
+{"SetConsoleWindowInfo"  ,(FUNC_) SetConsoleWindowInfo },
+{"setlocale"  ,(FUNC_) setlocale },
+{"SetConsoleOutputCP"  ,(FUNC_) SetConsoleOutputCP },
+{"SetConsoleTextAttribute"  ,(FUNC_) SetConsoleTextAttribute },
+{"SetConsoleScreenBufferSize"  ,(FUNC_) SetConsoleScreenBufferSize },
+{"MoveWindow"  ,(FUNC_) MoveWindow },
+
+{"GetModuleFileNameW"  ,(FUNC_) GetModuleFileNameW },
+{"GetFileAttributesExW"  ,(FUNC_) GetFileAttributesExW },
+
+
+{"_wfopen"  ,(FUNC_) _wfopen },
+
+{"wprintf"  ,(FUNC_) wprintf },
+{"wsprintfW"  ,(FUNC_) wsprintfW }, //Not work??
+
+{"SetLastError"  ,(FUNC_) SetLastError }, //Required !?
+{"fread"  ,(FUNC_) fread },
+{"MoveWindow"  ,(FUNC_) MoveWindow },
+{"GetModuleFileNameW"  ,(FUNC_) GetModuleFileNameW }, //useless?
+
+//Windows
+{"SetWindowLongW"  ,(FUNC_) SetWindowLongW },
+{"RegisterClassExW"  ,(FUNC_) RegisterClassExW },
+{"CreateWindowExW"  ,(FUNC_) CreateWindowExW },
+
+
+{"CreateCompatibleDC"  ,(FUNC_) CreateCompatibleDC },
+{"CreateDIBSection"  ,(FUNC_) CreateDIBSection },
+{"SelectObject"  ,(FUNC_) SelectObject },
 
 
 
@@ -348,7 +285,7 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 	
 	{"fgets"  ,(FUNC_) fgets },
 
-#else  
+#ifdef InCpcDosCore
 	////////////////////
 	////// CpcDos //////
 	////////////////////
@@ -532,7 +469,7 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 
 {"memcmp"  ,(FUNC_) memcmp },
 {"memmove"  ,(FUNC_) memmove },
-{"fputs"  ,(FUNC_) fputs },
+
 
 {"_write"  ,(FUNC_) fwrite },  // Décommenté le 18 Mars 2020 (Gze_text.exe test)
 {"_snwprintf"  ,(FUNC_) snprintf },  // Décommenté le 18 Mars 2020 (Gze_text.exe test)
@@ -546,36 +483,36 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 //{"setbuf"  ,(FUNC_) My_setbuf }, //!!!! Warning Dangerous function!
 
 
-{"fseek"  ,(FUNC_) fseek },
-{"ftell"  ,(FUNC_) ftell },
-{"rewind"  ,(FUNC_) rewind },
+{"fseek"  	,(FUNC_) fseek },
+{"ftell"  	,(FUNC_) ftell },
+{"rewind"  	,(FUNC_) rewind },
 
-{"fflush"  ,(FUNC_) fflush },
+{"fflush"  	,(FUNC_) fflush },
 {"fprintf"  ,(FUNC_) fprintf },
 {"sprintf"  ,(FUNC_) sprintf },
-{"strcat"  ,(FUNC_) strcat },
-{"strchr"  ,(FUNC_) strchr },
-{"strcpy"  ,(FUNC_) strcpy },
+{"strcat"  	,(FUNC_) strcat },
+{"strchr"  	,(FUNC_) strchr },
+{"strcpy"  	,(FUNC_) strcpy },
 {"strncmp"  ,(FUNC_) strncmp },
-{"strtok"  ,(FUNC_) strtok },
-{"strtol"  ,(FUNC_) strtol },
-{"time"  ,(FUNC_) time },
-{"wcscpy"  ,(FUNC_) strcpy },  // Décommenté le 18 Mars 2020 (Gze_text.exe test)
+{"strtok"  	,(FUNC_) strtok },
+{"strtol"  	,(FUNC_) strtol },
+{"time"  	,(FUNC_) time },
+{"wcscpy"  	,(FUNC_) strcpy },  // Décommenté le 18 Mars 2020 (Gze_text.exe test)
 {"strrchr"  ,(FUNC_) strrchr },
-{"srand"  ,(FUNC_) srand },
+{"srand"  	,(FUNC_) srand },
 {"strrchr"  ,(FUNC_) strrchr },
 
 
 
-{"getc"  ,(FUNC_) getc },
-{"fgetc"  ,(FUNC_) fgetc },
-{"putc"  ,(FUNC_) putc },
-//{"fputc"  ,(FUNC_) fputc },
+{"getc"  	,(FUNC_) getc },
+{"fgetc"  	,(FUNC_) fgetc },
+{"putc"  	,(FUNC_) putc },
+{"fputs"  	,(FUNC_) fputs },
 {"putchar"  ,(FUNC_) putchar },
 {"getchar"  ,(FUNC_) getchar },
-{"getch"  ,(FUNC_) getch },
-{"strlen"  ,(FUNC_) strlen },
-{"memchr"  ,(FUNC_) memchr },
+{"getch"  	,(FUNC_) getch },
+{"strlen"  	,(FUNC_) strlen },
+{"memchr"  	,(FUNC_) memchr },
 {"tolower"  ,(FUNC_) tolower },
 
 //{"_getch"  ,(FUNC_) getch },
@@ -585,40 +522,26 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 {"localeconv"  ,(FUNC_) localeconv },
 
 
-//////////// MATH ////////////
-{"floor"  ,(FUNC_) floor },
-{"ceil"  ,(FUNC_) ceil },
-{"abs"  ,(FUNC_) My_abs  }, 
-{"fabs"  ,(FUNC_) fabs  }, 
-{"qsort"  ,(FUNC_) qsort },
-{"tan"  ,(FUNC_) tan },
-
-
-////////////////////////////
-
-
-
-{"strncpy"  ,(FUNC_) imp_strncpy },
-
-
-
-///// Thread local Important? ///////
-//{"TlsAlloc"  ,(FUNC_) My_TlsAlloc },
-//{"TlsGetValue"  ,(FUNC_) My_TlsGetValue },
-//{"TlsSetValue"  ,(FUNC_) My_TlsSetValue },
-
+//////////// MATH ///////////////
+{"floor"  	,(FUNC_) floor },
+{"ceil"  	,(FUNC_) ceil },
+{"abs"  	,(FUNC_) imp_abs  }, 
+{"fabs"  	,(FUNC_) fabs  }, 
+{"qsort"  	,(FUNC_) qsort },
+{"tan"  	,(FUNC_) tan },
+////////////////////////////////
 
 
 
 {"isdigit"  ,(FUNC_) isdigit },
-{"strstr"  ,(FUNC_) strstr },
-{"atoi"  ,(FUNC_) atoi },
+{"strstr"  	,(FUNC_) strstr },
+{"atoi"  	,(FUNC_) atoi },
+
 
 
 ////////// CPC DOS ///////////////////
 #include "FuncTable/CpcDosFuncTable.h"
 //////////////////////////////////////
-
 
 {"putchar"  ,(FUNC_) putchar },
 {"puts"  ,(FUNC_) puts } //Must be End

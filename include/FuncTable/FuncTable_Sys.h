@@ -27,3 +27,15 @@ HRESULT sys_GetDpiForMonitor(HMONITOR hmonitor,int dpiType,UINT* dpiX,UINT* dpiY
 	*dpiY = 0;
 	return 0;
 }
+
+//!BOOL SetProcessDPIAware()
+inline BOOL sys_SetProcessDPIAware(){
+	showfunc("SetProcessDPIAware( )","");
+	return true;
+}
+
+//!HRESULT SetProcessDpiAwareness(PROCESS_DPI_AWARENESS value)
+inline HRESULT sys_SetProcessDpiAwareness(int value){
+	showfunc("SetProcessDpiAwareness( value: %d )",value);
+	return 0;
+}
