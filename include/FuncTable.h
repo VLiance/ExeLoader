@@ -56,6 +56,7 @@
 
 
 #include "FuncTable/DummyTable.h"
+#include "FuncTable/FuncTable_Imp.h"
 #include "FuncTable/FuncTable_Pipe.h"
 #include "FuncTable/FuncTable_Remap_Common.h"
 #include "FuncTable/FuncTable_Remap_Windows.h"
@@ -118,7 +119,7 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 	
 	{"setvbuf"  ,(FUNC_) pipe_setvbuf },
 	{"_set_error_mode"  ,(FUNC_) pipe_set_error_mode },
-	{"_vscprintf"  ,(FUNC_) pipe_vscprintf },
+	{"_vscprintf"  ,(FUNC_) imp_vscprintf },
 	
 	
 	{"LoadLibraryA"  ,(FUNC_) pipe_LoadLibraryA },
@@ -155,9 +156,9 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 	
 	
 	
-	{"_aligned_malloc"  ,(FUNC_) pipe_aligned_malloc },
-	{"_aligned_realloc"  ,(FUNC_) pipe_aligned_realloc },
-	{"_aligned_free"  ,(FUNC_) pipe_aligned_free },
+	{"_aligned_malloc"  ,(FUNC_) imp_aligned_malloc },
+	{"_aligned_realloc"  ,(FUNC_) imp_aligned_realloc },
+	{"_aligned_free"  ,(FUNC_) imp_aligned_free },
 	
 	
 	 
@@ -166,16 +167,16 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 	
 	
 	
-	{"_strdup"  ,(FUNC_) pipe_strdup },
-	{"strncpy"  ,(FUNC_) pipe_strncpy },
-	{"isspace"  ,(FUNC_) pipe_isspace },
-	{"isupper"  ,(FUNC_) pipe_isupper },
-	{"islower"  ,(FUNC_) pipe_islower },
+	{"_strdup"  ,(FUNC_) imp_strdup },
+	{"strncpy"  ,(FUNC_) imp_strncpy },
+	{"isspace"  ,(FUNC_) imp_isspace },
+	{"isupper"  ,(FUNC_ )imp_isupper },
+	{"islower"  ,(FUNC_) imp_islower },
 	
-	{"_lock"  ,(FUNC_) pipe_lock },
-	{"_unlock"  ,(FUNC_) pipe_unlock },
-	{"_initterm"  ,(FUNC_) pipe_initterm },
-	{"_initterm_e"  ,(FUNC_) pipe_initterm_e },
+	{"_lock"  ,(FUNC_) imp_lock },
+	{"_unlock"  ,(FUNC_) imp_unlock },
+	{"_initterm"  ,(FUNC_) imp_initterm },
+	{"_initterm_e"  ,(FUNC_) imp_initterm_e },
 	
 	{"CreateToolhelp32Snapshot"  ,(FUNC_) pipe_CreateToolhelp32Snapshot },
 	{"Thread32First"  ,(FUNC_) pipe_Thread32First },
@@ -605,7 +606,7 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 
 
 
-{"strncpy"  ,(FUNC_) pipe_strncpy },
+{"strncpy"  ,(FUNC_) imp_strncpy },
 
 
 

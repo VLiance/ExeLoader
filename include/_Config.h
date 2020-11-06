@@ -40,6 +40,9 @@
 //Use the standard Widows VirtualAlloc allocation or the more portable ExeLoader version
 //#define USE_Windows_VirtualAlloc
 
+//Activate this define to display every function calls (with those which are often called)
+//#define Pipe_Show_AllFunc
+
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////

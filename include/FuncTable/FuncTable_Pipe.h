@@ -5,7 +5,6 @@
  *
  *  @autors
  *   - Maeiky
- *   - Sebastien FAVIER
  *  
  * Copyright (c) 2020 - V·Liance / SPinti-Software. All rights reserved.
  *
@@ -16,26 +15,14 @@
 
 * Description:
 * 
-* FuncPipe will remap a system function to a same signature custom function to see what is called,
-* and then we choose what to do with it.
+* FuncTable_Pipe will remap a system function to a same signature custom function to see what is called,
+* and then we choose what to do with it. Usefull for Log, Debug & Redirect functions.
 *
 * Warning: Windows WINAPI function are __stdcall instead of __cdecl. 
 * __stdcall remapped function must have the EXACT same paramters and must be specified as __stdcall
 *  If not, your app will likely crash when the function return.
 *
 */
-
-
-#define showfunc_unimplt(name, ...) _EXE_LOADER_DEBUG(0, "\n-->Appel de Fonction non implémenté: " name, "\n-->Call not implemented func: " name , __VA_ARGS__);
-#define showfunc(name, ...) _EXE_LOADER_DEBUG(0, "\n-->Appel de: " name, "\n-->Call: " name , __VA_ARGS__);
-#define showfunc_ret(name, ...) _EXE_LOADER_DEBUG(0, "\n-->Retour: " name, "\n-->Return: " name , __VA_ARGS__);
-
-//#define Pipe_Show_AllFunc
-#ifdef Pipe_Show_AllFunc
-#define showfunc_opt showfunc
-#else
-#define showfunc_opt
-#endif
 
 //!ATOM RegisterClassW(const WNDCLASSW *lpWndClass)
 inline ATOM WINAPI pipe_RegisterClassW(void* value){
@@ -67,7 +54,6 @@ inline LRESULT WINAPI pipe_DispatchMessageA(const MSG *lpMsg){
 		return 0;
 	#endif
 }
-
 
 extern funcPtr_int _dFunc_wglGetPixelFormat;
 //!int GetPixelFormat(HDC hdc)
@@ -160,7 +146,6 @@ int WINAPI pipe_StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int Dest
 	#endif
 }
 
-
 //!BOOL AdjustWindowRectEx(LPRECT lpRect,DWORD  dwStyle,BOOL bMenu,DWORD  dwExStyle)
 inline BOOL WINAPI pipe_AdjustWindowRectEx(LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle){
 	showfunc("AdjustWindowRectEx( lpRect: %p, dwStyle: %d, bMenu: %d, dwExStyle: %p )", lpRect, dwStyle, bMenu, dwExStyle);
@@ -180,7 +165,6 @@ inline BOOL WINAPI  pipe_ShowWindow(HWND hWnd,int nCmdShow){
 		return true;
 	#endif
 }
-
 
 //!HMODULE GetModuleHandleA(LPCSTR  lpModuleName)
 //!HMODULE GetModuleHandleW(LPCWSTR lpModuleName)
@@ -260,8 +244,6 @@ inline BOOL WINAPI pipe_CloseHandle(HANDLE hObject){
 	#endif
 }
 
-
-
 //!SetWindowsHookExA(int idHook,HOOKPROC lpfn,HINSTANCE hmod,DWORD     dwThreadId)
 inline HHOOK WINAPI pipe_SetWindowsHookExA(int idHook,HOOKPROC lpfn,HINSTANCE hmod,DWORD     dwThreadId){
 	showfunc("SetWindowsHookExA( idHook: %d, lpfn:%p, hmod:%p, dwThreadId:%p )", idHook, lpfn, hmod, dwThreadId);
@@ -303,32 +285,14 @@ int pipe_set_error_mode(int mode_val){
 inline int pipe_setvbuf( FILE * stream, char * buffer, int mode, size_t size ){
 	showfunc("pipe_setvbuf( stream: %p, buffer: %p, mode: %d, size:%d )", stream, buffer, mode, size);
 	return 0; //TODO crash?
-//	#ifdef Func_Win
-//		return setvbuf(stream, buffer, mode, size);
-	/*
-	#else
-	return 0;
-	#endif
-	*/
+	//#ifdef Func_Win
+	//return setvbuf(stream, buffer, mode, size);
+	//#else
+	//return 0;
+	//#endif
 }
 
-//!void __cdecl _lock(int locknum)
-inline void  pipe_lock(int locknum){
-	showfunc_opt("_lock( locknum: %d )", locknum);
-	#ifdef Func_Win
-		//_lock(locknum);
-	#else
-	#endif
-}
 
-//!void __cdecl _unlock(int locknum)
-inline void  pipe_unlock(int locknum){
-	showfunc_opt("_unlock( locknum: %d )", locknum);
-	#ifdef Func_Win
-	//_unlock(locknum);
-	#else
-	#endif
-}
 
 //!HANDLE  CreateToolhelp32Snapshot(DWORD  dwFlags,DWORD  th32ProcessID)
 inline HANDLE pipe_CreateToolhelp32Snapshot(DWORD  dwFlags,DWORD  th32ProcessID){
@@ -348,37 +312,13 @@ BOOL pipe_Thread32Next(HANDLE hSnapshot,void* lpte){
 	return 0;
 }
 
-//!void __cdecl _initterm(PVFV *,PVFV *);
-typedef void (__cdecl *_PVFV)();
-inline void pipe_initterm(_PVFV* ppfn,_PVFV* end){
-	showfunc("_initterm( ppfn: %p, end: %p )", ppfn,end);
-	do {
-        if (_PVFV pfn = *++ppfn){
-            pfn();
-        }
-    } while (ppfn < end);
-}
-
-//!void __cdecl _initterm(PVFV *,PVFV *);
-typedef int  (__cdecl *_PIFV)();
-inline int pipe_initterm_e(_PIFV* ppfn,_PIFV* end){
-	showfunc("_initterm_e( ppfn: %p, end: %p )", ppfn,end);
-	do {
-        if (_PIFV pfn = *++ppfn){
-            if (int err = pfn()) return err;
-        }
-    } while (ppfn < end);
-    return 0;
-}
-
 //!HANDLE CreateSemaphore(_In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,_In_ LONG lInitialCount, _In_ LONG lMaximumCount, _In_opt_ LPCTSTR lpName)
 HANDLE  WINAPI  pipe_CreateSemaphore( //Must have __stdcall
  _In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,
   _In_     LONG                  lInitialCount,
   _In_     LONG                  lMaximumCount,
   _In_opt_ LPCTSTR               lpName
-)
-{
+){
 	showfunc_unimplt("_CreateSemaphore(  )","");
 	#ifdef Func_Win
 	return CreateSemaphoreA(lpSemaphoreAttributes, lInitialCount, lMaximumCount, lpName);
@@ -387,9 +327,6 @@ HANDLE  WINAPI  pipe_CreateSemaphore( //Must have __stdcall
 	
 	return 0;
 }
-
-
-
 
 //!void GetSystemInfo( LPSYSTEM_INFO lpSystemInfo)
 inline void pipe_GetSystemInfo( LPSYSTEM_INFO lpSystemInfo){
@@ -421,96 +358,16 @@ inline WINAPI BOOL pipe_ClientToScreen(HWND hWnd,LPPOINT lpPoint){
 	#endif
 }
 
-
-//!int _vscprintf(const char *format,va_list argptr)
-inline int pipe_vscprintf(const char *format,va_list argptr){
-	showfunc_opt("_vscprintf( )");
-    int retval = 0; 
-    va_list argcopy;
-    va_copy(argcopy, argptr); 
-	#ifdef Func_Win
-    retval = vsnprintf(NULL, 0, format, argcopy); 
-	#else
-	//TOODO
-	#endif
-    va_end(argcopy); 
-    return retval;
- }
-
-//! void * _aligned_malloc(size_t size,size_t alignment)
-inline void* pipe_aligned_malloc(size_t size,size_t alignment){
-	showfunc_opt("aligned_malloc( size: %d, alignment: %d )", size,alignment);
-	void* p1; // original block
-    void** p2; // aligned block
-    int offset = alignment - 1 + sizeof(void*);
-    if ((p1 = (void*)malloc(size + offset)) == NULL)
-    {
-       return NULL;
-    }
-    p2 = (void**)(((size_t)(p1) + offset) & ~(alignment - 1));
-    p2[-1] = p1;
-    return p2;
-}
-//!void _aligned_free (void *memblock)
-inline void pipe_aligned_free(void *memblock){
-	showfunc_opt("aligned_free( memblock: %p )", memblock);
-	if(memblock != 0){
-		free(((void**)memblock)[-1]);
-	}
-}
-//! void * _aligned_realloc(void *memblock,size_t size,size_t alignment);
-inline void* pipe_aligned_realloc(void *memblock,size_t size,size_t alignment){
-	showfunc_opt("aligned_realloc( size: %d, alignment: %d )", size,alignment);
-	pipe_aligned_free(memblock);
-	return pipe_aligned_malloc(size, alignment);
-}
-
-
-//!char *_strdup(const char *strSource)
-inline char* pipe_strdup(const char *strSource){
-	showfunc_opt("_strdup( strSource: %s )", strSource);
-	size_t size = strlen(strSource) + 1;
-	char* str = (char*)malloc(size);
-	if (str) {memcpy(str, strSource, size);}
-	return str;
-}
-
-
-//!char * strncpy( char * destination, const char * source, size_t num )
-inline char* pipe_strncpy( char * destination, const char * source, size_t num ){
-	showfunc_opt("strncpy( destination: %p, source: %p, num: %d )", destination, source, num);
-	size_t i = 0;
-	while(i++ != num && (*destination++ = *source++));
-	return destination;
-}
-
-//!int isspace ( int c )
-inline int pipe_isspace( int c ){
-	showfunc_opt("isspace( c %d )", c);
-	return c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r'; // || whatever other char you consider space
-}
-
-//!int isupper ( int c )
-inline int  pipe_isupper( int c ){
-	showfunc_opt("isupper( c %d )", c);
-	return (c >= 'A' && c <= 'Z');
-}
-
-//!int islower ( int c )
-inline int  pipe_islower( int c ){
-	showfunc_opt("islower( c %d )", c);
-	return (c >= 'a' && c <= 'z');
-}
-
 //!LPVOID VirtualAlloc(LPVOID lpAddress,SIZE_T dwSize,DWORD flAllocationType,DWORD flProtect)
 inline LPVOID pipe_VirtualAlloc(LPVOID lpAddress,SIZE_T dwSize,DWORD flAllocationType,DWORD flProtect){
 	showfunc("VirtualAlloc( lpAddress %p, dwSize: %d, flAllocationType: %d, flProtect:%d )", lpAddress, dwSize, flAllocationType, flProtect);
-	
 	#ifdef USE_Windows_VirtualAlloc
 	return VirtualAlloc(lpAddress, dwSize, flAllocationType, flProtect); 
 	#else
 	if(flAllocationType == 0x01000){
 		return instance_AllocManager.ManagedCalloc(dwSize, sizeof(char));
+	}else{
+		return 0;
 	}
 	#endif
 	
@@ -519,12 +376,13 @@ inline LPVOID pipe_VirtualAlloc(LPVOID lpAddress,SIZE_T dwSize,DWORD flAllocatio
 //!BOOL VirtualFree(LPVOID lpAddress,SIZE_T dwSize,DWORD  dwFreeType)
 inline BOOL pipe_VirtualFree(LPVOID lpAddress,SIZE_T dwSize,DWORD  dwFreeType){
 	showfunc("VirtualFree( lpAddress %p, dwSize: %d, dwFreeType:%d )", lpAddress, dwSize, dwFreeType);
-
 	#ifdef USE_Windows_VirtualAlloc
     return VirtualFree(lpAddress, dwSize, dwFreeType); 
 	#else
 	if(dwFreeType == 0x08000){
 		return instance_AllocManager.ManagedFree(lpAddress);
+	}else{
+		return true;
 	}
 	#endif
 }
