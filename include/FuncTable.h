@@ -34,12 +34,7 @@
 #ifndef EXELOADER_FuncTable_H
 #define EXELOADER_FuncTable_H
 
-
 #include "ExeLoader.h"
-#include "win.h"
-
-//#define InCpcDosCore
-//#undef ImWin
 
 #ifndef ImWin
 #define InCpcDosCore
@@ -59,13 +54,11 @@
 #include <setjmp.h>
 #include <stdlib.h>  
 
-#ifdef InCpcDosCore
-	#define Use_Custom_ThreadStorage
-#endif
 
-#include "FuncPipe.h"
-#include "FuncTableRemap_Common.h"
-#include "FuncTableRemap_Windows.h"
+#include "FuncTable/DummyTable.h"
+#include "FuncTable/FuncTable_Pipe.h"
+#include "FuncTable/FuncTable_Remap_Common.h"
+#include "FuncTable/FuncTable_Remap_Windows.h"
 	
 	
 
@@ -630,7 +623,7 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 
 
 ////////// CPC DOS ///////////////////
-#include "CpcDosFuncTable.h"
+#include "FuncTable/CpcDosFuncTable.h"
 //////////////////////////////////////
 
 

@@ -21,16 +21,35 @@
 #include "_Config.h"
 
 
+
+#ifdef CpcDos
+	#include "Lib_GZ/SysUtils/CpcDosHeader.h"
+#endif
+
 extern void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...);
 //#define _EXE_LOADER_DEBUG_S(_msg, ...)  _EXE_LOADER_DEBUG(0, _msg, _msg);
 #define _EXE_LOADER_DEBUG_(_msg, ...)  _EXE_LOADER_DEBUG(0, _msg, _msg,  __VA_ARGS__);
 
 
 
-#include "win.h"
+#include "FuncPrototype/win.h"
 #include "MemoryModule.h"
 
 
+#ifndef STDCALL
+	#define STDCALL __stdcall
+#endif
+
+#ifndef FuncTableStructure
+	#define FuncTableStructure
+	typedef void* (*FUNC_)();
+	typedef struct {
+		const char* sFuncName;
+		FUNC_* dFunc;
+	} FuncTable;
+	#undef PFUNC_
+	#define PFUNC_ FUNC_*
+#endif
 
 #define Func(_func) (void*)(&_func)
 #define DEREF_32(name) *(DWORD *)(name)

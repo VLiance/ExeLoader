@@ -15,6 +15,11 @@
  * You can obtain one at https://www.apache.org/licenses/LICENSE-2.0.html
  *
  */
+ 
+ 
+#include "MemoryModule.h"
+#include "ExeLoader.h"
+
 #include <cstdlib> 
 #include <cstdio> 
 #include <cstring>
@@ -23,13 +28,8 @@
 #include <memory>
 #include <iostream>
 
-#include "win.h"
-#ifdef CpcDos
-	#include "Lib_GZ/SysUtils/CpcDosHeader.h"
-#endif
 
-#include "MemoryModule.h"
-#include "ExeLoader.h"
+
 
 ManagedAlloc instance_AllocManager = {1024};
 

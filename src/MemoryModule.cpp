@@ -54,7 +54,7 @@
 #include <iostream>
 
 #include "FuncTable.h"
-#include "DummyTable.h"
+
 
 #if _MSC_VER
 // Disable warning about data -> function pointer conversion

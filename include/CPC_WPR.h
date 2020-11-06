@@ -72,21 +72,7 @@ extern "C" void 			cpc_Set_Version					(int _nCpcVerMajor, int _nCpcVerMinor);
 	
 #else
 
-	//Dynmaic loaded CpcDos (like external .exe)
-	#ifndef STDCALL
-		#define STDCALL __stdcall
-	#endif
 
-	#ifndef FuncTableStructure
-		#define FuncTableStructure
-		typedef void* (*FUNC_)();
-		typedef struct {
-			const char* sFuncName;
-			FUNC_* dFunc;
-		} FuncTable;
-		#undef PFUNC_
-		#define PFUNC_ FUNC_*
-	#endif
 
 	//extern "C" FUNC_ STDCALL GetProcAddress(void* hModule, char* lpProcName); //*Wrap over standard windows function (from dll on windows)*
 

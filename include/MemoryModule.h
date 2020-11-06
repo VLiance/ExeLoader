@@ -39,10 +39,7 @@
 #ifndef __MEMORY_MODULE_HEADER
 #define __MEMORY_MODULE_HEADER
 
-//#undef CpcDos
-//#define CpcDos ////////////////////////////////////////////
 
-#include "win.h"
 
 #ifdef CpcDos
 	#define  SetLastError(x)

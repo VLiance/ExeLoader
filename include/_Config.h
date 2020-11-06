@@ -46,5 +46,9 @@
 #undef USE_Windows_LoadLibrary
 #endif
 
+#ifdef InCpcDosCore
+	#define Use_Custom_ThreadStorage
+#endif
+
 
 #endif //EXELOADER_Config_H
