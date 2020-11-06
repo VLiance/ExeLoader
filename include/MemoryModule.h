@@ -15,17 +15,25 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is MemoryModule.h
+ *  Changes have been made for:
  *
- * The Initial Developer of the Original Code is Joachim Bauch.
+/*  -== ExeLoader ==-
  *
- * --> Adaptation for Cpcdos OSx by Michael BANVILLE and Sebastien FAVIER
- *      Updated: 31/10/2016
+ *  Load .exe / .dll from memory and remap functions
+ *  Run your binaries on any x86 hardware
  *
- * Portions created by Joachim Bauch are Copyright (C) 2004-2015
- * Joachim Bauch. All Rights Reserved.
+ *  @autors
+ *   - Maeiky
+ *   - Sebastien FAVIER
+ *  
+ * Copyright (c) 2020 - V·Liance / SPinti-Software. All rights reserved.
  *
+ * The contents of this file are subject to the Apache License Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * If a copy of the Apache License Version 2.0 was not distributed with this file,
+ * You can obtain one at https://www.apache.org/licenses/LICENSE-2.0.html
  */
+ 
 #include "_Config.h"
 
 #ifndef __MEMORY_MODULE_HEADER
@@ -39,7 +47,6 @@
 #ifdef CpcDos
 	#define  SetLastError(x)
 #endif
-
 
 
 #define GET_HEADER_DICTIONARY(module, idx)  &(module)->headers->OptionalHeader.DataDirectory[idx]
@@ -70,7 +77,6 @@ typedef FARPROC (*CustomGetProcAddressFunc)(HCUSTOMMODULE, LPCSTR, void *);
 typedef void (*CustomFreeLibraryFunc)(HCUSTOMMODULE, void *);
 
 
-
 typedef struct MEMORYMODULE {
 	PIMAGE_NT_HEADERS headers;
 	unsigned char *codeBase;
@@ -96,9 +102,7 @@ extern ManagedAlloc instance_AllocManager;
 
 class MemoryModule
 {
-	
 	public:
-//	ManagedAlloc instance_AllocManager;
 	MemoryModule(){ _EXE_LOADER_DEBUG(2, "CONSTRUCTEUR: MemoryModule instancie avec succes!\n", "CONSTRUCTOR: MemoryModule instancied with success!"); };
 	void Fin_instance();
 

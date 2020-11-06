@@ -1,7 +1,7 @@
 /*
  * Memory DLL loading code
- * Version 0.0.4  
- *   
+ * Version 0.0.4
+ *
  * Copyright (c) 2004-2015 by Joachim Bauch / mail@joachim-bauch.de
  * http://www.joachim-bauch.de
  *
@@ -9,23 +9,31 @@
  * 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
  * License.
- * 
- * The Original Code is MemoryModule.c
  *
- * The Initial Developer of the Original Code is Joachim Bauch.
- * 
- * --> Adaptation for Cpcdos OSx by Michael BANVILLE and Sebastien FAVIER
- *      Updated: 23 MAR 2020
+ *  Changes have been made for:
  *
- * Portions created by Joachim Bauch are Copyright (C) 2004-2015
- * Joachim Bauch. All Rights Reserved.
+/*  -== ExeLoader ==-
  *
- */     
+ *  Load .exe / .dll from memory and remap functions
+ *  Run your binaries on any x86 hardware
+ *
+ *  @autors
+ *   - Maeiky
+ *   - Sebastien FAVIER
+ *  
+ * Copyright (c) 2020 - V·Liance / SPinti-Software. All rights reserved.
+ *
+ * The contents of this file are subject to the Apache License Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * If a copy of the Apache License Version 2.0 was not distributed with this file,
+ * You can obtain one at https://www.apache.org/licenses/LICENSE-2.0.html
+ */
+ 
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>

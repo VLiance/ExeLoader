@@ -1,19 +1,25 @@
-// Mickael BANVILLE & Sebastien FAVIER
-// ExeLoader pour Cpcdos
-// Update v1 13/01/2016
-// Update v2 19 AVR 2019
-// Update v3 10 OCT 2019
-// Update v4 30 JAN 2020
-// Update v5 12 MAR 2020  
-// Update v5.1 20 MAR 2020  
-
-     
+/*  -== ExeLoader ==-
+ *
+ *  Load .exe / .dll from memory and remap functions
+ *  Run your binaries on any x86 hardware
+ *
+ *  @autors
+ *   - Maeiky
+ *   - Sebastien FAVIER
+ *  
+ * Copyright (c) 2020 - V·Liance / SPinti-Software. All rights reserved.
+ *
+ * The contents of this file are subject to the Apache License Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * If a copy of the Apache License Version 2.0 was not distributed with this file,
+ * You can obtain one at https://www.apache.org/licenses/LICENSE-2.0.html
+ */
+ 
 #include <cstdlib> 
 #include <cstdio> 
 #include <cstring>
-#include <cstdarg>  // Pour les arguments de fdebug_log
+#include <cstdarg>
 #include <csignal>
-
 #include <memory>
 #include <iostream>
 
@@ -23,11 +29,10 @@
 	#include "Lib_GZ/SysUtils/CpcDosHeader.h"
 #endif
 
-
 #include "MemoryModule.h"
 #include "ExeLoader.h"
 
- ManagedAlloc instance_AllocManager = {1024};
+ManagedAlloc instance_AllocManager = {1024};
 
 void signalHandler(int signum) {
 	printf("\n Interrupt signal received: ");
@@ -58,34 +63,19 @@ void signalHandler(int signum) {
 	exit(signum);
 }
 
-/*
-void segfault_sigaction(int signal, void* si, void *arg)
-{
-   printf("Caught segfault at address %p\n", si->si_addr);
-	exit(0);
-}*/
-
 void registerSignal() {
-/* //No sigaction on Windows
-int *foo = NULL;
-	struct sigaction sa;
-	memset(&sa, 0, sizeof(struct sigaction));
-	sigemptyset(&sa.sa_mask);
-	sa.sa_sigaction = segfault_sigaction;
-	sa.sa_flags   = SA_SIGINFO;
-	sigaction(SIGSEGV, NULL, NULL);
-*/
+	/* //No sigaction on Windows !?
+	int *foo = NULL;
+		struct sigaction sa;
+		memset(&sa, 0, sizeof(struct sigaction));
+		sigemptyset(&sa.sa_mask);
+		sa.sa_sigaction = segfault_sigaction;
+		sa.sa_flags   = SA_SIGINFO;
+		sigaction(SIGSEGV, NULL, NULL);
+	*/
 	for (int i = 1; i < 32; i++) {
 		signal(i, signalHandler);
 	}
-/*
-signal(SIGTERM, signalHandler);  //termination request, sent to the program
-signal(SIGSEGV, signalHandler);  //invalid memory access (segmentation fault)
-signal(SIGINT, signalHandler);  //external interrupt, usually initiated by the user
-signal(SIGILL, signalHandler);  //invalid program image, such as invalid instruction
-signal(SIGABRT, signalHandler);  //abnormal termination condition, as is e.g. initiated by std::abort()
-signal(10, signalHandler); //SIGBUS
-*/
 }
 
 char * DLL_LOADED[512] = {0};
@@ -165,10 +155,6 @@ long nExeFileSize;
 
 #else /* !!! Not Cpcdos !!! */
 
-	//   #define UNICODE
-	//   #define _UNICODE
-	//    #include <windows.h>
-	
 	void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...)
 	{
 		// Cette fonction permet d'utiliser le simuler un sprintf()
@@ -300,20 +286,6 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 	return NULL;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////
-
-// class hndl
-// {
-	// int idx;
-	
-	// public:
-	// HMEMORYMODULE handle;
-	
-	
-// };
-
-//#include <process.h>
 
 //GDB will automaticly break here (with Cwc compiler)
 extern "C" void GDB_Func_Break(){} //raise(SIGTRAP)? void __debugbreak();?

@@ -1,8 +1,25 @@
-/* @autor Maeiky  
-*
-* Minimal Windows func extracted to be include in non-Windows system
+/*  -== ExeLoader ==-
+ *
+ *  Load .exe / .dll from memory and remap functions
+ *  Run your binaries on any x86 hardware
+ *
+ *  @autors
+ *   - Maeiky
+ *   - Sebastien FAVIER
+ *  
+ * Copyright (c) 2020 - V·Liance / SPinti-Software. All rights reserved.
+ *
+ * The contents of this file are subject to the Apache License Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * If a copy of the Apache License Version 2.0 was not distributed with this file,
+ * You can obtain one at https://www.apache.org/licenses/LICENSE-2.0.html
+
+* Description:
+* 
+* Minimal Windows function prototype extracted, for non-Windows based system
 *
 */
+
 
 #ifdef UseWinFunc
 #include <windows.h>
