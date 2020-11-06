@@ -34,14 +34,17 @@
 //Use the Windows Stanard LoadLibraryA or undef to use the ExeLaoder AddLibrary similar to loading .exe from memory
 //#define USE_Windows_LoadLibrary
 
-//Some function are irrelevant and annoying, but sometime we need it for debugging purpose
-//#define Pipe_Show_AllFunc
+
+//Show when function are called from the fonction table, with is parameters
+//#define Show_FuncTable
+
+//Some function are irrelevant and may be annoying, but sometime we need it for debugging purpose
+//#define Show_AllFuncTable
 
 //Use the standard Widows VirtualAlloc allocation or the more portable ExeLoader version
 //#define USE_Windows_VirtualAlloc
 
-//Activate this define to display every function calls (with those which are often called)
-//#define Pipe_Show_AllFunc
+
 
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
@@ -50,6 +53,11 @@
 #ifndef Func_Win
 #undef USE_Windows_LoadLibrary
 #undef USE_Windows_VirtualAlloc
+#endif
+
+#ifdef Show_AllFuncTable
+	#undef Show_FuncTable
+	#define Show_FuncTable
 #endif
 
 #ifdef InCpcDosCore

@@ -90,12 +90,22 @@ typedef int  (*funcPtrIntIntPtr_int)(void*,int,int,void*);
 #define showfunc_ret(name, ...) _EXE_LOADER_DEBUG(0, "\n-->Retour: " name, "\n-->Return: " name , __VA_ARGS__);
 
 
-#ifdef Pipe_Show_AllFunc
+#ifdef Show_AllFuncTable
 #define showfunc_opt showfunc
 #else
 #define showfunc_opt
 #endif
 
+#ifndef Show_FuncTable
+#undef showfunc
+#define showfunc
+#undef showfunc_ret
+#define showfunc_ret
+#undef showfunc_unimplt
+#define showfunc_unimplt
+#undef showfunc_opt
+#define showfunc_opt
+#endif
 
 
 #endif //EXELOADER_Exeloader_H

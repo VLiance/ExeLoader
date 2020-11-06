@@ -57,6 +57,7 @@
 
 #include "FuncTable/DummyTable.h"
 #include "FuncTable/FuncTable_Imp.h"
+#include "FuncTable/FuncTable_Sys.h"
 #include "FuncTable/FuncTable_Pipe.h"
 #include "FuncTable/FuncTable_Remap_Common.h"
 #include "FuncTable/FuncTable_Remap_Windows.h"
@@ -83,17 +84,8 @@ typedef struct {
 
 
 
-HRESULT MyGetDpiForMonitor(
-  HMONITOR         hmonitor,
- // MONITOR_DPI_TYPE dpiType,
-  int dpiType,
-  UINT             *dpiX,
-  UINT             *dpiY
-){
-*dpiX = 0;
-*dpiY = 0;
-return 0;
-}
+
+
 inline BOOL MySetProcessDPIAware(){return true;}
 inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 ///inline void __stdcall MyRegisterClassW(void* value){
@@ -203,7 +195,7 @@ inline HRESULT MySetProcessDpiAwareness(int value){return 0;}
 	
 	
 	
-	{"GetDpiForMonitor"  ,(FUNC_) MyGetDpiForMonitor }, //Shcore.dll //shellscalingapi.h
+	{"GetDpiForMonitor"  ,(FUNC_) sys_GetDpiForMonitor }, //Shcore.dll //shellscalingapi.h
 //	{"SetProcessDpiAwareness"  ,(FUNC_) SetProcessDpiAwareness }, //Shcore.dll //shellscalingapi.h
 	{"SetProcessDpiAwareness"  ,(FUNC_) MySetProcessDpiAwareness }, //Shcore.dll //shellscalingapi.h
 //	{"SetProcessDPIAware"  ,(FUNC_) SetProcessDPIAware },
