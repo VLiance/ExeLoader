@@ -181,13 +181,15 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 {"HeapSize"  ,(FUNC_) HeapSize },
 */
 
-{"IsDebuggerPresent"  		 ,(FUNC_) pipe_IsDebuggerPresent },
-{"UnhandledExceptionFilter"  ,(FUNC_) pipe_UnhandledExceptionFilter },
+{"IsDebuggerPresent"  	 	,(FUNC_) pipe_IsDebuggerPresent },
+{"UnhandledExceptionFilter" ,(FUNC_) pipe_UnhandledExceptionFilter },
+
+{"GetCurrentProcess"  		,(FUNC_) pipe_GetCurrentProcess },
+{"TerminateProcess"  		,(FUNC_) pipe_TerminateProcess },
+{"GetStartupInoW"  			,(FUNC_) pipe_GetStartupInfoW },
 
 
-{"GetCurrentProcess"  ,(FUNC_) GetCurrentProcess },
-{"TerminateProcess"  ,(FUNC_) TerminateProcess },
-{"GetStartupInfoW"  ,(FUNC_) GetStartupInfoW },
+
 {"GetFileType"  ,(FUNC_) GetFileType },
 {"GetStdHandle"  ,(FUNC_) GetStdHandle },
 
@@ -244,7 +246,7 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 {"CreateFileW"  ,(FUNC_) CreateFileW },
 {"GetCurrentDirectoryW"  ,(FUNC_) GetCurrentDirectoryW },
 {"CharUpperW"  ,(FUNC_) CharUpperW },
-{"printf"  ,(FUNC_) printf },
+
 {"Sleep", 	(FUNC_) Sleep },
 {"GetStdHandle"  ,(FUNC_) GetStdHandle },
 {"GetConsoleWindow"  ,(FUNC_) GetConsoleWindow },
@@ -382,7 +384,10 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 
 {"GetLastError"  ,(FUNC_) My_GetLastError },
 
-{"CreateSemaphoreW"  ,(FUNC_) pipe_CreateSemaphore },
+{"CreateSemaphoreA"  ,(FUNC_) pipe_CreateSemaphoreA },
+{"CreateSemaphoreW"  ,(FUNC_) pipe_CreateSemaphoreW },
+
+
 {"___lc_codepage_func"  ,(FUNC_) My__lc_codepage_func },
 {"getenv"  ,(FUNC_) My_getenv },
 {"__getmainargs" ,(FUNC_) My_getmainargs },
@@ -474,6 +479,8 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 /// *safe enough for a direct replacement* ///
 /////////////////////////////////////////////
 /////////////////////////////////////////////
+
+{"printf"  ,(FUNC_) printf },
 
 /////////// MEM ////////////////////
 {"memcmp"  		,(FUNC_) memcmp },

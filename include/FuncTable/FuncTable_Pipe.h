@@ -299,19 +299,32 @@ BOOL pipe_Thread32Next(HANDLE hSnapshot,void* lpte){
 	return 0;
 }
 
-//!HANDLE CreateSemaphore(_In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,_In_ LONG lInitialCount, _In_ LONG lMaximumCount, _In_opt_ LPCTSTR lpName)
-HANDLE  WINAPI  pipe_CreateSemaphore( //Must have __stdcall
+//!HANDLE CreateSemaphoreA(_In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,_In_ LONG lInitialCount, _In_ LONG lMaximumCount, _In_opt_ LPCTSTR lpName)
+//!HANDLE CreateSemaphoreW(_In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,_In_ LONG lInitialCount, _In_ LONG lMaximumCount, _In_opt_ LPCWSTR lpName)
+HANDLE  WINAPI  pipe_CreateSemaphoreA( //Must have __stdcall
  _In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,
   _In_     LONG                  lInitialCount,
   _In_     LONG                  lMaximumCount,
   _In_opt_ LPCTSTR               lpName
 ){
-	showfunc_unimplt("_CreateSemaphore(  )","");
+	showfunc_unimplt("_CreateSemaphoreA(  )","");
 	#ifdef Func_Win
 	return CreateSemaphoreA(lpSemaphoreAttributes, lInitialCount, lMaximumCount, lpName);
 	#else
 	#endif
-	
+	return 0;
+}
+HANDLE  WINAPI  pipe_CreateSemaphoreW( //Must have __stdcall
+ _In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,
+  _In_     LONG                  lInitialCount,
+  _In_     LONG                  lMaximumCount,
+  _In_opt_ LPCWSTR                lpName
+){
+	showfunc_unimplt("_CreateSemaphoreW(  )","");
+	#ifdef Func_Win
+	return CreateSemaphoreW(lpSemaphoreAttributes, lInitialCount, lMaximumCount, lpName);
+	#else
+	#endif
 	return 0;
 }
 
@@ -491,5 +504,34 @@ LONG WINAPI pipe_UnhandledExceptionFilter(_EXCEPTION_POINTERS* ExceptionInfo){
 	return UnhandledExceptionFilter(ExceptionInfo);
 	#else
 	return false;
+	#endif	
+}
+
+//!HANDLE WINAPI GetCurrentProcess()
+HANDLE WINAPI pipe_GetCurrentProcess(){
+	showfunc("GetCurrentProcess( )", "");
+	#ifdef Func_Win 
+	return GetCurrentProcess();
+	#else
+	return 0;
+	#endif	
+}
+
+//!BOOL WINAPI TerminateProcess(HANDLE hProcess,UINT   uExitCode)
+BOOL WINAPI pipe_TerminateProcess(HANDLE hProcess,UINT uExitCode){
+	showfunc("TerminateProcess( hProcess: %p, uExitCode: %d )", hProcess, uExitCode);
+	#ifdef Func_Win 
+	return TerminateProcess(hProcess, uExitCode);
+	#else
+	return false;
+	#endif	
+}
+
+//!VOID WINAPI GetStartupInfoW (LPSTARTUPINFOW lpStartupInfo)
+VOID WINAPI pipe_GetStartupInfoW(LPSTARTUPINFOW lpStartupInfo){
+	showfunc("GetStartupInfoW( lpStartupInfo: %p)", lpStartupInfo);
+	#ifdef Func_Win 
+	GetStartupInfoW(lpStartupInfo);
+	#else
 	#endif	
 }
