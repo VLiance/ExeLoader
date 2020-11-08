@@ -34,17 +34,6 @@ inline ATOM WINAPI pipe_RegisterClassW(void* value){
 	#endif
 }
 
-//!HMODULE LoadLibraryA(LPCSTR lpLibFileName)
-inline HMODULE WINAPI pipe_LoadLibraryA(LPCSTR lpLibFileName){
-	showfunc("LoadLibraryA( lpLibFileName: %s )", lpLibFileName);
-	#ifdef USE_Windows_LoadLibrary
-		HMODULE _ret = LoadLibraryA(lpLibFileName);
-		if(!_ret){My_GetLastError();}return _ret;
-	#else
-		return (HMODULE)AddLibrary(lpLibFileName);
-	#endif
-}
-
 //!LRESULT DispatchMessageA(const MSG *lpMsg)
 inline LRESULT WINAPI pipe_DispatchMessageA(const MSG *lpMsg){
 	showfunc_opt("DispatchMessageA( lpMsg: %s )", lpMsg);
@@ -384,3 +373,25 @@ inline BOOL pipe_VirtualFree(LPVOID lpAddress,SIZE_T dwSize,DWORD  dwFreeType){
 	}
 	#endif
 }
+
+//!LPWSTR* CommandLineToArgvW(LPCWSTR lpCmdLine,int* pNumArgs)
+inline LPWSTR* pipe_CommandLineToArgvW(LPCWSTR lpCmdLine,int* pNumArgs){
+	showfunc("CommandLineToArgvW( lpCmdLine: %p, pNumArgs: %p )", lpCmdLine, pNumArgs);
+	#ifdef Func_Win
+	return CommandLineToArgvW(lpCmdLine, pNumArgs);
+	#else
+	return 0;
+	#endif
+}
+
+//!LPWSTR GetCommandLineW(){
+LPWSTR pipe_GetCommandLineW(){
+	showfunc("GetCommandLineW" "");
+	#ifdef Func_Win
+	return GetCommandLineW();
+	#else
+	return 0;
+	#endif
+}
+
+

@@ -20,6 +20,17 @@
 * 
 */
 
+//!HMODULE LoadLibraryA(LPCSTR lpLibFileName)
+inline HMODULE WINAPI imp_LoadLibraryA(LPCSTR lpLibFileName){
+	showfunc("LoadLibraryA( lpLibFileName: %s )", lpLibFileName);
+	#ifdef USE_Windows_LoadLibrary
+		HMODULE _ret = LoadLibraryA(lpLibFileName);
+		if(!_ret){My_GetLastError();}return _ret;
+	#else
+		return (HMODULE)AddLibrary(lpLibFileName);
+	#endif
+}
+
 //!FARPROC GetProcAddress(HMODULE hModule,LPCSTR  lpProcName)
 FARPROC WINAPI  imp_GetProcAddress(  HMODULE hModule, LPCSTR  lpProcName){
 
@@ -163,3 +174,61 @@ inline int imp_abs(int x){
 	showfunc_opt("abs( x %d )", x);
 	if(x < 0){return x*-1;}return x;
 }
+
+//==== TLS === //
+
+void** aTlsNewMem = 0;
+//!DWORD TlsAlloc()
+DWORD WINAPI imp_TlsAlloc(void){
+   	showfunc_opt("TlsAlloc( )", "");
+	static int _nIndex = 0;
+	static int _nMax = 0;
+	if(_nIndex >= _nMax){ //Realloc
+		int _nNewSize = _nMax*2 + 5; 
+		
+		 void** _aNewMem = (void**)calloc(_nNewSize, sizeof(void*));
+		 memcpy(_aNewMem, aTlsNewMem, _nMax*sizeof(void*) );
+		 free(aTlsNewMem);
+		 aTlsNewMem = _aNewMem;
+		 
+		 _nMax = _nNewSize;
+		_EXE_LOADER_DEBUG(3,"TlsAlloc() : [ReAlloc] size: %d\n","TlsAlloc() : [ReAlloc] size: %d\n", _nNewSize);
+	}
+	
+	_EXE_LOADER_DEBUG(3,"TlsAlloc() : %d\n","TlsAlloc() : %d\n", _nIndex);
+	_nIndex++;
+	return _nIndex-1;
+}
+
+//!BOOL TlsSetValue(DWORD  dwTlsIndex,LPVOID lpTlsValue)
+BOOL  WINAPI imp_TlsSetValue(DWORD dwTlsIndex, _In_opt_ LPVOID lpTlsValue){
+	showfunc_opt("TlsSetValue( dwTlsIndex: %d, lpTlsValue: %p )", dwTlsIndex, lpTlsValue);
+   if(lpTlsValue != 0){
+		_EXE_LOADER_DEBUG(3,"TlsSetValue() : %d [0x%p] value : %d\n","TlsSetValue() : %d [0x%p] value : %d\n", dwTlsIndex, lpTlsValue, *(int*)lpTlsValue );
+   }else{
+		_EXE_LOADER_DEBUG(3,"TlsSetValue() : %d [0x%p]\n"		    ,"TlsSetValue() : %d [0x%p]\n",			   dwTlsIndex, lpTlsValue);
+   }
+   aTlsNewMem[dwTlsIndex] = lpTlsValue;
+   return true;
+}
+
+//!LPVOID TlsGetValue(DWORD dwTlsIndex)
+LPVOID WINAPI imp_TlsGetValue(DWORD dwTlsIndex){
+	showfunc_opt("TlsGetValue( dwTlsIndex: %d )", dwTlsIndex);
+   if(aTlsNewMem[dwTlsIndex] != 0){
+		_EXE_LOADER_DEBUG(3,"TlsGetValue() : %d [0x%p] value : %d\n","TlsGetValue() : %d [0x%p] value : %d\n", dwTlsIndex, aTlsNewMem[dwTlsIndex], *(int*)aTlsNewMem[dwTlsIndex]);
+   }else{
+		_EXE_LOADER_DEBUG(3,"TlsGetValue() : %d [0x%p]\n"		     ,"TlsGetValue() : %d [0x%p]\n",		   dwTlsIndex, aTlsNewMem[dwTlsIndex]);
+   }
+   return aTlsNewMem[dwTlsIndex];
+}
+
+//!BOOL TlsFree(DWORD dwTlsIndex)
+BOOL WINAPI imp_TlsFree(DWORD dwTlsIndex){
+	showfunc_opt("TlsFree( dwTlsIndex: %d )", dwTlsIndex);
+	_EXE_LOADER_DEBUG(3,"TlsFree() : %d [0x%p] value : %d\n","TlsFree() : %d [0x%p] value: %d\n", dwTlsIndex, aTlsNewMem[dwTlsIndex], *(int*)aTlsNewMem[dwTlsIndex]);
+	aTlsNewMem[dwTlsIndex] = 0;
+	return true;
+}
+
+//============ //

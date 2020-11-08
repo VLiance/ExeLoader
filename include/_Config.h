@@ -44,7 +44,8 @@
 //Use the standard Widows VirtualAlloc allocation or the more portable ExeLoader version
 //#define USE_Windows_VirtualAlloc
 
-
+//Use standard TlsAlloc instead of the Exeloader one
+//#define USE_Platform_ThreadStorage
 
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
@@ -61,7 +62,7 @@
 #endif
 
 #ifdef InCpcDosCore
-	#define Use_Custom_ThreadStorage
+	#undef USE_Platform_ThreadStorage
 #endif
 
 

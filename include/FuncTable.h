@@ -64,12 +64,14 @@
 	#include "FuncTableRemap_CpcDos.h"
 #endif
 
-
-
  sFunc aTableFunc[] = {
+ ////////// CPC DOS ///////////////////
+#include "FuncTable/CpcDosFuncTable.h"
+//////////////////////////////////////
+
 {"fNotImplemented" 	,(FUNC_) fNotImplemented },    //Must be first
 {"GetProcAddress" 	,(FUNC_) imp_GetProcAddress }, //Special
-{"LoadLibraryA"    	,(FUNC_) pipe_LoadLibraryA },  //Special
+{"LoadLibraryA"    	,(FUNC_) imp_LoadLibraryA },  //Special
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////// FUNC TABLE /////////////////////////////////////////////////
@@ -144,10 +146,9 @@
 {"SetProcessDpiAwareness"  	,(FUNC_) sys_SetProcessDpiAwareness }, //Shcore.dll
 {"SetProcessDPIAware"  		,(FUNC_) sys_SetProcessDPIAware }, //Shcore.dll
 
-{"CommandLineToArgvW"  	,(FUNC_) CommandLineToArgvW },
-{"GetCommandLineW"  	,(FUNC_) GetCommandLineW },
-{"LocalFree"  			,(FUNC_) LocalFree },
-{"FreeLibrary"  		,(FUNC_) FreeLibrary },
+{"CommandLineToArgvW"  	,(FUNC_) pipe_CommandLineToArgvW },
+{"GetCommandLineW"  	,(FUNC_) pipe_GetCommandLineW },
+
 
 ////////////////////////////////////////
 
@@ -357,22 +358,6 @@
 	{"MessageBoxW"  ,(FUNC_) My_MessageBoxW },
 	
 	
-	{"kbhit"  ,(FUNC_) kbhit_CPC },
-	{"_kbhit"  ,(FUNC_) kbhit_CPC },
-	{"usleep", 	(FUNC_) usleep_CPC },
-	{"msleep", 	(FUNC_) sleep_CPC }, // idem que Sleep
-	{"Sleep", 	(FUNC_) sleep_CPC },
-	{"printf"  ,(FUNC_) printf_CPC },
-	{"setjmp"  ,(FUNC_) setjmp },
-	{"_setjmp"  ,(FUNC_) setjmp },
-	{"sigsetjmp"  ,(FUNC_) sigsetjmp },
-	{"_sigsetjmp"  ,(FUNC_) sigsetjmp },
-
-	{"longjmp"  ,(FUNC_) longjmp },
-	{"_longjmp"  ,(FUNC_) longjmp },
-	{"siglongjmp"  ,(FUNC_) siglongjmp },
-	{"_siglongjmp"  ,(FUNC_) siglongjmp },  
-  
 #endif /////////////////////////////////////
 
 
@@ -417,15 +402,16 @@
 
 
 
-#ifdef Use_Custom_ThreadStorage
-	{"TlsAlloc"  ,	 (FUNC_) My_TlsAlloc },
-	{"TlsGetValue"  ,(FUNC_) My_TlsGetValue },
-	{"TlsSetValue"  ,(FUNC_) My_TlsSetValue },
-	{"TlsFree"  	,(FUNC_) My_TlsFree },
+#ifdef USE_Platform_ThreadStorage
+	{"TlsAlloc"  ,	 (FUNC_) imp_TlsAlloc },
+	{"TlsGetValue"  ,(FUNC_) imp_TlsGetValue },
+	{"TlsSetValue"  ,(FUNC_) imp_TlsSetValue },
+	{"TlsFree"  	,(FUNC_) imp_TlsFree },
 #else
 	{"TlsAlloc"  ,	 (FUNC_) TlsAlloc },
 	{"TlsGetValue"  ,(FUNC_) TlsGetValue },
 	{"TlsSetValue"  ,(FUNC_) TlsSetValue },
+	{"TlsFree"  	,(FUNC_) TlsFree },
 #endif
 
 
@@ -460,35 +446,39 @@
 	{"GetFileAttributesW"  ,(FUNC_) GetFileAttributesW },
 #endif
 
-
-
-
-
-{"strcmp"  ,(FUNC_) strcmp },
-{"stricmp"  ,(FUNC_) stricmp },
-
-{"memcmp"  ,(FUNC_) memcmp },
-{"memmove"  ,(FUNC_) memmove },
-
-
-{"_write"  ,(FUNC_) fwrite },  // Décommenté le 18 Mars 2020 (Gze_text.exe test)
-{"_snwprintf"  ,(FUNC_) snprintf },  // Décommenté le 18 Mars 2020 (Gze_text.exe test)
-
-{"rand"  ,(FUNC_) rand },
-
-{"fopen"  ,(FUNC_) fopen },
-{"fclose"  ,(FUNC_) fclose },
-
-//{"setbuf"  ,(FUNC_) setbuf }, //!!!! Not WORK -> CRASH! (Only on windows?)
 //{"setbuf"  ,(FUNC_) My_setbuf }, //!!!! Warning Dangerous function!
+//{"LocalFree"  			,(FUNC_) LocalFree },
+
+{"FreeLibrary"  		,(FUNC_) FreeLibrary },
+{"localeconv"  ,(FUNC_) localeconv },
 
 
-{"fseek"  	,(FUNC_) fseek },
-{"ftell"  	,(FUNC_) ftell },
-{"rewind"  	,(FUNC_) rewind },
+{"_write"  		,(FUNC_) fwrite },  // Décommenté le 18 Mars 2020 (Gze_text.exe test)
+{"_snwprintf"  	,(FUNC_) snprintf },  // Décommenté le 18 Mars 2020 (Gze_text.exe test)
 
+
+{"memcmp"  		,(FUNC_) memcmp },
+{"memmove"  	,(FUNC_) memmove },
+
+{"strcmp"  		,(FUNC_) strcmp },
+{"stricmp"		,(FUNC_) stricmp },
+
+
+{"wcscpy"  	,(FUNC_) strcpy },  // Décommenté le 18 Mars 2020 (Gze_text.exe test)
+
+
+/////////////////////////////////////////////
+/////////// DIRECT MAPPING //////////////////
+/// *safe enough for a direct replacement* ///
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+/////////// LOG ////////////////////
 {"fflush"  	,(FUNC_) fflush },
 {"fprintf"  ,(FUNC_) fprintf },
+////////////////////////////////////
+
+/////////// STRING ///////////////
 {"sprintf"  ,(FUNC_) sprintf },
 {"strcat"  	,(FUNC_) strcat },
 {"strchr"  	,(FUNC_) strchr },
@@ -497,13 +487,19 @@
 {"strtok"  	,(FUNC_) strtok },
 {"strtol"  	,(FUNC_) strtol },
 {"time"  	,(FUNC_) time },
-{"wcscpy"  	,(FUNC_) strcpy },  // Décommenté le 18 Mars 2020 (Gze_text.exe test)
 {"strrchr"  ,(FUNC_) strrchr },
 {"srand"  	,(FUNC_) srand },
-{"strrchr"  ,(FUNC_) strrchr },
+{"atoi"  	,(FUNC_) atoi },
+{"isdigit"  ,(FUNC_) isdigit },
+{"strstr"  	,(FUNC_) strstr },
+{"strlen"  	,(FUNC_) strlen },
+{"memchr"  	,(FUNC_) memchr },
+{"tolower"  ,(FUNC_) tolower },
+////////////////////////////////
 
-
-
+/////////// CHAR ////////////////
+{"putchar"  ,(FUNC_) putchar },
+{"puts"  	,(FUNC_) puts },
 {"getc"  	,(FUNC_) getc },
 {"fgetc"  	,(FUNC_) fgetc },
 {"putc"  	,(FUNC_) putc },
@@ -511,40 +507,29 @@
 {"putchar"  ,(FUNC_) putchar },
 {"getchar"  ,(FUNC_) getchar },
 {"getch"  	,(FUNC_) getch },
-{"strlen"  	,(FUNC_) strlen },
-{"memchr"  	,(FUNC_) memchr },
-{"tolower"  ,(FUNC_) tolower },
+/////////////////////////////////
 
-//{"_getch"  ,(FUNC_) getch },
-
-
-//{"localeconv"  ,(FUNC_) My_localeconv },
-{"localeconv"  ,(FUNC_) localeconv },
-
-
-//////////// MATH ///////////////
+/////////// MATH ////////////////
 {"floor"  	,(FUNC_) floor },
+{"ceil"  	,(FUNC_) ceil },
 {"ceil"  	,(FUNC_) ceil },
 {"abs"  	,(FUNC_) imp_abs  }, 
 {"fabs"  	,(FUNC_) fabs  }, 
 {"qsort"  	,(FUNC_) qsort },
 {"tan"  	,(FUNC_) tan },
-////////////////////////////////
+{"rand"  	,(FUNC_) rand },
+/////////////////////////////////
+
+/////////// FILE ////////////////
+{"fopen"  	,(FUNC_) fopen },
+{"fclose"  	,(FUNC_) fclose },
+{"fseek"  	,(FUNC_) fseek },
+{"ftell"  	,(FUNC_) ftell },
+{"rewind"  	,(FUNC_) rewind },
+/////////////////////////////////
 
 
 
-{"isdigit"  ,(FUNC_) isdigit },
-{"strstr"  	,(FUNC_) strstr },
-{"atoi"  	,(FUNC_) atoi },
-
-
-
-////////// CPC DOS ///////////////////
-#include "FuncTable/CpcDosFuncTable.h"
-//////////////////////////////////////
-
-{"putchar"  ,(FUNC_) putchar },
-{"puts"  ,(FUNC_) puts } //Must be End
 };
 
 #endif //EXELOADER_FuncTable_H

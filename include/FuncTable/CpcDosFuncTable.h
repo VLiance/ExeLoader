@@ -18,6 +18,22 @@
 #include "ExeLoader.h"
 #ifndef ImWin
 
+	{"kbhit"  ,(FUNC_) kbhit_CPC },
+	{"_kbhit"  ,(FUNC_) kbhit_CPC },
+	{"usleep", 	(FUNC_) usleep_CPC },
+	{"msleep", 	(FUNC_) sleep_CPC }, // idem que Sleep
+	{"Sleep", 	(FUNC_) sleep_CPC },
+	{"printf"  ,(FUNC_) printf_CPC },
+	{"setjmp"  ,(FUNC_) setjmp },
+	{"_setjmp"  ,(FUNC_) setjmp },
+	{"sigsetjmp"  ,(FUNC_) sigsetjmp },
+	{"_sigsetjmp"  ,(FUNC_) sigsetjmp },
+
+	{"longjmp"  ,(FUNC_) longjmp },
+	{"_longjmp"  ,(FUNC_) longjmp },
+	{"siglongjmp"  ,(FUNC_) siglongjmp },
+	{"_siglongjmp"  ,(FUNC_) siglongjmp },  
+  
 	{"cpc_Creer_Contexte", 				(FUNC_)cpc_Creer_Contexte },
 	{"cpc_Obtenir_Zone_Contexte", 		(FUNC_)cpc_Obtenir_Zone_Contexte },
 	{"cpc_Blitter", 					(FUNC_)cpc_Blitter },
