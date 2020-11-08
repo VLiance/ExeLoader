@@ -394,4 +394,23 @@ LPWSTR pipe_GetCommandLineW(){
 	#endif
 }
 
+//!BOOL ScreenToClient(HWND hWnd,LPPOINT lpPoint)
+BOOL WINAPI pipe_ScreenToClient(HWND hWnd,LPPOINT lpPoint){
+	showfunc("pipe_ScreenToClient: %d, lpPoint: %p", hWnd ,lpPoint);
+	#ifdef Func_Win
+	return ScreenToClient(hWnd, lpPoint);
+	#else
+	return 0;
+	#endif	
+}
+
+//!BOOL GetCursorInfo(PCURSORINFO pci)
+BOOL pipe_GetCursorInfo(PCURSORINFO pci){
+	showfunc("pipe_GetCursorInfo: %p", pci);
+	#ifdef Func_Win
+	return GetCursorInfo(pci);
+	#else
+	return 0;
+	#endif	
+}
 

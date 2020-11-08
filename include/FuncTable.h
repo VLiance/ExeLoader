@@ -69,9 +69,10 @@
 #include "FuncTable/CpcDosFuncTable.h"
 //////////////////////////////////////
 
-{"fNotImplemented" 	,(FUNC_) fNotImplemented },    //Must be first
-{"GetProcAddress" 	,(FUNC_) imp_GetProcAddress }, //Special
-{"LoadLibraryA"    	,(FUNC_) imp_LoadLibraryA },  //Special
+{"fNotImplemented" 	,(FUNC_) fNotImplemented },    	//Must be first
+{"GetProcAddress" 	,(FUNC_) imp_GetProcAddress }, 	//Special
+{"LoadLibraryA"    	,(FUNC_) imp_LoadLibraryA },  	//Special
+{"LoadLibraryExW"  	,(FUNC_) LoadLibraryExW }, 		//TODO
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////// FUNC TABLE /////////////////////////////////////////////////
@@ -148,16 +149,15 @@
 
 {"CommandLineToArgvW"  	,(FUNC_) pipe_CommandLineToArgvW },
 {"GetCommandLineW"  	,(FUNC_) pipe_GetCommandLineW },
-
+{"ScreenToClient"  		,(FUNC_) pipe_ScreenToClient },
 
 ////////////////////////////////////////
 
-{"ScreenToClient"  ,(FUNC_) ScreenToClient },
-{"GetCursorInfo"  ,(FUNC_) GetCursorInfo },
+{"GetCursorInfo"  ,(FUNC_) pipe_GetCursorInfo },
 {"SetWindowPos"  ,(FUNC_) SetWindowPos },
 {"MonitorFromRect"  ,(FUNC_) MonitorFromRect },
 {"GetMonitorInfoW"  ,(FUNC_) GetMonitorInfoW },
-{"LoadLibraryExW"  ,(FUNC_) LoadLibraryExW },
+
 {"InitializeCriticalSectionEx" ,(FUNC_) My_InitializeCriticalSectionEx },
 {"IsProcessorFeaturePresent" ,(FUNC_) My_IsProcessorFeaturePresent },
 
@@ -419,20 +419,8 @@
 
 //Todo a implémenter
 #ifdef InCpcDosCore
-	
-	{"wcslen"  ,(FUNC_) strlen },
-	{"_strnicmp"  ,(FUNC_) strnicmp },
-	{"fwprintf"  ,(FUNC_) fprintf },
-	{"_vsnprintf"  ,(FUNC_) vsnprintf },
-	{"fputwc"  ,(FUNC_)	fputc },
-	{"putwc"  ,(FUNC_) putc },
-	{"getwc"  ,(FUNC_) getc },
-
-	{"GetFileAttributesW"  ,(FUNC_) fNotImplemented_1 },
-	{"_stricmp"  ,(FUNC_) stricmp },
-	
-
 #else
+	/// UNICODE (not supported on CpcDos)
 	{"wcslen"  ,(FUNC_) wcslen },
 	{"_strnicmp"  ,(FUNC_) _strnicmp },
 	{"fwprintf"  ,(FUNC_) fwprintf },
@@ -440,7 +428,6 @@
 	{"fputwc"  ,(FUNC_) fputwc },
 	{"putwc"  ,(FUNC_) putwc },
 	{"getwc"  ,(FUNC_) getwc },
-
 
 	{"_stricmp"  ,(FUNC_) _stricmp }, //Use stricmp?
 	{"GetFileAttributesW"  ,(FUNC_) GetFileAttributesW },
@@ -453,19 +440,15 @@
 {"localeconv"  ,(FUNC_) localeconv },
 
 
-{"_write"  		,(FUNC_) fwrite },  // Décommenté le 18 Mars 2020 (Gze_text.exe test)
-{"_snwprintf"  	,(FUNC_) snprintf },  // Décommenté le 18 Mars 2020 (Gze_text.exe test)
 
 
-{"memcmp"  		,(FUNC_) memcmp },
-{"memmove"  	,(FUNC_) memmove },
-
-{"strcmp"  		,(FUNC_) strcmp },
-{"stricmp"		,(FUNC_) stricmp },
 
 
-{"wcscpy"  	,(FUNC_) strcpy },  // Décommenté le 18 Mars 2020 (Gze_text.exe test)
-
+/*
+{"_write"  		,(FUNC_) fwrite }, //??
+{"_snwprintf"  	,(FUNC_) snprintf },//??
+{"wcscpy"  		,(FUNC_) strcpy },  //??
+*/
 
 /////////////////////////////////////////////
 /////////// DIRECT MAPPING //////////////////
@@ -473,12 +456,19 @@
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 
+/////////// MEM ////////////////////
+{"memcmp"  		,(FUNC_) memcmp },
+{"memmove"  	,(FUNC_) memmove },
+////////////////////////////////////
+
 /////////// LOG ////////////////////
 {"fflush"  	,(FUNC_) fflush },
 {"fprintf"  ,(FUNC_) fprintf },
 ////////////////////////////////////
 
 /////////// STRING ///////////////
+{"strcmp"  		,(FUNC_) strcmp },
+{"stricmp"		,(FUNC_) stricmp },
 {"sprintf"  ,(FUNC_) sprintf },
 {"strcat"  	,(FUNC_) strcat },
 {"strchr"  	,(FUNC_) strchr },
@@ -513,11 +503,11 @@
 {"floor"  	,(FUNC_) floor },
 {"ceil"  	,(FUNC_) ceil },
 {"ceil"  	,(FUNC_) ceil },
-{"abs"  	,(FUNC_) imp_abs  }, 
 {"fabs"  	,(FUNC_) fabs  }, 
 {"qsort"  	,(FUNC_) qsort },
 {"tan"  	,(FUNC_) tan },
 {"rand"  	,(FUNC_) rand },
+{"abs"  	,(FUNC_) imp_abs }, 
 /////////////////////////////////
 
 /////////// FILE ////////////////
@@ -527,8 +517,6 @@
 {"ftell"  	,(FUNC_) ftell },
 {"rewind"  	,(FUNC_) rewind },
 /////////////////////////////////
-
-
 
 };
 

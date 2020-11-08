@@ -18,6 +18,17 @@
 #include "ExeLoader.h"
 #ifndef ImWin
 
+	{"_strnicmp"  ,(FUNC_) strnicmp },
+	{"_stricmp"  ,(FUNC_) stricmp },
+	{"_vsnprintf"  ,(FUNC_) vsnprintf },
+	
+	{"wcslen"  ,(FUNC_) strlen }, //??
+	{"fwprintf"  ,(FUNC_) fprintf }, //??
+	{"fputwc"  ,(FUNC_)	fputc }, //??
+	{"putwc"  ,(FUNC_) putc }, //??
+	{"getwc"  ,(FUNC_) getc }, //??
+
+	
 	{"kbhit"  ,(FUNC_) kbhit_CPC },
 	{"_kbhit"  ,(FUNC_) kbhit_CPC },
 	{"usleep", 	(FUNC_) usleep_CPC },
