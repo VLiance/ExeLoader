@@ -386,7 +386,7 @@ inline LPWSTR* pipe_CommandLineToArgvW(LPCWSTR lpCmdLine,int* pNumArgs){
 
 //!LPWSTR GetCommandLineW(){
 LPWSTR pipe_GetCommandLineW(){
-	showfunc("GetCommandLineW" "");
+	showfunc("GetCommandLineW( )" "");
 	#ifdef Func_Win
 	return GetCommandLineW();
 	#else
@@ -396,7 +396,7 @@ LPWSTR pipe_GetCommandLineW(){
 
 //!BOOL ScreenToClient(HWND hWnd,LPPOINT lpPoint)
 BOOL WINAPI pipe_ScreenToClient(HWND hWnd,LPPOINT lpPoint){
-	showfunc("pipe_ScreenToClient: %d, lpPoint: %p", hWnd ,lpPoint);
+	showfunc("ScreenToClient( %d, lpPoint: %p )", hWnd ,lpPoint);
 	#ifdef Func_Win
 	return ScreenToClient(hWnd, lpPoint);
 	#else
@@ -405,8 +405,8 @@ BOOL WINAPI pipe_ScreenToClient(HWND hWnd,LPPOINT lpPoint){
 }
 
 //!BOOL GetCursorInfo(PCURSORINFO pci)
-BOOL pipe_GetCursorInfo(PCURSORINFO pci){
-	showfunc("pipe_GetCursorInfo: %p", pci);
+BOOL WINAPI pipe_GetCursorInfo(PCURSORINFO pci){
+	showfunc("pipe_GetCursorInfo( pci: %p )", pci);
 	#ifdef Func_Win
 	return GetCursorInfo(pci);
 	#else
@@ -414,3 +414,82 @@ BOOL pipe_GetCursorInfo(PCURSORINFO pci){
 	#endif	
 }
 
+//!BOOL SetWindowPos(HWND hWnd,HWND hWndInsertAfter,int  X,int  Y,int  cx,int  cy,UINT uFlags)
+BOOL WINAPI pipe_SetWindowPos(HWND hWnd,HWND hWndInsertAfter,int  X,int  Y,int  cx,int  cy,UINT uFlags){
+	showfunc("SetWindowPos( hWnd: %p, hWndInsertAfter: %p, X: %d, Y: %d, cw: %d, cy: %d, uFlags: %d )", hWnd, hWndInsertAfter, X, Y, cx, cy, uFlags);
+	#ifdef Func_Win
+	return SetWindowPos(hWnd, hWndInsertAfter, X, Y, cx, cy, uFlags);
+	#else
+	return true;
+	#endif	
+}
+
+//!HMONITOR MonitorFromRect(LPCRECT lprc,DWORD   dwFlags)
+HMONITOR WINAPI pipe_MonitorFromRect(LPCRECT lprc,DWORD   dwFlags){
+	showfunc("MonitorFromRect( lprc: %p, dwFlags: %p )", lprc, dwFlags);
+	#ifdef Func_Win 
+	return MonitorFromRect(lprc, dwFlags);
+	#else
+	return 0;
+	#endif	
+}
+
+//!BOOL GetMonitorInfoW(HMONITOR hMonitor,LPMONITORINFO lpmi)
+BOOL WINAPI pipe_GetMonitorInfoW(HMONITOR hMonitor, LPMONITORINFO lpmi){
+	showfunc("GetMonitorInfoW( hMonitor: %p, lpmi: %p )", hMonitor, lpmi);
+	#ifdef Func_Win 
+	return GetMonitorInfoW(hMonitor, lpmi);
+	#else
+	return 0;
+	#endif	
+}
+
+//!BOOL InitializeCriticalSectionEx(LPCRITICAL_SECTION lpCriticalSection,DWORD dwSpinCount,DWORD Flags)
+BOOL WINAPI pipe_InitializeCriticalSectionEx(LPCRITICAL_SECTION lpCriticalSection,DWORD dwSpinCount,DWORD Flags){
+	showfunc("InitializeCriticalSectionEx( lpCriticalSection: %p, dwSpinCount: %p, Flags: %p )", lpCriticalSection, dwSpinCount, Flags);
+	#ifdef Func_Win 
+	return InitializeCriticalSectionEx(lpCriticalSection, dwSpinCount, Flags);
+	#else
+	return 0;
+	#endif	
+}
+
+//!BOOL IsProcessorFeaturePresent(DWORD ProcessorFeature)
+BOOL pipe_IsProcessorFeaturePresent(DWORD ProcessorFeature){
+	showfunc("IsProcessorFeaturePresent( ProcessorFeature: %p )", ProcessorFeature);
+	#ifdef Func_Win 
+	return IsProcessorFeaturePresent(ProcessorFeature);
+	#else
+	return false;
+	#endif	
+}
+
+//!BOOL InitializeCriticalSectionAndSpinCount(LPCRITICAL_SECTION lpCriticalSection,DWORD dwSpinCount)
+BOOL pipe_InitializeCriticalSectionAndSpinCount(LPCRITICAL_SECTION lpCriticalSection,DWORD dwSpinCount){
+	showfunc("InitializeCriticalSectionAndSpinCount( lpCriticalSection: %p,  dwSpinCount: %p )", lpCriticalSection, dwSpinCount);
+	#ifdef Func_Win 
+	return InitializeCriticalSectionAndSpinCount(lpCriticalSection, dwSpinCount);
+	#else
+	return true;
+	#endif	
+}
+
+//!WINBOOL WINAPI IsDebuggerPresent (VOID)
+BOOL WINAPI pipe_IsDebuggerPresent(){
+	showfunc("IsDebuggerPresent( )", "");
+	#ifdef Func_Win 
+	return IsDebuggerPresent();
+	#else
+	return false;
+	#endif	
+}
+
+//!LONG WINAPI UnhandledExceptionFilter(_EXCEPTION_POINTERS *ExceptionInfo)
+LONG WINAPI pipe_UnhandledExceptionFilter(_EXCEPTION_POINTERS* ExceptionInfo){
+	showfunc("UnhandledExceptionFilter( ExceptionInfo: %p )", ExceptionInfo);
+	#ifdef Func_Win 
+	return UnhandledExceptionFilter(ExceptionInfo);
+	#else
+	return false;
+	#endif	
+}

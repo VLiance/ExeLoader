@@ -104,6 +104,12 @@
 {"SwapBuffers"  		,(FUNC_) pipe_SwapBuffers },
 ////////////////////////////////////////////////////////////
 
+///////////////// System //////////////
+{"GetDpiForMonitor"  		,(FUNC_) sys_GetDpiForMonitor }, //Shcore.dll
+{"SetProcessDpiAwareness"  	,(FUNC_) sys_SetProcessDpiAwareness }, //Shcore.dll
+{"SetProcessDPIAware"  		,(FUNC_) sys_SetProcessDPIAware }, //Shcore.dll
+////////////////////////////////////////
+
 {"VirtualAlloc"  		,(FUNC_) pipe_VirtualAlloc },
 {"VirtualFree"  		,(FUNC_) pipe_VirtualFree },
 
@@ -142,30 +148,43 @@
 {"LoadIconA"   			,(FUNC_) pipe_LoadIconA },
 {"LoadIconW"   			,(FUNC_) pipe_LoadIconW },
 
-///////////////// System //////////////
-{"GetDpiForMonitor"  		,(FUNC_) sys_GetDpiForMonitor }, //Shcore.dll
-{"SetProcessDpiAwareness"  	,(FUNC_) sys_SetProcessDpiAwareness }, //Shcore.dll
-{"SetProcessDPIAware"  		,(FUNC_) sys_SetProcessDPIAware }, //Shcore.dll
-
 {"CommandLineToArgvW"  	,(FUNC_) pipe_CommandLineToArgvW },
 {"GetCommandLineW"  	,(FUNC_) pipe_GetCommandLineW },
 {"ScreenToClient"  		,(FUNC_) pipe_ScreenToClient },
 
-////////////////////////////////////////
+{"GetCursorInfo"  		,(FUNC_) pipe_GetCursorInfo },
+{"SetWindowPos"  		,(FUNC_) pipe_SetWindowPos },
 
-{"GetCursorInfo"  ,(FUNC_) pipe_GetCursorInfo },
-{"SetWindowPos"  ,(FUNC_) SetWindowPos },
-{"MonitorFromRect"  ,(FUNC_) MonitorFromRect },
-{"GetMonitorInfoW"  ,(FUNC_) GetMonitorInfoW },
+{"MonitorFromRect" 		,(FUNC_) pipe_MonitorFromRect },
+{"GetMonitorInfoW"  	,(FUNC_) pipe_GetMonitorInfoW },
 
-{"InitializeCriticalSectionEx" ,(FUNC_) My_InitializeCriticalSectionEx },
-{"IsProcessorFeaturePresent" ,(FUNC_) My_IsProcessorFeaturePresent },
+{"InitializeCriticalSectionEx" 	,(FUNC_) pipe_InitializeCriticalSectionEx },
+{"IsProcessorFeaturePresent" 	,(FUNC_) pipe_IsProcessorFeaturePresent },
+{"InitializeCriticalSectionAndSpinCount", (FUNC_) pipe_InitializeCriticalSectionAndSpinCount },
 
-{"InitializeCriticalSectionAndSpinCount"  ,(FUNC_) InitializeCriticalSectionAndSpinCount },
-{"HeapAlloc"  ,(FUNC_) HeapAlloc },
+/*
+//!WINBASEAPI LPVOID WINAPI HeapAlloc (HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes)
+WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
+	showfunc_opt("HeapAlloc( hHeap: %p, dwFlags: %d, dwBytes: %d )", hHeap, dwFlags, dwBytes);
+}
+//!WINBASEAPI HANDLE WINAPI HeapCreate (DWORD flOptions, SIZE_T dwInitialSize, SIZE_T dwMaximumSize);
+//!WINBASEAPI HANDLE WINAPI GetProcessHeap (VOID)
+//!WINBASEAPI LPVOID WINAPI HeapReAlloc (HANDLE hHeap, DWORD dwFlags, LPVOID lpMem, SIZE_T dwBytes)
+//!WINBASEAPI WINBOOL WINAPI HeapFree (HANDLE hHeap, DWORD dwFlags, LPVOID lpMem)
+//!WINBASEAPI SIZE_T WINAPI HeapSize (HANDLE hHeap, DWORD dwFlags, LPCVOID lpMem)
+
 {"GetProcessHeap"  ,(FUNC_) GetProcessHeap },
-{"IsDebuggerPresent"  ,(FUNC_) IsDebuggerPresent },
-{"UnhandledExceptionFilter"  ,(FUNC_) UnhandledExceptionFilter },
+{"HeapCreate"  ,(FUNC_) HeapCreate },
+{"HeapAlloc"  ,(FUNC_) HeapAlloc },
+{"HeapReAlloc"  ,(FUNC_) HeapReAlloc },
+{"HeapFree"  ,(FUNC_) HeapFree },
+{"HeapSize"  ,(FUNC_) HeapSize },
+*/
+
+{"IsDebuggerPresent"  		 ,(FUNC_) pipe_IsDebuggerPresent },
+{"UnhandledExceptionFilter"  ,(FUNC_) pipe_UnhandledExceptionFilter },
+
+
 {"GetCurrentProcess"  ,(FUNC_) GetCurrentProcess },
 {"TerminateProcess"  ,(FUNC_) TerminateProcess },
 {"GetStartupInfoW"  ,(FUNC_) GetStartupInfoW },
@@ -183,7 +202,7 @@
 {"InitializeSListHead"  ,(FUNC_) InitializeSListHead },
 {"GetEnvironmentStringsW"  ,(FUNC_) GetEnvironmentStringsW },
 {"FreeEnvironmentStringsW"  ,(FUNC_) FreeEnvironmentStringsW },
-{"HeapFree"  ,(FUNC_) HeapFree },
+
 {"GetModuleFileNameA"  ,(FUNC_) GetModuleFileNameA },
 {"WriteFile"  ,(FUNC_) WriteFile },
 
@@ -467,8 +486,8 @@
 ////////////////////////////////////
 
 /////////// STRING ///////////////
-{"strcmp"  		,(FUNC_) strcmp },
-{"stricmp"		,(FUNC_) stricmp },
+{"strcmp"  	,(FUNC_) strcmp },
+{"stricmp"	,(FUNC_) stricmp },
 {"sprintf"  ,(FUNC_) sprintf },
 {"strcat"  	,(FUNC_) strcat },
 {"strchr"  	,(FUNC_) strchr },
