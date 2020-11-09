@@ -340,6 +340,7 @@ bool fMainExeLoader(const char* _sPath){
 	}
 	
 
+
 	#ifdef __cpp_exceptions
 	try{
 	#endif
@@ -583,6 +584,13 @@ bool fStartExeLoader(const char* _sPath) {
 	
 	// Lancer une instance du ManagedAlloc
 	instance_AllocManager.ManagedAlloc_(1024, (const char*) __FILE__);
+	
+	#ifdef Use_LongJump
+   if (setjmp(jumpsignal)) {
+        printf("\n Exe Fail, Continue?\n"); 
+		exit(exe_err);
+	}
+	#endif
 	
 	bool resultat = fMainExeLoader(_sPath);
 	

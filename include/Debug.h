@@ -1,6 +1,12 @@
 #ifndef EXELOADER_Debug
 #define EXELOADER_Debug
 
+
+int exe_err = 0;
+#include<setjmp.h> 
+jmp_buf jumpsignal; 
+#define Use_LongJump
+
 //GDB will automaticly break here (with Cwc compiler)
 extern "C" void GDB_Func_Break(){} //raise(SIGTRAP)? void __debugbreak();?
 extern "C" void GDB_Func_ExecuteCmds(){} 
@@ -32,7 +38,9 @@ inline void signalHandler(int signum) {
 		printf("UNKNOW");
 		break;
 	}
-	exit(signum);
+	exe_err = signum;
+	longjmp(jumpsignal, 1);
+	//exit(signum);
 }
 
 inline void registerSignal() {

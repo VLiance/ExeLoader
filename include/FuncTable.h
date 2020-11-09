@@ -182,12 +182,20 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 {"HeapSize"  ,(FUNC_) HeapSize },
 */
 
+
+//{"FreeLibrary"  		,(FUNC_) FreeLibrary },
+//{"localeconv"  ,(FUNC_) localeconv },
+//{"setlocale"  ,(FUNC_) setlocale },
+
 {"IsDebuggerPresent"  	 	,(FUNC_) pipe_IsDebuggerPresent },
 {"UnhandledExceptionFilter" ,(FUNC_) pipe_UnhandledExceptionFilter },
 
 {"GetCurrentProcess"  		,(FUNC_) pipe_GetCurrentProcess },
 {"TerminateProcess"  		,(FUNC_) pipe_TerminateProcess },
 {"GetStartupInoW"  			,(FUNC_) pipe_GetStartupInfoW },
+
+
+
 
 
 
@@ -252,7 +260,7 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 {"GetStdHandle"  ,(FUNC_) GetStdHandle },
 {"GetConsoleWindow"  ,(FUNC_) GetConsoleWindow },
 {"SetConsoleWindowInfo"  ,(FUNC_) SetConsoleWindowInfo },
-{"setlocale"  ,(FUNC_) setlocale },
+
 {"SetConsoleOutputCP"  ,(FUNC_) SetConsoleOutputCP },
 {"SetConsoleTextAttribute"  ,(FUNC_) SetConsoleTextAttribute },
 {"SetConsoleScreenBufferSize"  ,(FUNC_) SetConsoleScreenBufferSize },
@@ -270,7 +278,6 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 {"SetLastError"  ,(FUNC_) SetLastError }, //Required !?
 {"fread"  ,(FUNC_) fread },
 {"MoveWindow"  ,(FUNC_) MoveWindow },
-{"GetModuleFileNameW"  ,(FUNC_) GetModuleFileNameW }, //useless?
 
 //Windows
 {"SetWindowLongW"  ,(FUNC_) SetWindowLongW },
@@ -281,7 +288,6 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 {"CreateCompatibleDC"  ,(FUNC_) CreateCompatibleDC },
 {"CreateDIBSection"  ,(FUNC_) CreateDIBSection },
 {"SelectObject"  ,(FUNC_) SelectObject },
-
 
 
 
@@ -306,6 +312,9 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 	{"MessageBoxW"  ,(FUNC_) MessageBoxW },
 
 	
+	
+	
+
 	{"fgets"  ,(FUNC_) fgets },
 
 
@@ -387,12 +396,17 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 
 {"GetLastError"  ,(FUNC_) My_GetLastError },
 
+
 {"CreateSemaphoreA"  ,(FUNC_) pipe_CreateSemaphoreA },
 {"CreateSemaphoreW"  ,(FUNC_) pipe_CreateSemaphoreW },
 
 {"_snwprintf"  ,(FUNC_) imp_snwprintf },
 
 
+{"abort"  ,(FUNC_) abort },  //TODO custom abort
+
+
+/*
 {"___lc_codepage_func"  ,(FUNC_) My__lc_codepage_func },
 {"getenv"  ,(FUNC_) My_getenv },
 {"__getmainargs" ,(FUNC_) My_getmainargs },
@@ -413,21 +427,11 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 
 {"fputc"  ,(FUNC_) My_fputc },
 {"WriteConsoleA"  ,(FUNC_) My_WriteConsoleA },
+*/
 
-{"realloc"  ,(FUNC_) realloc },
-{"memcpy"  ,(FUNC_) memcpy },
-{"memset"  ,(FUNC_) memset },
-{"free"  ,(FUNC_) free },
-{"malloc"  ,(FUNC_) malloc },
-{"calloc"  ,(FUNC_) calloc },
-{"abort"  ,(FUNC_) abort },
-{"scanf"  ,(FUNC_) scanf },
-{"fwrite"  ,(FUNC_) fwrite },
 
 
 {"vfprintf"  ,(FUNC_) vfprintf },
-
-
 
 
 
@@ -449,6 +453,7 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 //Todo a implémenter
 #ifdef InCpcDosCore
 #else
+/*
 	/// UNICODE (not supported on CpcDos)
 	{"wcslen"  ,(FUNC_) wcslen },
 	{"_strnicmp"  ,(FUNC_) _strnicmp },
@@ -460,13 +465,14 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 
 	{"_stricmp"  ,(FUNC_) _stricmp }, //Use stricmp?
 	{"GetFileAttributesW"  ,(FUNC_) GetFileAttributesW },
+	*/
+	
 #endif
 
 //{"setbuf"  ,(FUNC_) My_setbuf }, //!!!! Warning Dangerous function!
 //{"LocalFree"  			,(FUNC_) LocalFree },
 
-{"FreeLibrary"  		,(FUNC_) FreeLibrary },
-{"localeconv"  ,(FUNC_) localeconv },
+
 
 
 
@@ -484,22 +490,32 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 {"wcscpy"  		,(FUNC_) strcpy },  //??
 */
 
+
+
+{"malloc"  ,(FUNC_) malloc },
+{"calloc"  ,(FUNC_) calloc },
+{"realloc"  ,(FUNC_) realloc },
+{"free"  ,(FUNC_) free },
+
+{"scanf"  ,(FUNC_) scanf },
 /////////////////////////////////////////////
 /////////// DIRECT MAPPING //////////////////
 /// *safe enough for a direct replacement* ///
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 
-{"printf"  ,(FUNC_) printf },
+/////////// LOG ////////////////////
+{"printf"  ,(FUNC_) printf }, // maybe not safe
+{"fflush"  	,(FUNC_) fflush },
+{"fprintf"  ,(FUNC_) fprintf },
+{"fwrite"  ,(FUNC_) fwrite },
+////////////////////////////////////
 
 /////////// MEM ////////////////////
 {"memcmp"  		,(FUNC_) memcmp },
 {"memmove"  	,(FUNC_) memmove },
-////////////////////////////////////
-
-/////////// LOG ////////////////////
-{"fflush"  	,(FUNC_) fflush },
-{"fprintf"  ,(FUNC_) fprintf },
+{"memcpy"  ,(FUNC_) memcpy },
+{"memset"  ,(FUNC_) memset },
 ////////////////////////////////////
 
 /////////// STRING ///////////////

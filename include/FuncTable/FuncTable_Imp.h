@@ -299,29 +299,57 @@ inline LPWSTR* imp_CommandLineToArgvW(LPCWSTR lpCmdLine,int* pNumArgs){
 
 
 //!int snprintf ( char * s, size_t n, const char * format, ... )
-int imp_snwprintf( wchar_t* s, size_t n, const wchar_t* format, ... ){
+int  imp_snwprintf( wchar_t* s, size_t n, const wchar_t* format, ... ){
 	showfunc("snwprintf( ) [TODO]", ""); 
-	
-//ConversionResult ConvertUTF16toUTF8 (const UTF16** sourceStart, const UTF16* sourceEnd, 
-//								  UTF8** targetStart, UTF8* targetEnd, ConversionFlags flags);
-	char* src = (char*)s;
-		
+
 	size_t len = wcslen(format);
 	printf("\nlength: %d \n", len);
 	printf("\nlsize_t: %d \n", n);
 	
-	
+	/////////////// UTF16 to UTF8 ///////////////
 	const UTF16* input = (const UTF16*)format;
-	UTF8* output = (UTF8*)s;
+	UTF8* output = (UTF8*)malloc(len+1);//+1 for null terminating char
 	
-ConversionResult res =	ConvertUTF16toUTF8(&input, input + len, &output, output + n, ConversionFlags::strictConversion);
-//		gzp_NewAssing( fConvertUTF16toUTF8( (gzUInt16*)m.aSubTab, gzp_DataSize, _aNewData->aTab) ,  m.nSubSize * 2 , 0); 
-		
-printf("\n result : %d  \n", (int)res);
+	UTF8* outStart = (UTF8*)output;
+	ConversionResult res =	ConvertUTF16toUTF8(&input, &input[len], &output, &output[n], ConversionFlags::lenientConversion);
+	//Possible value of res: conversionOK || sourceExhausted || targetExhausted
+	*output = 0; //Terminate string
+	/////////////////////////////////////////////
 	
-	wprintf(L"format: %s ", format);
-	printf("print format: %s ", (char*)output);
-	return 0;
+
+
+	//printf("\n result : %d  \n", (int)res);
+	
+//	wprintf(L"format: %s ", format);
+	printf("print format: %s ", (char*)outStart);
+	
+	////////////////////////////
+	UTF8* extract = (UTF8*)malloc(500);//+1 for null terminating char
+	//sprintf(extract, output, );
+	
+	int ret_len = 0;
+	#ifndef No_vswprintf
+	va_list arg;
+	va_start (arg, format);
+		//vsprintf ((char*)extract, (char*)output, arg);
+		ret_len += vswprintf((wchar_t*)s, n, format, arg);
+	va_end (arg);
+	#else
+		#define msg L"\nWarning[No vswprintf]"
+		memcpy(s, msg, sizeof(msg));
+		ret_len = sizeof(msg);
+	#endif
+	
+//	s[ret_len] = 0;
+
+	wprintf(L"%s", s);
+	//return s;
+//	printf("print extract: %s ", (char*)extract);
+	//printf("print extract: %s ", (char*)extract);
+	
+	
+	//free(output);
+	return  ret_len;
 }
 
 
