@@ -25,8 +25,10 @@
 #if ImWin
 #define Func_Win
 #endif
-//#undef Func_Win //Temp
+
 #define Func_Win //Temp
+#undef Func_Win //Temp
+
 
 ////////////////////////////////////////////////////
 /////////////  CUSTOM SETTINGS  ////////////////////

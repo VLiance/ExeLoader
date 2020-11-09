@@ -308,6 +308,9 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 	
 	{"fgets"  ,(FUNC_) fgets },
 
+
+
+/*
 #ifdef InCpcDosCore
 	////////////////////
 	////// CpcDos //////
@@ -379,14 +382,15 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 // 	{"LoadIconW"  ,(FUNC_) My_LoadIconW },
 	{"MessageBoxW"  ,(FUNC_) My_MessageBoxW },
 	
-	
 #endif /////////////////////////////////////
-
+*/
 
 {"GetLastError"  ,(FUNC_) My_GetLastError },
 
 {"CreateSemaphoreA"  ,(FUNC_) pipe_CreateSemaphoreA },
 {"CreateSemaphoreW"  ,(FUNC_) pipe_CreateSemaphoreW },
+
+{"_snwprintf"  ,(FUNC_) imp_snwprintf },
 
 
 {"___lc_codepage_func"  ,(FUNC_) My__lc_codepage_func },

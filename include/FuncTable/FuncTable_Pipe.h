@@ -516,3 +516,6 @@ VOID WINAPI pipe_GetStartupInfoW(LPSTARTUPINFOW lpStartupInfo){
 	#else
 	#endif	
 }
+
+
+

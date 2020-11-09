@@ -297,6 +297,15 @@ inline LPWSTR* imp_CommandLineToArgvW(LPCWSTR lpCmdLine,int* pNumArgs){
 
 //============ //
 
+//!int snprintf ( char * s, size_t n, const char * format, ... )
+int imp_snwprintf( wchar_t  *s, size_t n, const wchar_t* format, ... ){
+	showfunc("snwprintf( ) [TODO]", ""); 
+	wprintf(L"format: %s ", format);
+	return 0;
+}
+
+
+
 
 
 
