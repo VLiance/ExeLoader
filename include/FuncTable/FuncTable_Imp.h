@@ -297,10 +297,30 @@ inline LPWSTR* imp_CommandLineToArgvW(LPCWSTR lpCmdLine,int* pNumArgs){
 
 //============ //
 
+
 //!int snprintf ( char * s, size_t n, const char * format, ... )
-int imp_snwprintf( wchar_t  *s, size_t n, const wchar_t* format, ... ){
+int imp_snwprintf( wchar_t* s, size_t n, const wchar_t* format, ... ){
 	showfunc("snwprintf( ) [TODO]", ""); 
+	
+//ConversionResult ConvertUTF16toUTF8 (const UTF16** sourceStart, const UTF16* sourceEnd, 
+//								  UTF8** targetStart, UTF8* targetEnd, ConversionFlags flags);
+	char* src = (char*)s;
+		
+	size_t len = wcslen(format);
+	printf("\nlength: %d \n", len);
+	printf("\nlsize_t: %d \n", n);
+	
+	
+	const UTF16* input = (const UTF16*)format;
+	UTF8* output = (UTF8*)s;
+	
+ConversionResult res =	ConvertUTF16toUTF8(&input, input + len, &output, output + n, ConversionFlags::strictConversion);
+//		gzp_NewAssing( fConvertUTF16toUTF8( (gzUInt16*)m.aSubTab, gzp_DataSize, _aNewData->aTab) ,  m.nSubSize * 2 , 0); 
+		
+printf("\n result : %d  \n", (int)res);
+	
 	wprintf(L"format: %s ", format);
+	printf("print format: %s ", (char*)output);
 	return 0;
 }
 

@@ -27,6 +27,11 @@
 #include <csignal>
 #include <memory>
 
+#include <wchar.h>
+#include "ConvertUTF.h"
+
+
+
 #ifdef CpcDos
 	#include "Lib_GZ/SysUtils/CpcDosHeader.h"
 #endif
