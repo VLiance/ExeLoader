@@ -24,6 +24,7 @@
 *
 */
 
+
 //!ATOM RegisterClassW(const WNDCLASSW *lpWndClass)
 inline ATOM WINAPI pipe_RegisterClassW(void* value){
 	showfunc("RegisterClassW( value: %p )", value);
@@ -384,26 +385,6 @@ inline BOOL pipe_VirtualFree(LPVOID lpAddress,SIZE_T dwSize,DWORD  dwFreeType){
 	}else{
 		return true;
 	}
-	#endif
-}
-
-//!LPWSTR* CommandLineToArgvW(LPCWSTR lpCmdLine,int* pNumArgs)
-inline LPWSTR* pipe_CommandLineToArgvW(LPCWSTR lpCmdLine,int* pNumArgs){
-	showfunc("CommandLineToArgvW( lpCmdLine: %p, pNumArgs: %p )", lpCmdLine, pNumArgs);
-	#ifdef Func_Win
-	return CommandLineToArgvW(lpCmdLine, pNumArgs);
-	#else
-	return 0;
-	#endif
-}
-
-//!LPWSTR GetCommandLineW(){
-LPWSTR pipe_GetCommandLineW(){
-	showfunc("GetCommandLineW( )" "");
-	#ifdef Func_Win
-	return GetCommandLineW();
-	#else
-	return 0;
 	#endif
 }
 

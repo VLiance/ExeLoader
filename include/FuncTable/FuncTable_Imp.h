@@ -95,7 +95,7 @@ inline void  imp_unlock(int locknum){
 
 //!int _vscprintf(const char *format,va_list argptr)
 inline int imp_vscprintf(const char *format,va_list argptr){
-	showfunc_opt("_vscprintf( )");
+	showfunc_opt("_vscprintf( )", "");
     int retval = 0; 
     va_list argcopy;
     va_copy(argcopy, argptr); 
@@ -231,8 +231,80 @@ BOOL WINAPI imp_TlsFree(DWORD dwTlsIndex){
 	return true;
 }
 
+
+//==== Local Alloc === //  ** ---- Not tested --- **
+
+//!HLOCAL WINAPI LocalAlloc (UINT uFlags, SIZE_T uBytes)
+inline HLOCAL WINAPI imp_LocalAlloc(UINT  uFlags, SIZE_T uBytes){
+	showfunc_opt("LocalAlloc( uFlags: %d, uBytes: %d )", uFlags, uBytes);
+	SIZE_T* _alloc = (SIZE_T*)instance_AllocManager.ManagedCalloc(uBytes + sizeof(SIZE_T), sizeof(char));
+	_alloc[0] = uBytes;
+	return (HLOCAL)&_alloc[1];
+}
+
+//!SIZE_T WINAPI LocalSize (HLOCAL hMem)
+SIZE_T WINAPI imp_LocalSize(HLOCAL hMem){
+	showfunc_opt("LocalSize( hMem: %p)", hMem);
+	SIZE_T* _alloc = (SIZE_T*)hMem;_alloc--;
+	return _alloc[0];
+}
+
+//!HLOCAL WINAPI LocalFree (HLOCAL hMem)
+inline SIZE_T WINAPI imp_LocalFree(HLOCAL hMem){
+	showfunc_opt("LocalFree( hMem: %p)", hMem);
+	if(hMem != 0){
+		SIZE_T* _alloc = (SIZE_T*)hMem;_alloc--;
+		instance_AllocManager.ManagedFree(_alloc);
+	}
+	return 0;
+}
+
+//!HLOCAL WINAPI LocalReAlloc (HLOCAL hMem, SIZE_T uBytes, UINT uFlags)
+HLOCAL WINAPI imp_LocalReAlloc(HLOCAL hMem, SIZE_T uBytes, UINT uFlags){
+	showfunc_opt("LocalReAlloc( hMem: %p, uFlags: %d, uBytes: %d )", hMem, uFlags, uBytes);
+	imp_LocalFree(hMem);
+	return imp_LocalAlloc(0, uBytes);
+}
+
+//===== CommandLine ==== //
+
+//!LPWSTR GetCommandLineW(){
+LPWSTR imp_GetCommandLineW(){
+	showfunc("GetCommandLineW( )", "");
+	#ifdef Func_Win
+	return GetCommandLineW();
+	#else
+	//TODO Real Arg
+	wchar_t* arg = (wchar_t*)L"Test ExeLoader winMain input arg";
+	wchar_t* alloc = (wchar_t*)imp_LocalAlloc(0, sizeof(L"Test ExeLoader winMain input arg") ); //We must alloc with LocalAlloc because windows will call LocalFree later
+	memcpy(alloc, arg, sizeof(L"Test ExeLoader winMain input arg"));
+	showfunc_ret("GetCommandLineW[LPWSTR: %p]", alloc);
+	return (LPWSTR)alloc; 
+	#endif
+}
+
+//!LPWSTR* CommandLineToArgvW(LPCWSTR lpCmdLine,int* pNumArgs)
+inline LPWSTR* imp_CommandLineToArgvW(LPCWSTR lpCmdLine,int* pNumArgs){
+	showfunc("CommandLineToArgvW( lpCmdLine: %p, pNumArgs: %p )", lpCmdLine, pNumArgs);
+	#ifdef Func_Win
+	return CommandLineToArgvW(lpCmdLine, pNumArgs);
+	#else
+	pNumArgs = &exe_arg_nb;
+	showfunc_ret("CommandLineToArgvW(pNumArgs: %d)[exe_arg: %s]", *pNumArgs, *exe_arg);
+	return (LPWSTR*)exe_arg; //TODO Wide?
+	#endif
+}
+
 //============ //
 
 
 
 
+/*
+LPVOID WINAPI LocalLock (HLOCAL hMem);
+SIZE_T WINAPI LocalShrink (HLOCAL hMem, UINT cbNewSize);
+SIZE_T WINAPI LocalCompact (UINT uMinFree);
+UINT WINAPI LocalFlags (HLOCAL hMem);
+HLOCAL WINAPI LocalHandle (LPCVOID pMem);
+WINBOOL WINAPI LocalUnlock (HLOCAL hMem);
+*/

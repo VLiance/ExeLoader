@@ -179,10 +179,11 @@ long nExeFileSize;
 	}
 #endif /* !!! No Cpcdos !!! */
 
+
+winMain dWinMain = 0;
 mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 	mainFunc2 dMain ;
-	
-	
+
 	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'main_entry()'... ", "research 'main_entry()' entry point... ");
 	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "main_entry");
 	if(dMain){return dMain;}
@@ -201,8 +202,8 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 	if(dMain){return dMain;}
 	
 	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'WinMain@16()'... ", "research 'WinMain@16()' entry point... ");
-	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "WinMain@16");
-	if(dMain){return dMain;}
+	dWinMain = (winMain)_oMem->MemoryGetProcAddress(handle, "WinMain@16");
+	if(dWinMain){return 0;}
 	
 	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'WinMainCRTStartup()'... ", "research 'WinMainCRTStartup()' entry point... ");
 	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "WinMainCRTStartup");
@@ -261,6 +262,9 @@ void GDB_Send_AddSymbolFile(char* _path, void* _text_adress, int _timeout = 1000
 }
 
 
+
+int exe_arg_nb=0;
+char** exe_arg=0;
 MemoryModule* memory_module = 0;
 bool fMainExeLoader(const char* _sPath){
 
@@ -342,6 +346,8 @@ bool fMainExeLoader(const char* _sPath){
 		///////////// MAIN //////////////
 		char* argument[] = {(char*)"aaaabbbvvv", (char*)"aaaaa"};
 
+
+		
 		int _nLastChar = 0;
 		while( _sPath[_nLastChar] != 0)
 		{
@@ -382,10 +388,18 @@ bool fMainExeLoader(const char* _sPath){
 			
 			 
 			// Le point d'entre a ete trouve, maintenant on l'execute
-			if(dMain != NULL)
+			if(dMain != NULL || dWinMain != NULL)
 			{
 				_EXE_LOADER_DEBUG(5, " Execution du point d'entre...\n", "Point entry execution...");
-				dMain(1,argument);
+				exe_arg_nb = 1;
+				exe_arg = argument;
+				if(dWinMain != NULL){
+					//int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow);
+					wchar_t* winMainArg = (wchar_t* )L"Test WinMain ARG";
+					dWinMain(0, 0, winMainArg, 0);
+				}else{
+					dMain(exe_arg_nb,exe_arg);
+				}
 				_EXE_LOADER_DEBUG(5, " Execution du point d'entre TERMINE!\n", "Point entry execution...FINISHED!");
 			}
 			else

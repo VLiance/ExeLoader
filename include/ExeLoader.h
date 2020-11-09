@@ -75,6 +75,10 @@ typedef int (*addNumberProc)(int, int);
 typedef void (*testFunc)();
 typedef int (*mainFunc)();
 typedef int (*mainFunc2)(int argc, char* argv[]);
+typedef int (WINAPI *winMain)(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow);
+//int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow);
+
+
 typedef void (*FUNC_Version)(int _nMajor, int _nMinor);
 
 /// Generic Func Ptr ///
@@ -88,6 +92,9 @@ typedef int  (*funcPtrIntIntPtr_int)(void*,int,int,void*);
 #define showfunc_unimplt(name, ...) _EXE_LOADER_DEBUG(0, "\n-->Appel de Fonction non implémenté: " name, "\n-->Call not implemented func: " name , __VA_ARGS__);
 #define showfunc(name, ...) _EXE_LOADER_DEBUG(0, "\n-->Appel de: " name, "\n-->Call: " name , __VA_ARGS__);
 #define showfunc_ret(name, ...) _EXE_LOADER_DEBUG(0, "\n-->Retour: " name, "\n-->Return: " name , __VA_ARGS__);
+
+extern int exe_arg_nb;
+extern char** exe_arg;
 
 
 #ifdef Show_AllFuncTable

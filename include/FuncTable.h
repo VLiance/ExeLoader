@@ -74,6 +74,8 @@
 {"LoadLibraryA"    	,(FUNC_) imp_LoadLibraryA },  	//Special
 {"LoadLibraryExW"  	,(FUNC_) LoadLibraryExW }, 		//TODO
 
+{"CommandLineToArgvW"  	,(FUNC_) imp_CommandLineToArgvW },
+{"GetCommandLineW"  	,(FUNC_) imp_GetCommandLineW },
 /////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////// FUNC TABLE /////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -148,8 +150,7 @@
 {"LoadIconA"   			,(FUNC_) pipe_LoadIconA },
 {"LoadIconW"   			,(FUNC_) pipe_LoadIconW },
 
-{"CommandLineToArgvW"  	,(FUNC_) pipe_CommandLineToArgvW },
-{"GetCommandLineW"  	,(FUNC_) pipe_GetCommandLineW },
+
 {"ScreenToClient"  		,(FUNC_) pipe_ScreenToClient },
 
 {"GetCursorInfo"  		,(FUNC_) pipe_GetCursorInfo },
@@ -465,6 +466,11 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 
 
 
+
+{"LocalAlloc"  		,(FUNC_) imp_LocalAlloc },
+{"LocalReAlloc"		,(FUNC_) imp_LocalReAlloc },
+{"LocalSize"  		,(FUNC_) imp_LocalSize },
+{"LocalFree"  		,(FUNC_) imp_LocalFree },
 
 
 
