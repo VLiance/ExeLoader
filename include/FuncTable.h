@@ -401,7 +401,7 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 {"CreateSemaphoreW"  ,(FUNC_) pipe_CreateSemaphoreW },
 
 {"_snwprintf"  ,(FUNC_) imp_snwprintf },
-
+{"fwprintf"  ,(FUNC_) imp_fwprintf },
 
 {"abort"  ,(FUNC_) abort },  //TODO custom abort
 
@@ -519,6 +519,7 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 ////////////////////////////////////
 
 /////////// STRING ///////////////
+{"wcslen"  	,(FUNC_) wcslen },
 {"strcmp"  	,(FUNC_) strcmp },
 {"stricmp"	,(FUNC_) stricmp },
 {"sprintf"  ,(FUNC_) sprintf },

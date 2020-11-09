@@ -298,10 +298,47 @@ inline LPWSTR* imp_CommandLineToArgvW(LPCWSTR lpCmdLine,int* pNumArgs){
 //============ //
 
 
-//!int snprintf ( char * s, size_t n, const char * format, ... )
-int  imp_snwprintf( wchar_t* s, size_t n, const wchar_t* format, ... ){
-	showfunc("snwprintf( ) [TODO]", ""); 
 
+class WStr {
+	public:
+	wchar_t* src;
+	size_t 	 len;
+	UTF8*    utf8;
+	
+	WStr(wchar_t* _src):utf8(0) {
+		src = _src;
+		len =  wcslen(src);
+	}
+	
+	char* ToCStr(){
+		const UTF16* input = (const UTF16*)src;
+		UTF8* utf8 = (UTF8*)malloc(len+1);//+1 for null terminating char
+		
+		UTF8* outStart = (UTF8*)utf8;
+		ConversionResult res =	ConvertUTF16toUTF8(&input, &input[len], &utf8, &utf8[len], ConversionFlags::lenientConversion);
+		//Possible value of res: conversionOK || sourceExhausted || targetExhausted
+		*utf8 = 0; //Terminate string
+		return (char*)utf8;
+	}
+	
+	~WStr(){
+		free(utf8);
+	}
+};
+
+
+#ifndef No_vswprintf
+#define vswprintf_ARG(format, dest, max, ret)va_list _arg_;va_start (_arg_, format);int ret = vswprintf((wchar_t*)dest, max, format, _arg_);va_end (_arg_);
+#else
+#define msg_no_vswprintf L"\nWarning[No vswprintf]"
+#define vswprintf_ARG(format, dest, max, ret) int ret = sizeof(msg_no_vswprintf);if(ret<max){memcpy(dest, msg_no_vswprintf,ret);};
+#endif
+
+
+//!int snprintf ( char * s, size_t n, const char * format, ... )
+inline int  imp_snwprintf( wchar_t* s, size_t n, const wchar_t* format, ... ){
+	showfunc("snwprintf( s: %p, n: %d, format: %p, ... )", s,n,format); 
+/*
 	size_t len = wcslen(format);
 	printf("\nlength: %d \n", len);
 	printf("\nlsize_t: %d \n", n);
@@ -315,45 +352,27 @@ int  imp_snwprintf( wchar_t* s, size_t n, const wchar_t* format, ... ){
 	//Possible value of res: conversionOK || sourceExhausted || targetExhausted
 	*output = 0; //Terminate string
 	/////////////////////////////////////////////
-	
-
-
-	//printf("\n result : %d  \n", (int)res);
-	
-//	wprintf(L"format: %s ", format);
-	printf("print format: %s ", (char*)outStart);
-	
-	////////////////////////////
-	UTF8* extract = (UTF8*)malloc(500);//+1 for null terminating char
-	//sprintf(extract, output, );
-	
-	int ret_len = 0;
-	#ifndef No_vswprintf
-	va_list arg;
-	va_start (arg, format);
-		//vsprintf ((char*)extract, (char*)output, arg);
-		ret_len += vswprintf((wchar_t*)s, n, format, arg);
-	va_end (arg);
-	#else
-		#define msg L"\nWarning[No vswprintf]"
-		memcpy(s, msg, sizeof(msg));
-		ret_len = sizeof(msg);
-	#endif
-	
-//	s[ret_len] = 0;
-
-	wprintf(L"%s", s);
-	//return s;
-//	printf("print extract: %s ", (char*)extract);
-	//printf("print extract: %s ", (char*)extract);
-	
-	
 	//free(output);
-	return  ret_len;
+*/
+	vswprintf_ARG(format, s, n, ret);
+	//wprintf(L"TEST: %s", s);
+	return  ret;
 }
 
 
 
+//!int fwprintf (FILE* stream, const wchar_t* format, ...)
+inline int imp_fwprintf (FILE* stream, const wchar_t* format, ...){
+	showfunc("fwprintf( stream: %p, format: %p, ... )", stream, format); 
+	
+	wchar_t BUFFER[8192]; //TODO GLOBAL BUFF or malloc?
+	vswprintf_ARG(format, BUFFER, 8192, ret);
+	
+	//Convert to cstr?
+	wprintf(BUFFER);
+	
+	return ret;
+}
 
 
 
