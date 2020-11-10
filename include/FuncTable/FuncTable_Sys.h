@@ -21,12 +21,15 @@
 */
 
 //!HDC GetDC(HWND hWnd)
+int aDC[10] = {};
+int aDC_curr = 0;
 inline HDC WINAPI sys_GetDC(HWND hWnd){
 	showfunc("GetDC( lpModuleName: %p)", hWnd); 
 	#ifdef Func_Win
 		return GetDC(hWnd);
 	#else
-		return 0;
+		aDC_curr++;
+		return (HDC)aDC_curr;
 	#endif
 }
 

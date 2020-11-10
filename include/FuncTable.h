@@ -198,6 +198,9 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 //{"localeconv"  ,(FUNC_) localeconv },
 //{"setlocale"  ,(FUNC_) setlocale },
 
+{"setlocale"  ,(FUNC_) pipe_setlocale },
+{"getenv"  ,(FUNC_) pipe_getenv },
+
 {"IsDebuggerPresent"  	 	,(FUNC_) pipe_IsDebuggerPresent },
 {"UnhandledExceptionFilter" ,(FUNC_) pipe_UnhandledExceptionFilter },
 

@@ -171,6 +171,7 @@ inline HMODULE  WINAPI pipe_GetModuleHandleW(LPCWSTR lpModuleName){
 	#ifdef Func_Win
 		return GetModuleHandleW(lpModuleName);
 	#else
+		//wprintf(L"\nlpModuleName: %ws\n", lpModuleName );
 		return 0;
 	#endif
 }
@@ -507,5 +508,14 @@ VOID WINAPI pipe_GetStartupInfoW(LPSTARTUPINFOW lpStartupInfo){
 	#endif	
 }
 
+//!char* setlocale(int category, const char* locale)
+char* pipe_setlocale(int category, const char* locale){
+	showfunc("setlocale( category: %d, locale: %s )", category, locale);
+	return setlocale(category, locale); //required?
+}
 
-
+//!char* getenv (const char* name)
+char* pipe_getenv(const char* name){
+	showfunc("getenv( name: %s )", name);
+	return getenv(name);
+}
