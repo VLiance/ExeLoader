@@ -210,11 +210,14 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 
 
 //Windows
+
+{"CreateWindowExW"  ,(FUNC_) pipe_CreateWindowExW },
+{"QueryPerformanceCounter"  ,(FUNC_) sys_QueryPerformanceFrequency },
+
+
+/*
 {"SetWindowLongW"  ,(FUNC_) SetWindowLongW },
 {"RegisterClassExW"  ,(FUNC_) RegisterClassExW },
-{"CreateWindowExW"  ,(FUNC_) CreateWindowExW },
-
-
 
 {"CreateCompatibleDC"  ,(FUNC_) CreateCompatibleDC },
 {"CreateDIBSection"  ,(FUNC_) CreateDIBSection },
@@ -303,9 +306,6 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 {"SetLastError"  ,(FUNC_) SetLastError }, //Required !?
 {"fread"  ,(FUNC_) fread },
 
-
-
-
 	//Timer
 	{"QueryPerformanceCounter"  ,(FUNC_) QueryPerformanceCounter },
 	{"QueryPerformanceFrequency"  ,(FUNC_) QueryPerformanceFrequency },
@@ -326,12 +326,8 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 	//{"LoadIconW"  ,(FUNC_) LoadIconW },
 	{"MessageBoxW"  ,(FUNC_) MessageBoxW },
 
-	
-	
-	
-
 	{"fgets"  ,(FUNC_) fgets },
-
+*/
 
 
 /*

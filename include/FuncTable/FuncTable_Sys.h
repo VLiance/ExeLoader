@@ -34,7 +34,7 @@ inline HDC WINAPI sys_GetDC(HWND hWnd){
 }
 
 //!HWND WINAPI CreateWindowExW(DWORD dwExStyle,LPCWSTR lpClassName,LPCWSTR lpWindowName,DWORD dwStyle,int X,int Y,int nWidth,int nHeight,HWND hWndParent,HMENU hMenu,HINSTANCE hInstance,LPVOID lpParam)
-HWND WINAPI CreateWindowExW(DWORD dwExStyle,LPCWSTR lpClassName,LPCWSTR lpWindowName,DWORD dwStyle,int X,int Y,int nWidth,int nHeight,HWND hWndParent,HMENU hMenu,HINSTANCE hInstance,LPVOID lpParam){
+HWND WINAPI pipe_CreateWindowExW(DWORD dwExStyle,LPCWSTR lpClassName,LPCWSTR lpWindowName,DWORD dwStyle,int X,int Y,int nWidth,int nHeight,HWND hWndParent,HMENU hMenu,HINSTANCE hInstance,LPVOID lpParam){
 	showfunc("CreateWindowExW( dwExStyle: %d, lpClassName: %p, lpWindowName :%d, dwStyle: %d, X: %d, Y: %d, nWidth: %d, nHeight: %d, hWndParent: %p, hMenu: %p, hInstance: %d, lpParam: %d )",
 								dwExStyle, lpClassName, lpWindowName, dwStyle, X, Y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam);
 	#ifdef Func_Win
@@ -62,4 +62,17 @@ inline BOOL sys_SetProcessDPIAware(){
 inline HRESULT sys_SetProcessDpiAwareness(int value){
 	showfunc("SetProcessDpiAwareness( value: %d )",value);
 	return 0;
+}
+
+
+//!WINBOOL WINAPI QueryPerformanceFrequency (LARGE_INTEGER *lpFrequency)
+LARGE_INTEGER lpFrequency_ = {0};
+WINBOOL WINAPI sys_QueryPerformanceFrequency(LARGE_INTEGER *lpFrequency){
+   	showfunc("QueryPerformanceFrequency( lpFrequency: %p )", lpFrequency);
+	#ifdef Func_Win
+		return QueryPerformanceFrequency( lpFrequency);
+	#else
+		lpFrequency = &lpFrequency_;
+		return true;
+	#endif
 }
