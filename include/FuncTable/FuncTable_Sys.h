@@ -20,6 +20,41 @@
 * 
 */
 
+//!VOID WINAPI SetLastError (DWORD dwErrCode)
+DWORD last_error = 0;
+VOID WINAPI sys_SetLastError (DWORD dwErrCode){
+	showfunc_opt("SetLastError( dwErrCode: %d)", dwErrCode); 
+	#ifdef Func_Win
+		SetLastError(dwErrCode);
+	#else
+	last_error = dwErrCode;
+	#endif
+}
+
+//!DWORD WINAPI GetLastError (VOID)
+DWORD WINAPI sys_GetLastError(VOID){
+	showfunc_opt("GetLastError( )", ""); 
+	#ifdef Func_Win
+	DWORD error = GetLastError();
+	if (error){
+		LPVOID lpMsgBuf;
+		DWORD bufLen = FormatMessage(	FORMAT_MESSAGE_ALLOCATE_BUFFER |
+										FORMAT_MESSAGE_FROM_SYSTEM |
+										FORMAT_MESSAGE_IGNORE_INSERTS,
+										NULL,error,MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),(LPTSTR) &lpMsgBuf,0, NULL );
+		if (bufLen){
+		  LPCSTR lpMsgStr = (LPCSTR)lpMsgBuf;
+		  std::string result(lpMsgStr, lpMsgStr+bufLen);
+		  LocalFree(lpMsgBuf);
+		}
+		showinf("GetLastError:%s", result.c_str());
+	}
+	return error;
+	#else
+	 return last_error;
+	#endif
+}
+
 //!HDC GetDC(HWND hWnd)
 int aDC[10] = {};
 int aDC_curr = 0;

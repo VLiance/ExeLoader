@@ -24,7 +24,6 @@
 *
 */
 
-
 //!ATOM RegisterClassW(const WNDCLASSW *lpWndClass)
 inline ATOM WINAPI pipe_RegisterClassW(void* value){
 	showfunc("RegisterClassW( value: %p )", value);
@@ -502,6 +501,27 @@ BOOL WINAPI pipe_TerminateProcess(HANDLE hProcess,UINT uExitCode){
 //!VOID WINAPI GetStartupInfoW (LPSTARTUPINFOW lpStartupInfo)
 VOID WINAPI pipe_GetStartupInfoW(LPSTARTUPINFOW lpStartupInfo){
 	showfunc("GetStartupInfoW( lpStartupInfo: %p)", lpStartupInfo);
+	/*
+	lpStartupInfo->cb = sizeof(LPSTARTUPINFO);
+	lpStartupInfo->lpDesktop = (LPTSTR)L"";
+	lpStartupInfo->lpTitle = (LPTSTR)"";
+	lpStartupInfo->dwX =0;
+	lpStartupInfo->dwY =0;
+	lpStartupInfo->dwXSize =0;
+	lpStartupInfo->dwYSize =0;
+	lpStartupInfo->dwXCountChars =0;
+	lpStartupInfo->dwYCountChars =0;
+	lpStartupInfo->dwFillAttribute =0;
+	lpStartupInfo->dwFlags =0;
+	lpStartupInfo->wShowWindow =0;
+	lpStartupInfo->cbReserved2 =0;
+	lpStartupInfo->lpReserved2 =0;
+
+	lpStartupInfo->hStdInput =0;
+	lpStartupInfo->hStdOutput =0;
+	lpStartupInfo->hStdError =0;
+*/
+
 	#ifdef Func_Win 
 	GetStartupInfoW(lpStartupInfo);
 	#else
@@ -518,4 +538,24 @@ char* pipe_setlocale(int category, const char* locale){
 char* pipe_getenv(const char* name){
 	showfunc("getenv( name: %s )", name);
 	return getenv(name);
+}
+
+//!int WINAPI WideCharToMultiByte (UINT CodePage, DWORD dwFlags, LPCWCH lpWideCharStr, int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCCH lpDefaultChar, LPBOOL lpUsedDefaultChar)
+int WINAPI pipe_WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWCH lpWideCharStr, int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCCH lpDefaultChar, LPBOOL lpUsedDefaultChar){
+	showfunc("WideCharToMultiByte( ... )", "");
+	#ifdef Func_Win 
+	WideCharToMultiByte(CodePage, dwFlags, lpWideCharStr, cchWideChar, lpMultiByteStr, cbMultiByte, lpDefaultChar, lpUsedDefaultChar);
+	#else
+	return 0;
+	#endif	
+}
+
+//!int WINAPI MultiByteToWideChar (UINT CodePage, DWORD dwFlags, LPCCH lpMultiByteStr, int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar)
+int WINAPI pipe_MultiByteToWideChar (UINT CodePage, DWORD dwFlags, LPCCH lpMultiByteStr, int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar){
+	showfunc("MultiByteToWideChar( ... )", "");
+	#ifdef Func_Win 
+	MultiByteToWideChar(CodePage, dwFlags, lpMultiByteStr, cbMultiByte, lpWideCharStr, cchWideChar);
+	#else
+	return 0;
+	#endif	
 }

@@ -33,7 +33,8 @@ inline HMODULE WINAPI imp_LoadLibraryA(LPCSTR lpLibFileName){
 
 //!FARPROC GetProcAddress(HMODULE hModule,LPCSTR  lpProcName)
 FARPROC WINAPI  imp_GetProcAddress(  HMODULE hModule, LPCSTR  lpProcName){
-
+	showfunc("GetProcAddress( hModule: %p, lpProcName: %s)",hModule, lpProcName);
+	
 	char* _sDllName = (char*)"unknow";
 	bool bOurLib = is_in_aLibList((HMEMORYMODULE)hModule);
 
@@ -75,7 +76,10 @@ inline int imp_initterm_e(_PIFV* ppfn,_PIFV* end){
 	showfunc("_initterm_e( ppfn: %p, end: %p )", ppfn,end);
 	do {
         if (_PIFV pfn = *++ppfn){
-            if (int err = pfn()) return err;
+            if (int err = pfn()) {
+				showinf("func error: %d", err);
+				return err;
+			}
         }
     } while (ppfn < end);
     return 0;
@@ -106,6 +110,7 @@ void imp_set_app_type (int at){
 }
 
 // struct MSVCRT_lconv * CDECL MSVCRT_localeconv(void)
+// __declspec(dllimport) int __cdecl __lconv_init (void);
 //!int __lconv_init(void)
 int imp_lconv_init(void){
 	showfunc("__lconv_init( )", "");
@@ -119,10 +124,12 @@ int imp_lconv_init(void){
 }
 
 //!const char** __p__acmdln( void )
-char* _acmdln = 0;
+const char* _acmdln = "Test cmdLine";
 char** imp_p__acmdln( void ){
+	showfunc("p__acmdln( )","");
 	//_acmdln = (char*)malloc(8192);
-    return &_acmdln;
+    return (char**)&_acmdln;
+   // return &_acmdln;
 }	
 
 //!_onexit_t _onexit(_onexit_t function)
@@ -130,7 +137,7 @@ FUNC_ imp_onexit(FUNC_ func){
 	showfunc("_onexit( func: %p )", func);
 	//TODO _onexit can have multiple functions, must be added to a list
 	//https://github.com/shihyu/learn_c/blob/master/vc_lib_src/src/onexit.c
-	return 0;
+	return func; //success?
 }
 
 //!int* __p__fmode()
@@ -143,9 +150,37 @@ int* imp_p__fmode(){
 	return &_fmode_;
 }
 
+#ifndef _STARTUP_INFO_DEFINED
+ #define _STARTUP_INFO_DEFINED
+   typedef struct {
+     int newmode;
+   } _startupinfo;
+ #endif
 //!int __getmainargs(int * _Argc,char *** _Argv,char *** _Env,int _DoWildCard,_startupinfo * _StartInfo)
-int imp_getmainargs(int* _Argc, char*** _Argv, char*** _Env, int _DoWildCard, void* _StartInfo){
+int imp_getmainargs(int* _Argc, char*** _Argv, char*** _Env, int _DoWildCard, void* _StartInfo){ //_StartInfo :Other information to be passed to the CRT DLL.
 	showfunc("__getmainargs( _Argc: %p, _Argv: %p, _Env: %p, _DoWildCard: %d, _StartInfo: %p )", _Argc, _Argv, _Env, _DoWildCard, _StartInfo);
+	
+	/*LPSTARTUPINFOW
+	lpStartupInfo->cb = sizeof(LPSTARTUPINFO);
+	lpStartupInfo->lpDesktop = (LPTSTR)L"";
+	lpStartupInfo->lpTitle = (LPTSTR)"";
+	lpStartupInfo->dwX =0;
+	lpStartupInfo->dwY =0;
+	lpStartupInfo->dwXSize =0;
+	lpStartupInfo->dwYSize =0;
+	lpStartupInfo->dwXCountChars =0;
+	lpStartupInfo->dwYCountChars =0;
+	lpStartupInfo->dwFillAttribute =0;
+	lpStartupInfo->dwFlags =0;
+	lpStartupInfo->wShowWindow =0;
+	lpStartupInfo->cbReserved2 =0;
+	lpStartupInfo->lpReserved2 =0;
+
+	lpStartupInfo->hStdInput =0;
+	lpStartupInfo->hStdOutput =0;
+	lpStartupInfo->hStdError =0;
+*/
+	
 	for(int i = 0; i < *_Argc; i++){
 		showinf("arg[%d]: %s", i, _Argv[i]);
 	}

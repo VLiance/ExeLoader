@@ -72,7 +72,7 @@
 {"fNotImplemented" 	,(FUNC_) fNotImplemented },    	//Must be first
 {"GetProcAddress" 	,(FUNC_) imp_GetProcAddress }, 	//Special
 {"LoadLibraryA"    	,(FUNC_) imp_LoadLibraryA },  	//Special
-{"LoadLibraryExW"  	,(FUNC_) LoadLibraryExW }, 		//TODO
+//{"LoadLibraryExW"  	,(FUNC_) LoadLibraryExW }, 		//TODO
 
 {"CommandLineToArgvW"  	,(FUNC_) imp_CommandLineToArgvW },
 {"GetCommandLineW"  	,(FUNC_) imp_GetCommandLineW },
@@ -163,6 +163,8 @@
 
 
 {"ScreenToClient"  		,(FUNC_) pipe_ScreenToClient },
+{"WideCharToMultiByte"  ,(FUNC_) pipe_WideCharToMultiByte },
+{"MultiByteToWideChar"  ,(FUNC_) pipe_MultiByteToWideChar },
 
 {"GetCursorInfo"  		,(FUNC_) pipe_GetCursorInfo },
 {"SetWindowPos"  		,(FUNC_) pipe_SetWindowPos },
@@ -211,13 +213,13 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 
 //Windows
 
-{"CreateWindowExW"  ,(FUNC_) pipe_CreateWindowExW },
+{"CreateWindowExW"  			,(FUNC_) pipe_CreateWindowExW },
 //Win Ini
-{"QueryPerformanceCounter"  ,(FUNC_) sys_QueryPerformanceFrequency },
-{"GetTickCount"  ,(FUNC_) sys_GetTickCount },
-{"GetCurrentThreadId"  ,(FUNC_) sys_GetCurrentThreadId },
-{"GetCurrentProcessId"  ,(FUNC_) sys_GetCurrentProcessId },
-{"GetSystemTimeAsFileTime"  ,(FUNC_) sys_GetSystemTimeAsFileTime },
+{"QueryPerformanceCounter"  	,(FUNC_) sys_QueryPerformanceFrequency },
+{"GetTickCount"  				,(FUNC_) sys_GetTickCount },
+{"GetCurrentThreadId"  			,(FUNC_) sys_GetCurrentThreadId },
+{"GetCurrentProcessId"  		,(FUNC_) sys_GetCurrentProcessId },
+{"GetSystemTimeAsFileTime"  	,(FUNC_) sys_GetSystemTimeAsFileTime },
 {"SetUnhandledExceptionFilter"  ,(FUNC_) sys_SetUnhandledExceptionFilter },
 /////////
 
@@ -411,16 +413,17 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 #endif /////////////////////////////////////
 */
 
-{"GetLastError"  ,(FUNC_) My_GetLastError },
+{"GetLastError"  ,(FUNC_) sys_GetLastError },
+{"SetLastError"  ,(FUNC_) sys_SetLastError },
 
 
 {"CreateSemaphoreA"  ,(FUNC_) pipe_CreateSemaphoreA },
 {"CreateSemaphoreW"  ,(FUNC_) pipe_CreateSemaphoreW },
 
-{"_snwprintf"  ,(FUNC_) imp_snwprintf },
-{"fwprintf"  ,(FUNC_) imp_fwprintf },
+{"_snwprintf"  	,(FUNC_) imp_snwprintf },
+{"fwprintf"  	,(FUNC_) imp_fwprintf },
 
-{"abort"  ,(FUNC_) abort },  //TODO custom abort
+{"abort"  		,(FUNC_) abort },  //TODO custom abort
 
 
 /*
