@@ -214,16 +214,6 @@ HICON WINAPI pipe_LoadIconW(HINSTANCE hInstance, LPCWSTR lpIconName){
 	#endif
 }
 
-//!HDC GetDC(HWND hWnd)
-inline HDC WINAPI pipe_GetDC(HWND hWnd){
-	showfunc("GetDC( lpModuleName: %p)", hWnd); 
-	#ifdef Func_Win
-		return GetDC(hWnd);
-	#else
-		return 0;
-	#endif
-}
-
 //!BOOL WINAPI CloseHandle(HANDLE hObject)
 inline BOOL WINAPI pipe_CloseHandle(HANDLE hObject){
 	showfunc("CloseHandle( hObject: %p)", hObject); 

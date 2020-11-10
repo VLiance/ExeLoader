@@ -97,6 +97,7 @@ typedef int  (*funcPtrIntIntPtr_int)(void*,int,int,void*);
 #define showfunc_unimplt(name, ...) _EXE_LOADER_DEBUG(0, "\n-->Appel de Fonction non implémenté: " name, "\n-->Call not implemented func: " name , __VA_ARGS__);
 #define showfunc(name, ...) _EXE_LOADER_DEBUG(0, "\n-->Appel de: " name, "\n-->Call: " name , __VA_ARGS__);
 #define showfunc_ret(name, ...) _EXE_LOADER_DEBUG(0, "\n-->Retour: " name, "\n-->Return: " name , __VA_ARGS__);
+#define showinf(name, ...) _EXE_LOADER_DEBUG(0, "\n--: " name, "\n---: " name , __VA_ARGS__);
 
 extern int exe_arg_nb;
 extern char** exe_arg;
@@ -118,5 +119,50 @@ extern char** exe_arg;
 #undef showfunc_opt
 #define showfunc_opt
 #endif
+
+
+/// STRING ///
+class WStr {
+  public:
+	wchar_t* src;
+	size_t 	 len;
+	UTF8*    utf8;
+	
+	WStr(wchar_t* _src):utf8(0) {
+		src = _src;
+		len =  wcslen(src);
+	}
+	
+	char* ToCStr(){
+		const UTF16* input = (const UTF16*)src;
+		UTF8* utf8 = (UTF8*)malloc(len+1);//+1 for null terminating char
+		
+		UTF8* outStart = (UTF8*)utf8;
+		ConversionResult res =	ConvertUTF16toUTF8(&input, &input[len], &utf8, &utf8[len], ConversionFlags::lenientConversion);
+		//Possible value of res: conversionOK || sourceExhausted || targetExhausted
+		*utf8 = 0; //Terminate string
+		return (char*)utf8;
+	}
+	
+	~WStr(){
+		free(utf8);
+	}
+};
+////////////////
+
+#ifndef No_vswprintf
+#define vswprintf_ARG(format, dest, max, ret)va_list _arg_;va_start (_arg_, format);int ret = vswprintf((wchar_t*)dest, max, format, _arg_);va_end (_arg_);
+#else
+#define msg_no_vswprintf L"\nWarning[No vswprintf]"
+#define vswprintf_ARG(format, dest, max, ret) int ret = sizeof(msg_no_vswprintf);if(ret<max){memcpy(dest, msg_no_vswprintf,ret);};
+#endif
+
+
+
+
+
+
+
+
 
 #endif //EXELOADER_Exeloader_H

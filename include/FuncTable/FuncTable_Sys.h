@@ -20,6 +20,17 @@
 * 
 */
 
+//!HDC GetDC(HWND hWnd)
+inline HDC WINAPI sys_GetDC(HWND hWnd){
+	showfunc("GetDC( lpModuleName: %p)", hWnd); 
+	#ifdef Func_Win
+		return GetDC(hWnd);
+	#else
+		return 0;
+	#endif
+}
+
+
 //!HRESULT GetDpiForMonitor(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType,UINT *dpiX,UINT *dpiY)
 HRESULT sys_GetDpiForMonitor(HMONITOR hmonitor,int dpiType,UINT* dpiX,UINT* dpiY){
 	showfunc("GetDpiForMonitor( hmonitor: %p, dpiType: %d, dpiX: %p,  dpiY: %p )", hmonitor, dpiType, dpiX, dpiY);

@@ -93,6 +93,65 @@ inline void  imp_unlock(int locknum){
 	//_unlock(locknum);
 }
 
+//!void __set_app_type (int at)
+#define _UNKNOWN_APP    0
+#define _CONSOLE_APP    1
+#define _GUI_APP        2
+void imp_set_app_type (int at){
+	switch(at){
+		case _GUI_APP:showfunc("_set_app_type( at: %d [_GUI_APP] )",at);break;
+		case _CONSOLE_APP:showfunc("_set_app_type( at: %d [_CONSOLE_APP] )",at);break;
+		default :showfunc("_set_app_type( at: %d [_UNKNOWN_APP] )",at);break;
+	}
+}
+
+// struct MSVCRT_lconv * CDECL MSVCRT_localeconv(void)
+//!int __lconv_init(void)
+int imp_lconv_init(void){
+	showfunc("__lconv_init( )", "");
+	/* char Char = (char) UCHAR_MAX;
+	  _lconv.int_frac_digits = Char;
+	  _lconv.frac_digits = Char;
+	  _lconv.p_sep_by_space = _lconv.n_sep_by_space = Char;
+	  _lconv.p_cs_precedes = _lconv.n_cs_precedes = Char;
+	  _lconv.p_sign_posn = _lconv.n_sign_posn = Char;*/
+	return -1;
+}
+
+//!const char** __p__acmdln( void )
+char* _acmdln = 0;
+char** imp_p__acmdln( void ){
+	//_acmdln = (char*)malloc(8192);
+    return &_acmdln;
+}	
+
+//!_onexit_t _onexit(_onexit_t function)
+FUNC_ imp_onexit(FUNC_ func){
+	showfunc("_onexit( func: %p )", func);
+	//TODO _onexit can have multiple functions, must be added to a list
+	//https://github.com/shihyu/learn_c/blob/master/vc_lib_src/src/onexit.c
+	return 0;
+}
+
+//!int* __p__fmode()
+int _fmode_ = 0;
+#define	_O_TEXT_	0x4000	// CR-LF in file becomes LF in memory. 
+#define	_O_BINARY_	0x8000	// Input and output is not translated. 
+int* imp_p__fmode(){
+	showfunc("__p__fmode( )", "");
+	_fmode_ = _O_TEXT_;
+	return &_fmode_;
+}
+
+//!int __getmainargs(int * _Argc,char *** _Argv,char *** _Env,int _DoWildCard,_startupinfo * _StartInfo)
+int imp_getmainargs(int* _Argc, char*** _Argv, char*** _Env, int _DoWildCard, void* _StartInfo){
+	showfunc("__getmainargs( _Argc: %p, _Argv: %p, _Env: %p, _DoWildCard: %d, _StartInfo: %p )", _Argc, _Argv, _Env, _DoWildCard, _StartInfo);
+	for(int i = 0; i < *_Argc; i++){
+		showinf("arg[%d]: %s", i, _Argv[i]);
+	}
+	return 0;//successful
+}
+
 //!int _vscprintf(const char *format,va_list argptr)
 inline int imp_vscprintf(const char *format,va_list argptr){
 	showfunc_opt("_vscprintf( )", "");
@@ -296,44 +355,6 @@ inline LPWSTR* imp_CommandLineToArgvW(LPCWSTR lpCmdLine,int* pNumArgs){
 }
 
 //============ //
-
-
-
-class WStr {
-	public:
-	wchar_t* src;
-	size_t 	 len;
-	UTF8*    utf8;
-	
-	WStr(wchar_t* _src):utf8(0) {
-		src = _src;
-		len =  wcslen(src);
-	}
-	
-	char* ToCStr(){
-		const UTF16* input = (const UTF16*)src;
-		UTF8* utf8 = (UTF8*)malloc(len+1);//+1 for null terminating char
-		
-		UTF8* outStart = (UTF8*)utf8;
-		ConversionResult res =	ConvertUTF16toUTF8(&input, &input[len], &utf8, &utf8[len], ConversionFlags::lenientConversion);
-		//Possible value of res: conversionOK || sourceExhausted || targetExhausted
-		*utf8 = 0; //Terminate string
-		return (char*)utf8;
-	}
-	
-	~WStr(){
-		free(utf8);
-	}
-};
-
-
-#ifndef No_vswprintf
-#define vswprintf_ARG(format, dest, max, ret)va_list _arg_;va_start (_arg_, format);int ret = vswprintf((wchar_t*)dest, max, format, _arg_);va_end (_arg_);
-#else
-#define msg_no_vswprintf L"\nWarning[No vswprintf]"
-#define vswprintf_ARG(format, dest, max, ret) int ret = sizeof(msg_no_vswprintf);if(ret<max){memcpy(dest, msg_no_vswprintf,ret);};
-#endif
-
 
 //!int snprintf ( char * s, size_t n, const char * format, ... )
 inline int  imp_snwprintf( wchar_t* s, size_t n, const wchar_t* format, ... ){

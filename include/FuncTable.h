@@ -80,6 +80,18 @@
 //////////////////////////// FUNC TABLE /////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
+/////////// CRT /////////////
+{"_initterm"  		,(FUNC_) imp_initterm },
+{"_initterm_e"  	,(FUNC_) imp_initterm_e },
+{"__set_app_type"  	,(FUNC_) imp_set_app_type },
+{"__p__fmode"  		,(FUNC_) imp_p__fmode },
+{"__lconv_init"  	,(FUNC_) imp_lconv_init },
+{"__p__acmdln"  	,(FUNC_) imp_p__acmdln },
+{"__getmainargs"  	,(FUNC_) imp_getmainargs },
+{"_onexit"  		,(FUNC_) imp_onexit },
+
+/////////////////////////////
+
 //////// Implemented ////////////////////////////////////////
 {"_aligned_malloc"	,(FUNC_) imp_aligned_malloc },
 {"_aligned_realloc"	,(FUNC_) imp_aligned_realloc },
@@ -93,8 +105,7 @@
 
 {"_lock"  			,(FUNC_) imp_lock },
 {"_unlock"  		,(FUNC_) imp_unlock },
-{"_initterm"  		,(FUNC_) imp_initterm },
-{"_initterm_e"  	,(FUNC_) imp_initterm_e },
+
 {"_vscprintf"  		,(FUNC_) imp_vscprintf },
 ////////////////////////////////////////////////////////////
 
@@ -142,7 +153,7 @@
 {"GetModuleHandleA" 	,(FUNC_) pipe_GetModuleHandleA },
 {"GetModuleHandleW"  	,(FUNC_) pipe_GetModuleHandleW },
 
-{"GetDC"  				,(FUNC_) pipe_GetDC },
+{"GetDC"  				,(FUNC_) sys_GetDC },
 {"CloseHandle"  		,(FUNC_) pipe_CloseHandle },
 
 {"LoadCursorA" 			,(FUNC_) pipe_LoadCursorA },

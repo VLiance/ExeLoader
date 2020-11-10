@@ -390,6 +390,7 @@ bool fMainExeLoader(const char* _sPath){
 			 
 			// Le point d'entre a ete trouve, maintenant on l'execute
 			if(dMain != NULL || dWinMain != NULL)
+			//if(0)
 			{
 				_EXE_LOADER_DEBUG(5, " Execution du point d'entre...\n", "Point entry execution...");
 				exe_arg_nb = 1;
