@@ -76,3 +76,53 @@ WINBOOL WINAPI sys_QueryPerformanceFrequency(LARGE_INTEGER *lpFrequency){
 		return true;
 	#endif
 }
+
+//!DWORD WINAPI GetTickCount (VOID)
+DWORD WINAPI sys_GetTickCount(){
+ 	showfunc("GetTickCount( )", "");
+	#ifdef Func_Win
+		return GetTickCount();
+	#else
+		return 0;
+	#endif
+}
+
+//!DWORD WINAPI GetCurrentThreadId (VOID)
+DWORD WINAPI sys_GetCurrentThreadId(){
+ 	showfunc("GetCurrentThreadId( )", "");
+	#ifdef Func_Win
+		return GetCurrentThreadId();
+	#else
+		return 1;//TODO
+	#endif
+}
+
+//!DWORD WINAPI GetCurrentThreadId (VOID)
+DWORD WINAPI sys_GetCurrentProcessId(){
+ 	showfunc("GetCurrentProcessId( )", "");
+	#ifdef Func_Win
+		return GetCurrentProcessId();
+	#else
+		return 1;//TODO
+	#endif
+}
+
+ //!VOID WINAPI GetSystemTimeAsFileTime (LPFILETIME lpSystemTimeAsFileTime)
+ VOID WINAPI sys_GetSystemTimeAsFileTime(LPFILETIME lpSystemTimeAsFileTime){
+	 showfunc("GetSystemTimeAsFileTime( lpSystemTimeAsFileTime: %p )", lpSystemTimeAsFileTime);
+	#ifdef Func_Win
+		GetSystemTimeAsFileTime(lpSystemTimeAsFileTime);
+	#else
+	#endif
+ }
+ 
+//!LPTOP_LEVEL_EXCEPTION_FILTER WINAPI SetUnhandledExceptionFilter (LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter)
+LPTOP_LEVEL_EXCEPTION_FILTER WINAPI sys_SetUnhandledExceptionFilter(LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter){
+ 	showfunc("SetUnhandledExceptionFilter( lpTopLevelExceptionFilter: %p )", lpTopLevelExceptionFilter);
+	#ifdef Func_Win
+		return SetUnhandledExceptionFilter(lpTopLevelExceptionFilter);
+	#else
+		return 0;
+	#endif
+}
+ 

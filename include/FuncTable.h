@@ -212,8 +212,14 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 //Windows
 
 {"CreateWindowExW"  ,(FUNC_) pipe_CreateWindowExW },
+//Win Ini
 {"QueryPerformanceCounter"  ,(FUNC_) sys_QueryPerformanceFrequency },
-
+{"GetTickCount"  ,(FUNC_) sys_GetTickCount },
+{"GetCurrentThreadId"  ,(FUNC_) sys_GetCurrentThreadId },
+{"GetCurrentProcessId"  ,(FUNC_) sys_GetCurrentProcessId },
+{"GetSystemTimeAsFileTime"  ,(FUNC_) sys_GetSystemTimeAsFileTime },
+{"SetUnhandledExceptionFilter"  ,(FUNC_) sys_SetUnhandledExceptionFilter },
+/////////
 
 /*
 {"SetWindowLongW"  ,(FUNC_) SetWindowLongW },
