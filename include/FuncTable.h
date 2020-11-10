@@ -209,6 +209,17 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 {"GetStartupInoW"  			,(FUNC_) pipe_GetStartupInfoW },
 
 
+//Windows
+{"SetWindowLongW"  ,(FUNC_) SetWindowLongW },
+{"RegisterClassExW"  ,(FUNC_) RegisterClassExW },
+{"CreateWindowExW"  ,(FUNC_) CreateWindowExW },
+
+
+
+{"CreateCompatibleDC"  ,(FUNC_) CreateCompatibleDC },
+{"CreateDIBSection"  ,(FUNC_) CreateDIBSection },
+{"SelectObject"  ,(FUNC_) SelectObject },
+{"MoveWindow"  ,(FUNC_) MoveWindow },
 
 
 
@@ -291,17 +302,7 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 
 {"SetLastError"  ,(FUNC_) SetLastError }, //Required !?
 {"fread"  ,(FUNC_) fread },
-{"MoveWindow"  ,(FUNC_) MoveWindow },
 
-//Windows
-{"SetWindowLongW"  ,(FUNC_) SetWindowLongW },
-{"RegisterClassExW"  ,(FUNC_) RegisterClassExW },
-{"CreateWindowExW"  ,(FUNC_) CreateWindowExW },
-
-
-{"CreateCompatibleDC"  ,(FUNC_) CreateCompatibleDC },
-{"CreateDIBSection"  ,(FUNC_) CreateDIBSection },
-{"SelectObject"  ,(FUNC_) SelectObject },
 
 
 
