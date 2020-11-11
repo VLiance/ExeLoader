@@ -223,6 +223,21 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 {"SetUnhandledExceptionFilter"  ,(FUNC_) sys_SetUnhandledExceptionFilter },
 /////////
 
+{"TranslateMessage" ,(FUNC_) sys_TranslateMessage },
+{"DispatchMessageW" ,(FUNC_) sys_DispatchMessageW },
+{"DispatchMessageA" ,(FUNC_) sys_DispatchMessageA },
+{"PeekMessageA"		,(FUNC_) sys_PeekMessageA },
+{"PeekMessageW"		,(FUNC_) sys_PeekMessageW },
+
+
+
+{"InitializeCriticalSection" ,(FUNC_) sys_InitializeCriticalSection },
+{"EnterCriticalSection" ,(FUNC_) sys_EnterCriticalSection },
+{"LeaveCriticalSection" ,(FUNC_) sys_LeaveCriticalSection },
+
+{"SetErrorMode"  	,(FUNC_) sys_SetErrorMode },
+
+
 /*
 {"SetWindowLongW"  ,(FUNC_) SetWindowLongW },
 {"RegisterClassExW"  ,(FUNC_) RegisterClassExW },
@@ -400,9 +415,7 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 	{"GetClientRect"  ,(FUNC_) My_GetClientRect },
 	{"GetWindowRect"  ,(FUNC_) My_GetWindowRect },
 
-	{"TranslateMessage"  ,(FUNC_) My_TranslateMessage },
-	{"DispatchMessageW"  ,(FUNC_) My_DispatchMessageW },
-	{"PeekMessageW"  ,(FUNC_) My_PeekMessageW },
+
 	{"GetWindowLongW"  ,(FUNC_) My_GetWindowLongW },
 	{"DefWindowProcW"  ,(FUNC_) My_DefWindowProcW },
 

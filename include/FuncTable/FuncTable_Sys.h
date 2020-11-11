@@ -161,3 +161,88 @@ LPTOP_LEVEL_EXCEPTION_FILTER WINAPI sys_SetUnhandledExceptionFilter(LPTOP_LEVEL_
 	#endif
 }
  
+
+//!WINBOOL WINAPI TranslateMessage(CONST MSG *lpMsg)
+WINBOOL WINAPI sys_TranslateMessage(CONST MSG *lpMsg){
+ 	showfunc_opt("TranslateMessage( lpMsg: %p )", lpMsg);
+	#ifdef Func_Win
+		return TranslateMessage(lpMsg);
+	#else
+		return true;
+	#endif
+}
+
+//!LRESULT WINAPI DispatchMessageA(CONST MSG *lpMsg)
+//!LRESULT WINAPI DispatchMessageW(CONST MSG *lpMsg)
+WINBOOL WINAPI sys_DispatchMessageA(CONST MSG *lpMsg){
+ 	showfunc_opt("DispatchMessageA( lpMsg: %p )", lpMsg);
+	#ifdef Func_Win
+		return DispatchMessageA(lpMsg);
+	#else
+		return true;
+	#endif
+}
+WINBOOL WINAPI sys_DispatchMessageW(CONST MSG *lpMsg){
+ 	showfunc_opt("DispatchMessageW( lpMsg: %p )", lpMsg);
+	#ifdef Func_Win
+		return sys_DispatchMessageW(lpMsg);
+	#else
+		return 0;
+	#endif
+}
+
+//!WINBOOL WINAPI PeekMessageA(LPMSG lpMsg,HWND hWnd,UINT wMsgFilterMin,UINT wMsgFilterMax,UINT wRemoveMsg)
+//!WINBOOL WINAPI PeekMessageW(LPMSG lpMsg,HWND hWnd,UINT wMsgFilterMin,UINT wMsgFilterMax,UINT wRemoveMsg)
+WINBOOL WINAPI sys_PeekMessageA(LPMSG lpMsg,HWND hWnd,UINT wMsgFilterMin,UINT wMsgFilterMax,UINT wRemoveMsg){
+ 	showfunc_opt("PeekMessageA( lpMsg: %p, hWnd: %p, wMsgFilterMin: %d, wMsgFilterMax: %d, wRemoveMsg: %d )", lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg );
+	#ifdef Func_Win
+		return PeekMessageA( lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg );
+	#else
+		return 0;
+	#endif
+}
+WINBOOL WINAPI sys_PeekMessageW(LPMSG lpMsg,HWND hWnd,UINT wMsgFilterMin,UINT wMsgFilterMax,UINT wRemoveMsg){
+ 	showfunc_opt("PeekMessageW( lpMsg: %p, hWnd: %p, wMsgFilterMin: %d, wMsgFilterMax: %d, wRemoveMsg: %d )", lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg );
+	#ifdef Func_Win
+		return PeekMessageW(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg);
+	#else
+		return 0;
+	#endif
+}
+
+//!VOID WINAPI InitializeCriticalSection (LPCRITICAL_SECTION lpCriticalSection)
+VOID WINAPI sys_InitializeCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
+ 	showfunc_opt("InitializeCriticalSection( lpCriticalSection: %p )", lpCriticalSection);
+	#ifdef Func_Win
+		InitializeCriticalSection(lpCriticalSection);
+	#else
+	#endif
+}
+
+//!VOID WINAPI EnterCriticalSection (LPCRITICAL_SECTION lpCriticalSection)
+VOID WINAPI sys_EnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
+ 	showfunc_opt("EnterCriticalSection( lpCriticalSection: %p )", lpCriticalSection);
+	#ifdef Func_Win
+		EnterCriticalSection(lpCriticalSection);
+	#else
+	#endif
+}
+
+//!VOID WINAPI LeaveCriticalSection (LPCRITICAL_SECTION lpCriticalSection)
+ VOID WINAPI sys_LeaveCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
+ 	showfunc_opt("LeaveCriticalSection( lpCriticalSection: %p )", lpCriticalSection);
+	#ifdef Func_Win
+		LeaveCriticalSection(lpCriticalSection);
+	#else
+	#endif
+}
+
+//!UINT WINAPI SetErrosrMode (UINT uMode)
+UINT WINAPI sys_SetErrorMode(UINT uMode){
+ 	showfunc("SetErrorMode( uMode: %p )", uMode);
+	#ifdef Func_Win
+		return SetErrorMode(uMode);
+	#else
+		return 0;
+	#endif
+}
