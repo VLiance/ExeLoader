@@ -172,6 +172,14 @@
 {"MonitorFromRect" 		,(FUNC_) pipe_MonitorFromRect },
 {"GetMonitorInfoW"  	,(FUNC_) pipe_GetMonitorInfoW },
 
+
+{"OutputDebugStringA"  	,(FUNC_) pipe_OutputDebugStringA },
+{"OutputDebugStringW"  	,(FUNC_) pipe_OutputDebugStringW },
+
+{"GetConsoleWindow"  	,(FUNC_) pipe_GetConsoleWindow },
+
+
+
 {"InitializeCriticalSectionEx" 	,(FUNC_) pipe_InitializeCriticalSectionEx },
 {"IsProcessorFeaturePresent" 	,(FUNC_) pipe_IsProcessorFeaturePresent },
 {"InitializeCriticalSectionAndSpinCount", (FUNC_) pipe_InitializeCriticalSectionAndSpinCount },

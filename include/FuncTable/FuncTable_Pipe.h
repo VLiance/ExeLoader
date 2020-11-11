@@ -559,3 +559,32 @@ int WINAPI pipe_MultiByteToWideChar (UINT CodePage, DWORD dwFlags, LPCCH lpMulti
 	return 0;
 	#endif	
 }
+
+//!VOID WINAPI OutputDebugStringA (LPCSTR lpOutputString)
+//!VOID WINAPI OutputDebugStringW (LPCWSTR lpOutputString)
+VOID WINAPI pipe_OutputDebugStringA (LPCSTR lpOutputString){
+	showfunc_opt("OutputDebugStringA( lpOutputString: %p )", lpOutputString);
+	showinf("%s", lpOutputString);
+	#ifdef Func_Win 
+	OutputDebugStringA(lpOutputString);
+	#else
+	#endif	
+}
+VOID WINAPI pipe_OutputDebugStringW (LPCSTR lpOutputString){
+	showfunc_opt("OutputDebugStringW( lpOutputString: %p )", lpOutputString);
+	#ifdef Func_Win 
+	OutputDebugStringW(lpOutputString);
+	#else
+	#endif	
+}
+
+//!HWND WINAPI GetConsoleWindow(VOID)
+HWND WINAPI pipe_GetConsoleWindow(VOID){
+	showfunc("GetConsoleWindow( )", "");
+	#ifdef Func_Win 
+	return GetConsoleWindow();
+	#else
+	return 0;
+	#endif	
+	
+}

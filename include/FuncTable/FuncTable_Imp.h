@@ -430,19 +430,10 @@ inline int imp_fwprintf (FILE* stream, const wchar_t* format, ...){
 	return ret;
 }
 
-//!int vsnprintf (char * s, size_t n, const char * format, va_list arg );
-int imp_vsnprintf (char* s, size_t n, const char * format, ...){
+//!int vsnprintf (char * __restrict__ __stream, size_t __n, const char * __restrict__ __format, va_list __local_argv);
+int imp_vsnprintf (char* s, size_t n, const char *  format, va_list __local_argv){
 	showfunc("vsnprintf( s: %p, n: %d, format: %p, ... )", s,n,format); 
-	//vsnprintf_ARG(format, s, n, ret);
-	
-va_list ap;
-   va_start(ap, format);
-  int ret = vsnprintf(s, n, format, ap);
-   va_end(ap);
-	
-	
-	//printf("TEST: %s", s);
-	return ret;
+	return vsnprintf(s, n, format, __local_argv);
 }
 
 /*

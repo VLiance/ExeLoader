@@ -306,3 +306,4 @@ WINBOOL WINAPI sys_GetWindowRect(HWND hWnd,LPRECT lpRect){
 		return true;
 	#endif
 }
+
