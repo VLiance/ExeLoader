@@ -430,6 +430,15 @@ inline int imp_fwprintf (FILE* stream, const wchar_t* format, ...){
 	return ret;
 }
 
+//!int vsnprintf (char * s, size_t n, const char * format, va_list arg );
+int imp_vsnprintf (char* s, size_t n, const char * format, ...){
+	showfunc("vsnprintf( s: %p, n: %d, format: %p, ... )", s,n,format); 
+	char BUFFER[8192]; //TODO GLOBAL BUFF or malloc?
+	vsnprintf_ARG(format, BUFFER, 8192, ret);
+	//printf("TEST: %s", BUFFER);
+	return ret;
+}
+//GetClientRect
 
 
 /*

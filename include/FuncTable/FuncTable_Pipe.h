@@ -335,7 +335,7 @@ inline WINAPI HWND pipe_WindowFromDC(HDC hDC){
 	#ifdef Func_Win
 	return WindowFromDC(hDC);
 	#else
-	return 0;
+	return (HWND)1;//Test (Required for SetPixelFormat)
 	#endif
 }
 

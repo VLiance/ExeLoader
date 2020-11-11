@@ -246,3 +246,19 @@ UINT WINAPI sys_SetErrorMode(UINT uMode){
 		return 0;
 	#endif
 }
+
+//!WINBOOL WINAPI GetClientRect(HWND hWnd,LPRECT lpRect)
+//struct RECT {LONG left; LONG top;LONG right;LONG bottom;}
+WINBOOL WINAPI sys_GetClientRect(HWND hWnd,LPRECT lpRect){
+ 	showfunc("GetClientRect( hWnd: %p, lpRect: %p )", hWnd, lpRect);
+	#ifdef Func_Win
+		return GetClientRect(hWnd, lpRect);
+	#else
+		lpRect->left = 0;
+		lpRect->top = 0;
+		lpRect->right = 600;
+		lpRect->bottom = 800;
+		return true;
+	#endif
+}
+ 

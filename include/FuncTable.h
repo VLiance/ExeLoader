@@ -214,6 +214,8 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 //Windows
 
 {"CreateWindowExW"  			,(FUNC_) pipe_CreateWindowExW },
+{"GetClientRect"  				,(FUNC_) sys_GetClientRect },
+
 //Win Ini
 {"QueryPerformanceCounter"  	,(FUNC_) sys_QueryPerformanceFrequency },
 {"GetTickCount"  				,(FUNC_) sys_GetTickCount },
@@ -236,6 +238,7 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 {"LeaveCriticalSection" ,(FUNC_) sys_LeaveCriticalSection },
 
 {"SetErrorMode"  	,(FUNC_) sys_SetErrorMode },
+
 
 
 /*
@@ -433,6 +436,7 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 {"CreateSemaphoreA"  ,(FUNC_) pipe_CreateSemaphoreA },
 {"CreateSemaphoreW"  ,(FUNC_) pipe_CreateSemaphoreW },
 
+{"_vsnprintf"  	,(FUNC_) imp_vsnprintf },
 {"_snwprintf"  	,(FUNC_) imp_snwprintf },
 {"fwprintf"  	,(FUNC_) imp_fwprintf },
 
@@ -479,7 +483,6 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 	{"TlsSetValue"  ,(FUNC_) TlsSetValue },
 	{"TlsFree"  	,(FUNC_) TlsFree },
 #endif
-
 
 
 

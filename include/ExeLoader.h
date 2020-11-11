@@ -157,6 +157,12 @@ class WStr {
 #define vswprintf_ARG(format, dest, max, ret) int ret = sizeof(msg_no_vswprintf);if(ret<max){memcpy(dest, msg_no_vswprintf,ret);};
 #endif
 
+#ifndef No_vsnprintf
+#define vsnprintf_ARG(format, dest, max, ret)va_list _arg_;va_start (_arg_, format);int ret = vsnprintf((char*)dest, max, format, _arg_);va_end (_arg_);
+#else
+#define msg_no_vsnprintf L"\nWarning[No No_vsnprintf]"
+#define vsnprintf_ARG(format, dest, max, ret) int ret = sizeof(msg_no_vsnprintf);if(ret<max){memcpy(dest, msg_no_vsnprintf,ret);};
+#endif
 
 
 
