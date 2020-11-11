@@ -209,13 +209,25 @@ WINBOOL WINAPI sys_PeekMessageW(LPMSG lpMsg,HWND hWnd,UINT wMsgFilterMin,UINT wM
 		return 0;
 	#endif
 }
+/*
+typedef struct _RTL_CRITICAL_SECTION {
+  PRTL_CRITICAL_SECTION_DEBUG DebugInfo;
+  LONG LockCount;
+  LONG RecursionCount;
+  HANDLE OwningThread;
+  HANDLE LockSemaphore;
+  ULONG_PTR SpinCount;
+    } RTL_CRITICAL_SECTION,*PRTL_CRITICAL_SECTION;
+*/
 
+RTL_CRITICAL_SECTION CriticalSection = {(PRTL_CRITICAL_SECTION_DEBUG)1,1,1,(HANDLE)1,(HANDLE)1,(ULONG_PTR)1};
 //!VOID WINAPI InitializeCriticalSection (LPCRITICAL_SECTION lpCriticalSection)
 VOID WINAPI sys_InitializeCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
  	showfunc_opt("InitializeCriticalSection( lpCriticalSection: %p )", lpCriticalSection);
 	#ifdef Func_Win
 		InitializeCriticalSection(lpCriticalSection);
 	#else
+	*lpCriticalSection = CriticalSection;
 	#endif
 }
 
@@ -225,6 +237,16 @@ VOID WINAPI sys_EnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
 	#ifdef Func_Win
 		EnterCriticalSection(lpCriticalSection);
 	#else
+		*lpCriticalSection = CriticalSection;
+	#endif
+}
+
+//!VOID WINAPI TryEnterCriticalSection (LPCRITICAL_SECTION lpCriticalSection)
+VOID WINAPI sys_TryEnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
+ 	showfunc_opt("TryEnterCriticalSection( lpCriticalSection: %p )", lpCriticalSection);
+	#ifdef Func_Win
+		TryEnterCriticalSection(lpCriticalSection);
+	#else
 	#endif
 }
 
@@ -233,6 +255,15 @@ VOID WINAPI sys_EnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
  	showfunc_opt("LeaveCriticalSection( lpCriticalSection: %p )", lpCriticalSection);
 	#ifdef Func_Win
 		LeaveCriticalSection(lpCriticalSection);
+	#else
+	#endif
+}
+
+//!VOID WINAPI DeleteCriticalSection (LPCRITICAL_SECTION lpCriticalSection)
+ VOID WINAPI sys_DeleteCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
+ 	showfunc_opt("DeleteCriticalSection( lpCriticalSection: %p )", lpCriticalSection);
+	#ifdef Func_Win
+		DeleteCriticalSection(lpCriticalSection);
 	#else
 	#endif
 }
@@ -261,4 +292,17 @@ WINBOOL WINAPI sys_GetClientRect(HWND hWnd,LPRECT lpRect){
 		return true;
 	#endif
 }
- 
+
+//!WINBOOL WINAPI GetWindowRect(HWND hWnd,LPRECT lpRect)
+WINBOOL WINAPI sys_GetWindowRect(HWND hWnd,LPRECT lpRect){
+	showfunc("GetWindowRect( hWnd: %p, lpRect: %p )", hWnd, lpRect);
+	#ifdef Func_Win
+		return GetWindowRect(hWnd, lpRect);
+	#else
+		lpRect->left = 0;
+		lpRect->top = 0;
+		lpRect->right = 600;
+		lpRect->bottom = 800;
+		return true;
+	#endif
+}

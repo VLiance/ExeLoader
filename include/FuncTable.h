@@ -215,6 +215,7 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 
 {"CreateWindowExW"  			,(FUNC_) pipe_CreateWindowExW },
 {"GetClientRect"  				,(FUNC_) sys_GetClientRect },
+{"GetWindowRect"  				,(FUNC_) sys_GetWindowRect },
 
 //Win Ini
 {"QueryPerformanceCounter"  	,(FUNC_) sys_QueryPerformanceFrequency },
@@ -235,7 +236,9 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 
 {"InitializeCriticalSection" ,(FUNC_) sys_InitializeCriticalSection },
 {"EnterCriticalSection" ,(FUNC_) sys_EnterCriticalSection },
+{"TryEnterCriticalSection" ,(FUNC_) sys_TryEnterCriticalSection },
 {"LeaveCriticalSection" ,(FUNC_) sys_LeaveCriticalSection },
+{"DeleteCriticalSection" ,(FUNC_) sys_DeleteCriticalSection },
 
 {"SetErrorMode"  	,(FUNC_) sys_SetErrorMode },
 
