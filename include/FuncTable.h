@@ -226,7 +226,8 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 {"GetWindowRect"  				,(FUNC_) sys_GetWindowRect },
 
 //Win Ini
-{"QueryPerformanceCounter"  	,(FUNC_) sys_QueryPerformanceFrequency },
+{"QueryPerformanceFrequency"  	,(FUNC_) sys_QueryPerformanceFrequency },
+{"QueryPerformanceCounter"  	,(FUNC_) sys_QueryPerformanceCounter },
 {"GetTickCount"  				,(FUNC_) sys_GetTickCount },
 {"GetCurrentThreadId"  			,(FUNC_) sys_GetCurrentThreadId },
 {"GetCurrentProcessId"  		,(FUNC_) sys_GetCurrentProcessId },
@@ -250,7 +251,7 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 
 {"SetErrorMode"  	,(FUNC_) sys_SetErrorMode },
 
-
+{"DefWindowProcW"  ,(FUNC_) sys_DefWindowProcW },
 
 /*
 {"SetWindowLongW"  ,(FUNC_) SetWindowLongW },
@@ -453,6 +454,9 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 
 {"abort"  		,(FUNC_) abort },  //TODO custom abort
 
+{"___lc_codepage_func"  ,(FUNC_) imp_lc_codepage_func },
+
+{"localeconv"  ,(FUNC_) pipe_localeconv },
 
 /*
 {"___lc_codepage_func"  ,(FUNC_) My__lc_codepage_func },
@@ -480,7 +484,7 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 
 
 {"vfprintf"  ,(FUNC_) vfprintf },
-
+{"_stricmp"  ,(FUNC_) imp_stricmp },
 
 
 #ifdef USE_Platform_ThreadStorage

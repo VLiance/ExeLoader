@@ -544,7 +544,7 @@ char* pipe_getenv(const char* name){
 int WINAPI pipe_WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWCH lpWideCharStr, int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCCH lpDefaultChar, LPBOOL lpUsedDefaultChar){
 	showfunc("WideCharToMultiByte( ... )", "");
 	#ifdef Func_Win 
-	WideCharToMultiByte(CodePage, dwFlags, lpWideCharStr, cchWideChar, lpMultiByteStr, cbMultiByte, lpDefaultChar, lpUsedDefaultChar);
+	return WideCharToMultiByte(CodePage, dwFlags, lpWideCharStr, cchWideChar, lpMultiByteStr, cbMultiByte, lpDefaultChar, lpUsedDefaultChar);
 	#else
 	return 0;
 	#endif	
@@ -554,7 +554,7 @@ int WINAPI pipe_WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWCH lpWideC
 int WINAPI pipe_MultiByteToWideChar (UINT CodePage, DWORD dwFlags, LPCCH lpMultiByteStr, int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar){
 	showfunc_opt("MultiByteToWideChar( ... )", "");
 	#ifdef Func_Win 
-	MultiByteToWideChar(CodePage, dwFlags, lpMultiByteStr, cbMultiByte, lpWideCharStr, cchWideChar);
+	return MultiByteToWideChar(CodePage, dwFlags, lpMultiByteStr, cbMultiByte, lpWideCharStr, cchWideChar);
 	#else
 	return 0;
 	#endif	
@@ -570,7 +570,7 @@ VOID WINAPI pipe_OutputDebugStringA (LPCSTR lpOutputString){
 	#else
 	#endif	
 }
-VOID WINAPI pipe_OutputDebugStringW (LPCSTR lpOutputString){
+VOID WINAPI pipe_OutputDebugStringW (LPCWSTR lpOutputString){
 	showfunc_opt("OutputDebugStringW( lpOutputString: %p )", lpOutputString);
 	#ifdef Func_Win 
 	OutputDebugStringW(lpOutputString);
@@ -587,4 +587,14 @@ HWND WINAPI pipe_GetConsoleWindow(VOID){
 	return 0;
 	#endif	
 	
+}
+
+//!struct lconv* localeconv (void)
+struct lconv* pipe_localeconv(void){
+	showfunc("localeconv( )", "");
+	#ifdef Func_Win 
+	return localeconv();
+	#else
+	return 0;
+	#endif	
 }

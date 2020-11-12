@@ -46,8 +46,9 @@ DWORD WINAPI sys_GetLastError(VOID){
 		  LPCSTR lpMsgStr = (LPCSTR)lpMsgBuf;
 		  std::string result(lpMsgStr, lpMsgStr+bufLen);
 		  LocalFree(lpMsgBuf);
+		  showinf("GetLastError:%s", result.c_str());
 		}
-		showinf("GetLastError:%s", result.c_str());
+
 	}
 	return error;
 	#else
@@ -99,6 +100,17 @@ inline HRESULT sys_SetProcessDpiAwareness(int value){
 	return 0;
 }
 
+//!WINBOOL WINAPI QueryPerformanceCounter (LARGE_INTEGER *lpPerformanceCount)
+LARGE_INTEGER lpPerformanceCount_ = {0};
+WINBOOL WINAPI sys_QueryPerformanceCounter (LARGE_INTEGER *lpPerformanceCount){
+   	showfunc("QueryPerformanceCounter(lpPerformanceCount)", lpPerformanceCount);
+	#ifdef Func_Win
+		return QueryPerformanceCounter( lpPerformanceCount);
+	#else
+		lpPerformanceCount = &lpPerformanceCount_;
+		return true;
+	#endif
+}
 
 //!WINBOOL WINAPI QueryPerformanceFrequency (LARGE_INTEGER *lpFrequency)
 LARGE_INTEGER lpFrequency_ = {0};
@@ -185,7 +197,7 @@ WINBOOL WINAPI sys_DispatchMessageA(CONST MSG *lpMsg){
 WINBOOL WINAPI sys_DispatchMessageW(CONST MSG *lpMsg){
  	showfunc_opt("DispatchMessageW( lpMsg: %p )", lpMsg);
 	#ifdef Func_Win
-		return sys_DispatchMessageW(lpMsg);
+		return DispatchMessageW(lpMsg);
 	#else
 		return 0;
 	#endif
@@ -318,3 +330,22 @@ WINBOOL WINAPI sys_GetWindowRect(HWND hWnd,LPRECT lpRect){
 	#endif
 }
 
+
+//!LRESULT WINAPI DefWindowProcA (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+//!LRESULT WINAPI DefWindowProcW (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+LRESULT WINAPI sys_DefWindowProcA (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam){
+	showfunc("DefWindowProcA( hWnd: %p, Msg: %p, wParam: %p, lParam: %p )", hWnd, Msg, wParam, lParam);
+	#ifdef Func_Win
+		return DefWindowProcA(hWnd, Msg, wParam, lParam);
+	#else
+		return 0;
+	#endif
+}
+LRESULT WINAPI sys_DefWindowProcW (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam){
+	showfunc("DefWindowProcW( hWnd: %p, Msg: %p, wParam: %p, lParam: %p )", hWnd, Msg, wParam, lParam);
+	#ifdef Func_Win
+		return DefWindowProcW(hWnd, Msg, wParam, lParam);
+	#else
+		return 0;
+	#endif
+}

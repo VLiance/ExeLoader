@@ -436,6 +436,20 @@ int imp_vsnprintf (char* s, size_t n, const char *  format, va_list __local_argv
 	return vsnprintf(s, n, format, __local_argv);
 }
 
+//!UINT ___lc_codepage_func(void)
+UINT imp_lc_codepage_func(void){
+	showfunc_opt("___lc_codepage_func( )", ""); 
+	return 0;
+}
+
+//!int _stricmp(const char *string1,const char *string2)
+int imp_stricmp(const char *string1,const char *string2){
+	showfunc_opt("_stricmp( string1: %p, string2: %p )", ""); 
+	return stricmp(string1, string2);
+}
+
+
+
 /*
 LPVOID WINAPI LocalLock (HLOCAL hMem);
 SIZE_T WINAPI LocalShrink (HLOCAL hMem, UINT cbNewSize);
