@@ -592,9 +592,12 @@ HWND WINAPI pipe_GetConsoleWindow(VOID){
 //!struct lconv* localeconv (void)
 struct lconv* pipe_localeconv(void){
 	showfunc("localeconv( )", "");
+	return localeconv();//TODO?
+	/*
 	#ifdef Func_Win 
 	return localeconv();
 	#else
-	return 0;
+	return 0;//Crash
 	#endif	
+	*/
 }

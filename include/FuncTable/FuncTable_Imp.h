@@ -432,14 +432,14 @@ inline int imp_fwprintf (FILE* stream, const wchar_t* format, ...){
 
 //!int vsnprintf (char * __restrict__ __stream, size_t __n, const char * __restrict__ __format, va_list __local_argv);
 int imp_vsnprintf (char* s, size_t n, const char *  format, va_list __local_argv){
-	showfunc("vsnprintf( s: %p, n: %d, format: %p, ... )", s,n,format); 
+	showfunc_opt("vsnprintf( s: %p, n: %d, format: %p, ... )", s,n,format); 
 	return vsnprintf(s, n, format, __local_argv);
 }
 
 //!UINT ___lc_codepage_func(void)
 UINT imp_lc_codepage_func(void){
 	showfunc_opt("___lc_codepage_func( )", ""); 
-	return 0;
+	return 0; //TODO validate?
 }
 
 //!int _stricmp(const char *string1,const char *string2)
