@@ -221,7 +221,7 @@ typedef struct _RTL_CRITICAL_SECTION {
 */
 //RTL_CRITICAL_SECTION CriticalSection = {(PRTL_CRITICAL_SECTION_DEBUG)1,1,1,(HANDLE)1,(HANDLE)1,(ULONG_PTR)1};
 //!VOID WINAPI InitializeCriticalSection (LPCRITICAL_SECTION lpCriticalSection)
-int criticalSection_thread_ = 0;
+int criticalSection_thread_ = 1;
 VOID WINAPI sys_InitializeCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
  	showfunc_opt("InitializeCriticalSection( lpCriticalSection: %p )", lpCriticalSection);
 	#ifdef Func_Win
@@ -234,7 +234,7 @@ VOID WINAPI sys_InitializeCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
 	lpCriticalSection->OwningThread = (HANDLE)criticalSection_thread_; //fake thread
 	lpCriticalSection->LockSemaphore = (HANDLE)1;
 	lpCriticalSection->SpinCount = 1;
-	criticalSection_thread_ ++; //fake to bypass mesa assert
+	//criticalSection_thread_ ++; //fake to bypass mesa assert
 	#endif
 }
 
@@ -245,7 +245,7 @@ VOID WINAPI sys_EnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
 		EnterCriticalSection(lpCriticalSection);
 	#else
 		lpCriticalSection->OwningThread = (HANDLE)criticalSection_thread_;
-			criticalSection_thread_ ++; //fake to bypass mesa assert
+	//		criticalSection_thread_ ++; //fake to bypass mesa assert
 		//*lpCriticalSection = CriticalSection;
 	#endif
 }
@@ -266,6 +266,7 @@ VOID WINAPI sys_TryEnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
 	#ifdef Func_Win
 		LeaveCriticalSection(lpCriticalSection);
 	#else
+		lpCriticalSection->OwningThread = (HANDLE)0;
 	#endif
 }
 
