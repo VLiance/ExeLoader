@@ -38,8 +38,8 @@ struct pixel {
 };
 
 // Window client size
-const int width = 375;
-const int height = 375;
+const int width = 608;
+const int height = 800;
 
 /* Target fps, though it's hard to achieve this fps
  * without extra timer functionality unless you have
@@ -147,6 +147,8 @@ void MakeSurface(HWND hwnd) {
 
   // Create DIB section to always give direct access to pixels
  // hbmp = CreateDIBSection( hdc, &bmi, DIB_RGB_COLORS, (void**)&pixels, NULL, 0 );
+ 
+ container_pixels = &pixels;
   hbmp = CreateDIBSection( hdc, &bmi, DIB_RGB_COLORS, (void**)container_pixels, NULL, 0 );
 
 
