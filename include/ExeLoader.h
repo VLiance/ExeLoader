@@ -101,7 +101,9 @@ typedef int  (*funcPtrIntIntPtr_int)(void*,int,int,void*);
 
 extern int exe_arg_nb;
 extern char** exe_arg;
-
+extern HINSTANCE hExeloader;
+extern HWND hwnd_View;
+extern void pixView_update(HWND _hwnd);
 
 #ifdef Show_AllFuncTable
 #define showfunc_opt showfunc
@@ -163,12 +165,6 @@ class WStr {
 #define msg_no_vsnprintf L"\nWarning[No No_vsnprintf]"
 #define vsnprintf_ARG(format, dest, max, ret) int ret = sizeof(msg_no_vsnprintf);if(ret<max){memcpy(dest, msg_no_vsnprintf,ret);};
 #endif
-
-
-
-
-
-
 
 
 #endif //EXELOADER_Exeloader_H

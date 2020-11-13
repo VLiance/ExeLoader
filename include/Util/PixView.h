@@ -57,7 +57,8 @@ HDC hdcMem;
 
 
 // Pointer to pixels (will automatically have space allocated by CreateDIBSection
-pixel *pixels;
+pixel* pixels;
+pixel** container_pixels;
 
 
 void onFrame(pixel *pixels) {
@@ -105,7 +106,7 @@ DWORD WINAPI tickThreadProc(HANDLE handle) {
 
   for ( ;; ) {
     // Do stuff with pixels
-    onFrame( pixels );
+ //   onFrame( pixels );
 
     // Draw pixels to window
     BitBlt( hdc, 0, 0, width, height, hdcMem, 0, 0, SRCCOPY );
@@ -145,19 +146,36 @@ void MakeSurface(HWND hwnd) {
   HDC hdc = GetDC( hwnd );
 
   // Create DIB section to always give direct access to pixels
-  hbmp = CreateDIBSection( hdc, &bmi, DIB_RGB_COLORS, (void**)&pixels, NULL, 0 );
-  DeleteDC( hdc );
+ // hbmp = CreateDIBSection( hdc, &bmi, DIB_RGB_COLORS, (void**)&pixels, NULL, 0 );
+  hbmp = CreateDIBSection( hdc, &bmi, DIB_RGB_COLORS, (void**)container_pixels, NULL, 0 );
 
+
+
+
+
+  ShowWindow( hwnd, SW_SHOW );
+  
+  // Retrieve the window's DC
+ // HDC hdc = GetDC( hwnd );
+
+  // Create DC with shared pixels to variable 'pixels'
+  /*
+  hdcMem = CreateCompatibleDC( hdc );
+  HBITMAP hbmOld = (HBITMAP)SelectObject( hdcMem, hbmp );
+  SelectObject( hdcMem, hbmOld );
+ onFrame( pixels );
+    BitBlt( hdc, 0, 0, width, height, hdcMem, 0, 0, SRCCOPY );
+*/
   // Create a new thread to use as a timer
-  hTickThread = CreateThread( NULL, NULL, &tickThreadProc, NULL, NULL, NULL );
+  hTickThread = CreateThread( NULL, 0, &tickThreadProc, NULL, 0, NULL );
+ 
+ 
+  DeleteDC( hdc );
 }
 
-LRESULT CALLBACK WndProc(
-      HWND hwnd,
-      UINT msg,
-      WPARAM wParam,
-      LPARAM lParam)
+LRESULT CALLBACK WndProc( HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
+printf("!!!WndProc!!!");
   switch ( msg ) {
     case WM_CREATE:
       {
@@ -194,9 +212,9 @@ LRESULT CALLBACK WndProc(
 }
 
 
-void createWindow( HINSTANCE hInstance){
+HWND pixView_createWindow( HINSTANCE hInstance){
   WNDCLASSEX wc;
-  MSG msg;
+
 
   // Init wc
   wc.cbClsExtra = 0;
@@ -208,7 +226,7 @@ void createWindow( HINSTANCE hInstance){
   wc.hIconSm = LoadIcon( NULL, IDI_APPLICATION );
   wc.hInstance = hInstance;
   wc.lpfnWndProc = WndProc;
-  wc.lpszClassName = "animation_class";
+  wc.lpszClassName = "pixview_class";
   wc.lpszMenuName = NULL;
   wc.style = 0;
 
@@ -227,6 +245,7 @@ void createWindow( HINSTANCE hInstance){
     300, 200, width, height,
     NULL, NULL, hInstance, NULL );
 
+printf("\n CreateWindowEx: %d\n", hwnd);
 
   RECT rcClient, rcWindow;
   POINT ptDiff;
@@ -241,11 +260,14 @@ void createWindow( HINSTANCE hInstance){
 
   // Resize client
   MoveWindow( hwnd, rcWindow.left, rcWindow.top, width + ptDiff.x, height + ptDiff.y, false);
+  return hwnd;
 }
 
-void update(HANDLE _hwnd,  MSG _msg){
+void pixView_update(HWND _hwnd){
+	if(_hwnd == 0){return;}
 	UpdateWindow( _hwnd );
-	while ( GetMessage(&_msg, 0, 0, NULL) > 0 ) {
+	MSG _msg;
+	while ( PeekMessageA(&_msg, 0, 0, 0, PM_REMOVE) > 0 ) {
 		TranslateMessage( &_msg );
 		DispatchMessage( &_msg );
 	}

@@ -26,6 +26,8 @@ ManagedAlloc instance_AllocManager = {1024};
 char * DLL_LOADED[512] = {0};
 void * DLL_HANDLE[512] = {0};
 int nTotalDLL = 0;
+HINSTANCE hExeloader = 0;
+HWND hwnd_View = 0;
 
 char* aExeFileData;
 long nExeFileSize;
@@ -262,11 +264,33 @@ void GDB_Send_AddSymbolFile(char* _path, void* _text_adress, int _timeout = 1000
 }
 
 
+#define ShowPixView
+#ifdef ShowPixView
+#include "Util/PixView.h"
+#endif
+
 
 int exe_arg_nb=0;
 char** exe_arg=0;
 MemoryModule* memory_module = 0;
 bool fMainExeLoader(const char* _sPath){
+	//setbuf(stdout, NULL);//Just to test
+	#ifdef ImWin
+		 setbuf(stdout, NULL);//Required to see every printf
+		 setbuf(stderr, NULL);//Required to see every printf
+		 registerSignal();
+	#endif
+	
+
+	#ifdef ShowPixView
+		hwnd_View=pixView_createWindow(hExeloader);
+		//while(1){
+		//Sleep(10);
+		pixView_update(hwnd_View);
+		//}
+	#endif
+
+
 
 	if(strlen(_sPath) <= 0){
 		_EXE_LOADER_DEBUG(5, "Aucun fichier spécifié", "No Input files");
@@ -278,13 +302,7 @@ bool fMainExeLoader(const char* _sPath){
 //raise(SIGTRAP);
 
 
-	//setbuf(stdout, NULL);//Just to test
-	#ifdef ImWin
-		 setbuf(stdout, NULL);//Required to see every printf
-		 setbuf(stderr, NULL);//Required to see every printf
-		 registerSignal();
-	#endif
-	
+
 	// Instancier MemoryModule
 	std::unique_ptr<MemoryModule> memory_module_instance(new MemoryModule());
 	memory_module = memory_module_instance.get();
@@ -605,14 +623,23 @@ bool fStartExeLoader(const char* _sPath) {
 }
 
 #ifdef ImWin
-int main(int argc, char* argv[]) {
-	printf("#\nMainCalled!! %d, %s", argc, argv[0]);
-
-	fMainExeLoader(argv[1]);  // argv[0] is path
+int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nShowCmd){
+	hExeloader = hInstance;
+	printf("#\nWinMainCalled!! %d, %s",lpCmdLine);
+	fMainExeLoader(lpCmdLine);  // argv[0] is path
 	printf("\n -- END -- \n");
 	system("Pause");
-
 	// MemoryFreeLibrary(handle);
 	return 0;
 }
+/*
+int main(int argc, char* argv[]) {
+	printf("#\nMainCalled!! %d, %s", argc, argv[0]);
+	fMainExeLoader(argv[1]);  // argv[0] is path
+	printf("\n -- END -- \n");
+	system("Pause");
+	// MemoryFreeLibrary(handle);
+	return 0;
+}*/
+
 #endif
