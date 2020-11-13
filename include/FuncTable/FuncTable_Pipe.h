@@ -329,16 +329,6 @@ inline void pipe_GetSystemInfo( LPSYSTEM_INFO lpSystemInfo){
 	#endif
 }
 
-//!HWND WindowFromDC(HDC hDC)
-inline WINAPI HWND pipe_WindowFromDC(HDC hDC){
-	showfunc("WindowFromDC( hDC:%p )",hDC);
-	#ifdef Func_Win
-	return WindowFromDC(hDC);
-	#else
-	return (HWND)1;//Test (Required for SetPixelFormat)
-	#endif
-}
-
 //!BOOL ClientToScreen(HWND    hWnd,LPPOINT lpPoint)
 inline WINAPI BOOL pipe_ClientToScreen(HWND hWnd,LPPOINT lpPoint){
 	showfunc("ClientToScreen( hWnd:%p, lpPoint.x:%d, lpPoint.y:%d )",hWnd, lpPoint->x, lpPoint->y);

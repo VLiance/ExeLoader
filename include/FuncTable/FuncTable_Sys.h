@@ -69,6 +69,17 @@ inline HDC WINAPI sys_GetDC(HWND hWnd){
 	#endif
 }
 
+//!HWND WindowFromDC(HDC hDC)
+inline WINAPI HWND pipe_WindowFromDC(HDC hDC){
+	showfunc("WindowFromDC( hDC:%p )",hDC);
+	#ifdef Func_Win
+	return WindowFromDC(hDC);
+	#else
+	return (HWND)hDC;//Test (Required for SetPixelFormat)
+	#endif
+}
+
+
 //!HWND WINAPI CreateWindowExW(DWORD dwExStyle,LPCWSTR lpClassName,LPCWSTR lpWindowName,DWORD dwStyle,int X,int Y,int nWidth,int nHeight,HWND hWndParent,HMENU hMenu,HINSTANCE hInstance,LPVOID lpParam)
 HWND WINAPI pipe_CreateWindowExW(DWORD dwExStyle,LPCWSTR lpClassName,LPCWSTR lpWindowName,DWORD dwStyle,int X,int Y,int nWidth,int nHeight,HWND hWndParent,HMENU hMenu,HINSTANCE hInstance,LPVOID lpParam){
 	showfunc("CreateWindowExW( dwExStyle: %d, lpClassName: %p, lpWindowName :%d, dwStyle: %d, X: %d, Y: %d, nWidth: %d, nHeight: %d, hWndParent: %p, hMenu: %p, hInstance: %d, lpParam: %d )",
@@ -101,25 +112,26 @@ inline HRESULT sys_SetProcessDpiAwareness(int value){
 }
 
 //!WINBOOL WINAPI QueryPerformanceCounter (LARGE_INTEGER *lpPerformanceCount)
-LARGE_INTEGER lpPerformanceCount_ = {0};
+
 WINBOOL WINAPI sys_QueryPerformanceCounter (LARGE_INTEGER *lpPerformanceCount){
    	showfunc("QueryPerformanceCounter(lpPerformanceCount)", lpPerformanceCount);
 	#ifdef Func_Win
 		return QueryPerformanceCounter( lpPerformanceCount);
 	#else
-		lpPerformanceCount = &lpPerformanceCount_;
+		LARGE_INTEGER lpPerformanceCount_ = {521891041};//Dummy value
+		*lpPerformanceCount = lpPerformanceCount_;
 		return true;
 	#endif
 }
 
 //!WINBOOL WINAPI QueryPerformanceFrequency (LARGE_INTEGER *lpFrequency)
-LARGE_INTEGER lpFrequency_ = {0};
 WINBOOL WINAPI sys_QueryPerformanceFrequency(LARGE_INTEGER *lpFrequency){
    	showfunc("QueryPerformanceFrequency( lpFrequency: %p )", lpFrequency);
 	#ifdef Func_Win
 		return QueryPerformanceFrequency( lpFrequency);
 	#else
-		lpFrequency = &lpFrequency_;
+		LARGE_INTEGER lpFrequency_ = {8221038}; //Dummy value
+		*lpFrequency = lpFrequency_;
 		return true;
 	#endif
 }
