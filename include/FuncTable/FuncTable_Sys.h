@@ -62,7 +62,7 @@ inline HDC WINAPI sys_GetDC(HWND hWnd){
 	#ifdef Func_Win
 		return GetDC(hWnd);
 	#else
-		return (HDC)hWnd; //HDC is same as HWND (not necessary to dissociate them) //800
+		return (HDC)hWnd; //HDC is same as HWND (not necessary to dissociate them)
 	#endif
 }
 
@@ -72,7 +72,7 @@ inline WINAPI HWND pipe_WindowFromDC(HDC hDC){
 	#ifdef Func_Win
 	return WindowFromDC(hDC);
 	#else
-	return (HWND)hDC; //HDC is same as HWND (not necessary to dissociate them) //800
+	return (HWND)hDC; //HDC is same as HWND (not necessary to dissociate them)
 	#endif
 }
 
@@ -97,7 +97,7 @@ HWND WINAPI pipe_CreateWindowExW(DWORD dwExStyle,LPCWSTR lpClassName,LPCWSTR lpW
 
 		showinf("create hwnd_View( hwnd_View: %d )", aContext[idx].hwnd_View );
 	
-		return (HWND)idx;//800
+		return (HWND)idx;
 	#endif
 }
 
@@ -331,9 +331,9 @@ WINBOOL WINAPI sys_GetClientRect(HWND hWnd,LPRECT lpRect){
 		return GetClientRect(hWnd, lpRect);
 	#else
 		lpRect->left = 0;
-		lpRect->top = 0;
-		lpRect->right = 800;
-		lpRect->bottom = 600;
+		lpRect->top  = 0;
+		lpRect->right  = aContext[(int)hWnd].width;
+		lpRect->bottom = aContext[(int)hWnd].height;
 		return true;
 	#endif
 }
@@ -345,9 +345,9 @@ WINBOOL WINAPI sys_GetWindowRect(HWND hWnd,LPRECT lpRect){
 		return GetWindowRect(hWnd, lpRect);
 	#else
 		lpRect->left = 0;
-		lpRect->top = 0;
-		lpRect->right = 800;
-		lpRect->bottom = 600;
+		lpRect->top  = 0;
+		lpRect->right  = aContext[(int)hWnd].width;
+		lpRect->bottom = aContext[(int)hWnd].height;
 		return true;
 	#endif
 }

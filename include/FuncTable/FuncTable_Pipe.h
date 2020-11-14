@@ -151,11 +151,11 @@ int WINAPI pipe_StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int Dest
 		*/
 	
 		int idx = (int)hdc; //HDC is same as HWND (not necessary to dissociate them)
-		
-		pixView_MakeSurface(&aContext[idx]);
-		memcpy(aContext[idx].pixels, lpBits, aContext[idx].height * aContext[idx].width *4);
-		pixView_update(&aContext[idx]);
-		
+		#ifdef ShowPixView
+			pixView_MakeSurface(&aContext[idx]);
+			memcpy(aContext[idx].pixels, lpBits, aContext[idx].height * aContext[idx].width *4);
+			pixView_update(&aContext[idx]);
+		#endif
 		showinf("use hwnd_View( hwnd_View: %d )", aContext[idx].hwnd_View);
 		return aContext[idx].height; //number of scan lines copied
 	#endif
