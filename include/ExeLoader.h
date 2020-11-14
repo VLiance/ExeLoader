@@ -107,6 +107,7 @@ extern HINSTANCE hExeloader;
 //extern HWND hwnd_View;
 
 typedef struct {
+	HBITMAP hbmp;
 	HWND hwnd_View;
 	void* pixels;
 	int idx;

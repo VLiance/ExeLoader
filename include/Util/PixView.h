@@ -27,18 +27,6 @@ struct pixel {
   };pixel():val(0){}
 };
 
-// Window client size
-//const int width = 800;
-//const int height = 600;
-
-HBITMAP hbmp;
-HANDLE hTickThread;
-HWND hwnd;
-HDC hdcMem;
-
-//pixel* pixels;
-//pixel** container_pixels;
-
 LRESULT CALLBACK WndProc( HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam){
   switch ( msg ) {
     case WM_CREATE:
@@ -61,7 +49,6 @@ LRESULT CALLBACK WndProc( HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam){
       break;
     case WM_DESTROY:
       {
-        TerminateThread( hTickThread, 0 );
         PostQuitMessage( 0 );
       }
       break;
@@ -96,7 +83,7 @@ HWND pixView_createWindow( HINSTANCE hInstance, ContextInf* _context){
 	  class_registred = true;
   }
 
-  hwnd = CreateWindowEx(
+  HWND hwnd = CreateWindowEx(
     WS_EX_APPWINDOW,
     "pixview_class",
     "pixview",
@@ -121,7 +108,6 @@ HWND pixView_createWindow( HINSTANCE hInstance, ContextInf* _context){
   return hwnd;
 }
 
-
 void pixView_MakeSurface(ContextInf* _context){
 	HWND _hwnd = (HWND)_context->hwnd_View;
 	
@@ -143,7 +129,7 @@ void pixView_MakeSurface(ContextInf* _context){
 	bmi.bmiColors[0].rgbReserved = 0;
 
 	HDC hdc = GetDC( _hwnd );
-	hbmp = CreateDIBSection( hdc, &bmi, DIB_RGB_COLORS, (void**)&_context->pixels, NULL, 0 );
+	_context->hbmp = CreateDIBSection( hdc, &bmi, DIB_RGB_COLORS, (void**)&_context->pixels, NULL, 0 );
 	DeleteDC( hdc );
 }
 
@@ -154,18 +140,14 @@ void pixView_update(ContextInf* _context){
 	MSG _msg;
 	ShowWindow( _hwnd, SW_SHOW );
 	
-	
 	while ( PeekMessageA(&_msg, 0, 0, 0, PM_REMOVE) > 0 ) {
 		TranslateMessage( &_msg );
 		DispatchMessage( &_msg );
 	}
 	
-
-	
-	
 	HDC hdc = GetDC( _hwnd );
-	hdcMem = CreateCompatibleDC( hdc );
-	HBITMAP hbmOld = (HBITMAP)SelectObject( hdcMem, hbmp );
+	HDC hdcMem = CreateCompatibleDC( hdc );
+	HBITMAP hbmOld = (HBITMAP)SelectObject( hdcMem, _context->hbmp );
 
 	BitBlt( hdc, 0, 0, _context->width, _context->height, hdcMem, 0, 0, SRCCOPY );
 
