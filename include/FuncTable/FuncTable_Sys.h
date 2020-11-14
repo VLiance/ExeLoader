@@ -361,3 +361,12 @@ LRESULT WINAPI sys_DefWindowProcW (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lP
 		return 0;
 	#endif
 }
+
+//!VOID WINAPI Sleep (DWORD dwMilliseconds)
+VOID WINAPI sys_Sleep (DWORD dwMilliseconds){
+	showfunc("Sleep( dwMilliseconds: %d )", dwMilliseconds);
+	#ifdef Func_Win
+		Sleep(dwMilliseconds);
+	#else
+	#endif
+}

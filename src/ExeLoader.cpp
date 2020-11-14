@@ -286,7 +286,7 @@ bool fMainExeLoader(const char* _sPath){
 		hwnd_View=pixView_createWindow(hExeloader);
 		//while(1){
 		//Sleep(10);
-		pixView_update(hwnd_View);
+		//pixView_update(hwnd_View);
 		//}
 	#endif
 

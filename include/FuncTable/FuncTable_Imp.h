@@ -297,11 +297,8 @@ DWORD WINAPI imp_TlsAlloc(void){
 //!BOOL TlsSetValue(DWORD  dwTlsIndex,LPVOID lpTlsValue)
 BOOL  WINAPI imp_TlsSetValue(DWORD dwTlsIndex, _In_opt_ LPVOID lpTlsValue){
 	showfunc_opt("TlsSetValue( dwTlsIndex: %d, lpTlsValue: %p )", dwTlsIndex, lpTlsValue);
-   if(lpTlsValue != 0){
-		_EXE_LOADER_DEBUG(3,"TlsSetValue() : %d [0x%p] value : %d\n","TlsSetValue() : %d [0x%p] value : %d\n", dwTlsIndex, lpTlsValue, *(int*)lpTlsValue );
-   }else{
-		_EXE_LOADER_DEBUG(3,"TlsSetValue() : %d [0x%p]\n"		    ,"TlsSetValue() : %d [0x%p]\n",			   dwTlsIndex, lpTlsValue);
-   }
+	//if(lpTlsValue != 0){showfunc_opt(3,"TlsSetValue() : %d [0x%p] value : %d\n","TlsSetValue() : %d [0x%p] value : %d\n", dwTlsIndex, lpTlsValue, *(int*)lpTlsValue );
+	//}else{showfunc_opt(3,"TlsSetValue() : %d [0x%p]\n"		    ,"TlsSetValue() : %d [0x%p]\n",			   dwTlsIndex, lpTlsValue);}
    aTlsNewMem[dwTlsIndex] = lpTlsValue;
    return true;
 }
@@ -309,22 +306,18 @@ BOOL  WINAPI imp_TlsSetValue(DWORD dwTlsIndex, _In_opt_ LPVOID lpTlsValue){
 //!LPVOID TlsGetValue(DWORD dwTlsIndex)
 LPVOID WINAPI imp_TlsGetValue(DWORD dwTlsIndex){
 	showfunc_opt("TlsGetValue( dwTlsIndex: %d )", dwTlsIndex);
-   if(aTlsNewMem[dwTlsIndex] != 0){
-		_EXE_LOADER_DEBUG(3,"TlsGetValue() : %d [0x%p] value : %d\n","TlsGetValue() : %d [0x%p] value : %d\n", dwTlsIndex, aTlsNewMem[dwTlsIndex], *(int*)aTlsNewMem[dwTlsIndex]);
-   }else{
-		_EXE_LOADER_DEBUG(3,"TlsGetValue() : %d [0x%p]\n"		     ,"TlsGetValue() : %d [0x%p]\n",		   dwTlsIndex, aTlsNewMem[dwTlsIndex]);
-   }
+   //if(aTlsNewMem[dwTlsIndex] != 0){_EXE_LOADER_DEBUG(3,"TlsGetValue() : %d [0x%p] value : %d\n","TlsGetValue() : %d [0x%p] value : %d\n", dwTlsIndex, aTlsNewMem[dwTlsIndex], *(int*)aTlsNewMem[dwTlsIndex]);
+   //}else{_EXE_LOADER_DEBUG(3,"TlsGetValue() : %d [0x%p]\n"		     ,"TlsGetValue() : %d [0x%p]\n",		   dwTlsIndex, aTlsNewMem[dwTlsIndex]);}
    return aTlsNewMem[dwTlsIndex];
 }
 
 //!BOOL TlsFree(DWORD dwTlsIndex)
 BOOL WINAPI imp_TlsFree(DWORD dwTlsIndex){
 	showfunc_opt("TlsFree( dwTlsIndex: %d )", dwTlsIndex);
-	_EXE_LOADER_DEBUG(3,"TlsFree() : %d [0x%p] value : %d\n","TlsFree() : %d [0x%p] value: %d\n", dwTlsIndex, aTlsNewMem[dwTlsIndex], *(int*)aTlsNewMem[dwTlsIndex]);
+	//_EXE_LOADER_DEBUG(3,"TlsFree() : %d [0x%p] value : %d\n","TlsFree() : %d [0x%p] value: %d\n", dwTlsIndex, aTlsNewMem[dwTlsIndex], *(int*)aTlsNewMem[dwTlsIndex]);
 	aTlsNewMem[dwTlsIndex] = 0;
 	return true;
 }
-
 
 //==== Local Alloc === //  ** ---- Not tested --- **
 

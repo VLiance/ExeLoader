@@ -56,8 +56,8 @@
 #include "FuncTable/FuncTable_Imp.h"
 #include "FuncTable/FuncTable_Sys.h"
 #include "FuncTable/FuncTable_Pipe.h"
-#include "FuncTable/FuncTable_Remap_Common.h"
-#include "FuncTable/FuncTable_Remap_Windows.h"
+//#include "FuncTable/FuncTable_Remap_Common.h"
+//#include "FuncTable/FuncTable_Remap_Windows.h"
 	
 #ifndef UseWinFunc
 	//onCpcDos
@@ -69,13 +69,13 @@
 #include "FuncTable/CpcDosFuncTable.h"
 //////////////////////////////////////
 
-{"fNotImplemented" 	,(FUNC_) fNotImplemented },    	//Must be first
-{"GetProcAddress" 	,(FUNC_) imp_GetProcAddress }, 	//Special
-{"LoadLibraryA"    	,(FUNC_) imp_LoadLibraryA },  	//Special
-//{"LoadLibraryExW"  	,(FUNC_) LoadLibraryExW }, 		//TODO
+{"func_NotImplemented" 		,(FUNC_) func_NotImplemented }, //Must be first
+{"GetProcAddress" 			,(FUNC_) imp_GetProcAddress }, 	//Special
+{"LoadLibraryA"    			,(FUNC_) imp_LoadLibraryA },  	//Special
+//{"LoadLibraryExW"  			,(FUNC_) LoadLibraryExW }, 			//TODO
 
-{"CommandLineToArgvW"  	,(FUNC_) imp_CommandLineToArgvW },
-{"GetCommandLineW"  	,(FUNC_) imp_GetCommandLineW },
+{"CommandLineToArgvW"  		,(FUNC_) imp_CommandLineToArgvW },
+{"GetCommandLineW"  		,(FUNC_) imp_GetCommandLineW },
 /////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////// FUNC TABLE /////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -180,27 +180,23 @@
 
 
 
-{"InitializeCriticalSectionEx" 	,(FUNC_) pipe_InitializeCriticalSectionEx },
-{"IsProcessorFeaturePresent" 	,(FUNC_) pipe_IsProcessorFeaturePresent },
+{"InitializeCriticalSectionEx" 			,(FUNC_) pipe_InitializeCriticalSectionEx },
+{"IsProcessorFeaturePresent" 			,(FUNC_) pipe_IsProcessorFeaturePresent },
 {"InitializeCriticalSectionAndSpinCount", (FUNC_) pipe_InitializeCriticalSectionAndSpinCount },
 
 /*
 //!WINBASEAPI LPVOID WINAPI HeapAlloc (HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes)
-WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
-	showfunc_opt("HeapAlloc( hHeap: %p, dwFlags: %d, dwBytes: %d )", hHeap, dwFlags, dwBytes);
-}
 //!WINBASEAPI HANDLE WINAPI HeapCreate (DWORD flOptions, SIZE_T dwInitialSize, SIZE_T dwMaximumSize);
 //!WINBASEAPI HANDLE WINAPI GetProcessHeap (VOID)
 //!WINBASEAPI LPVOID WINAPI HeapReAlloc (HANDLE hHeap, DWORD dwFlags, LPVOID lpMem, SIZE_T dwBytes)
 //!WINBASEAPI WINBOOL WINAPI HeapFree (HANDLE hHeap, DWORD dwFlags, LPVOID lpMem)
 //!WINBASEAPI SIZE_T WINAPI HeapSize (HANDLE hHeap, DWORD dwFlags, LPCVOID lpMem)
-
-{"GetProcessHeap"  ,(FUNC_) GetProcessHeap },
-{"HeapCreate"  ,(FUNC_) HeapCreate },
-{"HeapAlloc"  ,(FUNC_) HeapAlloc },
-{"HeapReAlloc"  ,(FUNC_) HeapReAlloc },
-{"HeapFree"  ,(FUNC_) HeapFree },
-{"HeapSize"  ,(FUNC_) HeapSize },
+{"GetProcessHeap"  	,(FUNC_) win_GetProcessHeap },
+{"HeapCreate"  		,(FUNC_) win_HeapCreate },
+{"HeapAlloc"  		,(FUNC_) win_HeapAlloc },
+{"HeapReAlloc"  		,(FUNC_) win_HeapReAlloc },
+{"HeapFree"  			,(FUNC_) win_HeapFree },
+{"HeapSize"  			,(FUNC_) win_HeapSize },
 */
 
 
@@ -208,8 +204,8 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 //{"localeconv"  ,(FUNC_) localeconv },
 //{"setlocale"  ,(FUNC_) setlocale },
 
-{"setlocale"  ,(FUNC_) pipe_setlocale },
-{"getenv"  ,(FUNC_) pipe_getenv },
+{"setlocale"  				,(FUNC_) pipe_setlocale },
+{"getenv"  					,(FUNC_) pipe_getenv },
 
 {"IsDebuggerPresent"  	 	,(FUNC_) pipe_IsDebuggerPresent },
 {"UnhandledExceptionFilter" ,(FUNC_) pipe_UnhandledExceptionFilter },
@@ -243,260 +239,47 @@ WINBASEAPI LPVOID WINAPI HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 
 
 
-{"InitializeCriticalSection" ,(FUNC_) sys_InitializeCriticalSection },
-{"EnterCriticalSection" ,(FUNC_) sys_EnterCriticalSection },
-{"TryEnterCriticalSection" ,(FUNC_) sys_TryEnterCriticalSection },
-{"LeaveCriticalSection" ,(FUNC_) sys_LeaveCriticalSection },
-{"DeleteCriticalSection" ,(FUNC_) sys_DeleteCriticalSection },
+{"InitializeCriticalSection" 	,(FUNC_) sys_InitializeCriticalSection },
+{"EnterCriticalSection" 		,(FUNC_) sys_EnterCriticalSection },
+{"TryEnterCriticalSection" 		,(FUNC_) sys_TryEnterCriticalSection },
+{"LeaveCriticalSection" 		,(FUNC_) sys_LeaveCriticalSection },
+{"DeleteCriticalSection" 		,(FUNC_) sys_DeleteCriticalSection },
 
-{"SetErrorMode"  	,(FUNC_) sys_SetErrorMode },
+{"SetErrorMode"  			,(FUNC_) sys_SetErrorMode },
 
-{"DefWindowProcW"  ,(FUNC_) sys_DefWindowProcW },
+{"DefWindowProcW"  			,(FUNC_) sys_DefWindowProcW },
+{"Sleep"					,(FUNC_) sys_Sleep },
 
-/*
-{"SetWindowLongW"  ,(FUNC_) SetWindowLongW },
-{"RegisterClassExW"  ,(FUNC_) RegisterClassExW },
-
-{"CreateCompatibleDC"  ,(FUNC_) CreateCompatibleDC },
-{"CreateDIBSection"  ,(FUNC_) CreateDIBSection },
-{"SelectObject"  ,(FUNC_) SelectObject },
-{"MoveWindow"  ,(FUNC_) MoveWindow },
+{"GetLastError"  			,(FUNC_) sys_GetLastError },
+{"SetLastError"  			,(FUNC_) sys_SetLastError },
 
 
-
-
-{"GetFileType"  ,(FUNC_) GetFileType },
-{"GetStdHandle"  ,(FUNC_) GetStdHandle },
-
-{"GetACP"  ,(FUNC_) GetACP },
-{"MultiByteToWideChar"  ,(FUNC_) MultiByteToWideChar },
-{"WideCharToMultiByte"  ,(FUNC_) WideCharToMultiByte },
-{"GetStringTypeW"  ,(FUNC_) GetStringTypeW },
-{"GetCommandLineA"  ,(FUNC_) GetCommandLineA },
-{"GetCommandLineW"  ,(FUNC_) GetCommandLineW },
-{"GetCPInfo"  ,(FUNC_) GetCPInfo },
-{"IsValidCodePage"  ,(FUNC_) IsValidCodePage },
-{"InitializeSListHead"  ,(FUNC_) InitializeSListHead },
-{"GetEnvironmentStringsW"  ,(FUNC_) GetEnvironmentStringsW },
-{"FreeEnvironmentStringsW"  ,(FUNC_) FreeEnvironmentStringsW },
-
-{"GetModuleFileNameA"  ,(FUNC_) GetModuleFileNameA },
-{"WriteFile"  ,(FUNC_) WriteFile },
-
-{"GetCurrentProcessId"  ,(FUNC_)GetCurrentProcessId },
-{"GetCurrentThreadId"  ,(FUNC_)GetCurrentThreadId },
-{"GetTickCount"  ,(FUNC_) GetTickCount },
-{"QueryPerformanceCounter"  ,(FUNC_) QueryPerformanceCounter },
-{"GetSystemTimeAsFileTime"  ,(FUNC_) GetSystemTimeAsFileTime },
-{"SetUnhandledExceptionFilter"  ,(FUNC_) SetUnhandledExceptionFilter },
-
-
-{"CreateThread" ,(FUNC_) CreateThread },
-{"EnterCriticalSection" ,(FUNC_) EnterCriticalSection },//BUG
-{"LeaveCriticalSection" ,(FUNC_) LeaveCriticalSection }, //BUG
-{"DeleteCriticalSection" ,(FUNC_) DeleteCriticalSection },
-{"ExitProcess" ,(FUNC_) ExitProcess },
-{"LoadLibraryExW" ,(FUNC_) LoadLibraryExW },
-{"GetSystemTimeAsFileTime" ,(FUNC_) GetSystemTimeAsFileTime },
-{"IsProcessorFeaturePresent" ,(FUNC_) IsProcessorFeaturePresent },
-
-	
-{"InitializeCriticalSection" ,(FUNC_) InitializeCriticalSection },
-//{"InitializeCriticalSectionEx" ,(FUNC_) InitializeCriticalSectionEx },
-
-{"GetCurrentProcessId"  ,(FUNC_) GetCurrentProcessId },
-
-{"CreateEventW"  ,(FUNC_) CreateEventW },
-{"IsDBCSLeadByte"  ,(FUNC_) IsDBCSLeadByte },
-{"GetConsoleMode"  ,(FUNC_) GetConsoleMode },
-{"SetConsoleCtrlHandler"  ,(FUNC_) SetConsoleCtrlHandler },
-{"LoadStringW"  ,(FUNC_) LoadStringW },
-{"SetErrorMode"  ,(FUNC_) SetErrorMode },
-{"RegOpenKeyExW"  ,(FUNC_) RegOpenKeyExW },
-{"RegQueryValueExW"  ,(FUNC_) RegQueryValueExW },
-{"RegCloseKey"  ,(FUNC_) RegCloseKey },
-{"GetVersionExW"  ,(FUNC_) GetVersionExW },
-{"GetVersionExW"  ,(FUNC_) GetVersionExW },
-{"LoadLibraryW"  ,(FUNC_) LoadLibraryW },
-{"CreateFileW"  ,(FUNC_) CreateFileW },
-{"GetCurrentDirectoryW"  ,(FUNC_) GetCurrentDirectoryW },
-{"CharUpperW"  ,(FUNC_) CharUpperW },
-
-{"Sleep", 	(FUNC_) Sleep },
-{"GetStdHandle"  ,(FUNC_) GetStdHandle },
-{"GetConsoleWindow"  ,(FUNC_) GetConsoleWindow },
-{"SetConsoleWindowInfo"  ,(FUNC_) SetConsoleWindowInfo },
-
-{"SetConsoleOutputCP"  ,(FUNC_) SetConsoleOutputCP },
-{"SetConsoleTextAttribute"  ,(FUNC_) SetConsoleTextAttribute },
-{"SetConsoleScreenBufferSize"  ,(FUNC_) SetConsoleScreenBufferSize },
-{"MoveWindow"  ,(FUNC_) MoveWindow },
-
-{"GetModuleFileNameW"  ,(FUNC_) GetModuleFileNameW },
-{"GetFileAttributesExW"  ,(FUNC_) GetFileAttributesExW },
-
-
-{"_wfopen"  ,(FUNC_) _wfopen },
-
-{"wprintf"  ,(FUNC_) wprintf },
-{"wsprintfW"  ,(FUNC_) wsprintfW }, //Not work??
-
-{"SetLastError"  ,(FUNC_) SetLastError }, //Required !?
-{"fread"  ,(FUNC_) fread },
-
-	//Timer
-	{"QueryPerformanceCounter"  ,(FUNC_) QueryPerformanceCounter },
-	{"QueryPerformanceFrequency"  ,(FUNC_) QueryPerformanceFrequency },
-
-	{"Sleep"  ,(FUNC_) Sleep },
-	{"BitBlt"  ,(FUNC_) BitBlt },
-
-	{"GetClientRect"  ,(FUNC_) GetClientRect },
-	{"GetWindowRect"  ,(FUNC_) GetWindowRect },
-
-	{"TranslateMessage"  ,(FUNC_) TranslateMessage },
-	{"DispatchMessageW"  ,(FUNC_) DispatchMessageW },
-	{"PeekMessageW"  ,(FUNC_) PeekMessageW },
-	{"GetWindowLongW"  ,(FUNC_) GetWindowLongW },
-	{"DefWindowProcW"  ,(FUNC_) DefWindowProcW },
-
-	//{"LoadCursorW"  ,(FUNC_) LoadCursorW },
-	//{"LoadIconW"  ,(FUNC_) LoadIconW },
-	{"MessageBoxW"  ,(FUNC_) MessageBoxW },
-
-	{"fgets"  ,(FUNC_) fgets },
-*/
-
-
-/*
-#ifdef InCpcDosCore
-	////////////////////
-	////// CpcDos //////
-	////////////////////
-  
-	//{"abs"  ,(FUNC_) abs_CPC },  ///BUG!!
-	
-	{"fgets"  ,(FUNC_) cpc_fgets },
-	{"_fgets"  ,(FUNC_) cpc_fgets },
-
-	{"GetStdHandle"  ,(FUNC_) My_GetStdHandle },
-	{"GetConsoleWindow"  ,(FUNC_) My_GetConsoleWindow },
-	{"SetConsoleWindowInfo"  ,(FUNC_) My_SetConsoleWindowInfo },
-	{"setlocale"  ,(FUNC_) My_setlocale },
-	{"SetConsoleOutputCP"  ,(FUNC_) My_SetConsoleOutputCP },
-	{"SetConsoleTextAttribute"  ,(FUNC_) My_SetConsoleTextAttribute },
-	{"SetConsoleScreenBufferSize"  ,(FUNC_) My_SetConsoleScreenBufferSize },
-	{"MoveWindow"  ,(FUNC_) My_MoveWindow },
-
-	{"GetModuleFileNameW"  ,(FUNC_) My_GetModuleFileNameW },
-	{"GetFileAttributesExW"  ,(FUNC_) My_GetFileAttributesExW },
-
-
-
-	{"_wfopen"  ,(FUNC_) My_wfopen },
-
-	{"wprintf"  ,(FUNC_) My_wprintf },
-	{"wsprintfW"  ,(FUNC_) My_wprintf }, //Not work??
-
-
-	{"SetLastError"  ,(FUNC_) My_SetLastError }, //Required !?
-	{"fread"  ,(FUNC_) fread },
-
-	{"MoveWindow"  ,(FUNC_) Nothing },
-	{"GetModuleFileNameW"  ,(FUNC_) Nothing }, //useless?
-
-	//Windows
-	{"SetWindowLongW"  ,(FUNC_) My_SetWindowLongW },
-	{"RegisterClassExW"  ,(FUNC_) My_RegisterClassExW },
-	{"CreateWindowExW"  ,(FUNC_) My_CreateWindowExW },
-	{"ShowWindow"  ,(FUNC_) My_ShowWindow },
-	{"CreateCompatibleDC"  ,(FUNC_) My_CreateCompatibleDC },
-	{"CreateDIBSection"  ,(FUNC_) My_CreateDIBSection },
-	{"SelectObject"  ,(FUNC_) My_SelectObject },
-	{"GetDC"  ,(FUNC_) My_GetDC },
-
-	{"GetCurrentProcessId "  ,(FUNC_) My_GetCurrentProcessId },
-	{"GetTickCount "  ,(FUNC_) clock() },
-
-	//Timer
-	{"QueryPerformanceCounter"  ,(FUNC_) My_QueryPerformanceCounter },
-	{"QueryPerformanceFrequency"  ,(FUNC_) My_QueryPerformanceFrequency },
-
-	//{"Sleep"  ,(FUNC_) My_Sleep },
-
-
-	{"BitBlt"  ,(FUNC_) My_BitBlt },
-
-	{"GetClientRect"  ,(FUNC_) My_GetClientRect },
-	{"GetWindowRect"  ,(FUNC_) My_GetWindowRect },
-
-
-	{"GetWindowLongW"  ,(FUNC_) My_GetWindowLongW },
-	{"DefWindowProcW"  ,(FUNC_) My_DefWindowProcW },
-
-//	{"LoadCursorW"  ,(FUNC_) My_LoadCursorW },
-// 	{"LoadIconW"  ,(FUNC_) My_LoadIconW },
-	{"MessageBoxW"  ,(FUNC_) My_MessageBoxW },
-	
-#endif /////////////////////////////////////
-*/
-
-{"GetLastError"  ,(FUNC_) sys_GetLastError },
-{"SetLastError"  ,(FUNC_) sys_SetLastError },
-
-
-{"CreateSemaphoreA"  ,(FUNC_) pipe_CreateSemaphoreA },
-{"CreateSemaphoreW"  ,(FUNC_) pipe_CreateSemaphoreW },
+{"CreateSemaphoreA"  		,(FUNC_) pipe_CreateSemaphoreA },
+{"CreateSemaphoreW"  		,(FUNC_) pipe_CreateSemaphoreW },
 
 {"_vsnprintf"  	,(FUNC_) imp_vsnprintf },
 {"_snwprintf"  	,(FUNC_) imp_snwprintf },
 {"fwprintf"  	,(FUNC_) imp_fwprintf },
 
-{"abort"  		,(FUNC_) abort },  //TODO custom abort
-
 {"___lc_codepage_func"  ,(FUNC_) imp_lc_codepage_func },
-
 {"localeconv"  ,(FUNC_) pipe_localeconv },
 
-/*
-{"___lc_codepage_func"  ,(FUNC_) My__lc_codepage_func },
-{"getenv"  ,(FUNC_) My_getenv },
-{"__getmainargs" ,(FUNC_) My_getmainargs },
-{"__set_app_type" ,(FUNC_) My_set_app_type },
-{"_setmode" ,(FUNC_) My_setmode },
-{"__p__environ" ,(FUNC_) My_penviron },
-{"__p__fmode" ,(FUNC_) My_pfmode },
-{"signal" ,(FUNC_) My__signal },
-{"atexit" ,(FUNC_) My_atexit },
-{"_cexit" ,(FUNC_) My_cexit },
-{"_onexit" ,(FUNC_) My_Onexit },
-{"exit" ,(FUNC_) My_exit },
-{"GetStartupInfo" ,(FUNC_) My_GetStartupInfo },
-
-{"GetCommandLineA"  ,(FUNC_) My_GetCommandLineA },
-{"GetStartupInfoA"  ,(FUNC_) My_GetStartupInfo },
-{"GetCurrentThreadId"  ,(FUNC_) My_GetCurrentThreadId },
-
-{"fputc"  ,(FUNC_) My_fputc },
-{"WriteConsoleA"  ,(FUNC_) My_WriteConsoleA },
-*/
-
-
+{"abort"  		,(FUNC_) abort },  //TODO custom abort
 
 {"vfprintf"  ,(FUNC_) vfprintf },
 {"_stricmp"  ,(FUNC_) imp_stricmp },
 
 
 #ifdef USE_Platform_ThreadStorage
-	{"TlsAlloc"  ,	 (FUNC_) imp_TlsAlloc },
-	{"TlsGetValue"  ,(FUNC_) imp_TlsGetValue },
-	{"TlsSetValue"  ,(FUNC_) imp_TlsSetValue },
-	{"TlsFree"  	,(FUNC_) imp_TlsFree },
-#else
 	{"TlsAlloc"  ,	 (FUNC_) TlsAlloc },
 	{"TlsGetValue"  ,(FUNC_) TlsGetValue },
 	{"TlsSetValue"  ,(FUNC_) TlsSetValue },
 	{"TlsFree"  	,(FUNC_) TlsFree },
+#else
+	{"TlsAlloc"  ,	 (FUNC_) imp_TlsAlloc },
+	{"TlsGetValue"  ,(FUNC_) imp_TlsGetValue },
+	{"TlsSetValue"  ,(FUNC_) imp_TlsSetValue },
+	{"TlsFree"  	,(FUNC_) imp_TlsFree },
 #endif
 
 

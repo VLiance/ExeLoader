@@ -358,13 +358,6 @@ typedef struct _IMAGE_DOS_HEADER {
 #endif
   typedef  char* LPCTSTR;
 
-
-
-
-
-
-
-
 #define IMAGE_SCN_CNT_CODE 0x00000020
 #define IMAGE_SCN_CNT_INITIALIZED_DATA 0x00000040
 #define IMAGE_SCN_CNT_UNINITIALIZED_DATA 0x00000080
@@ -427,7 +420,6 @@ typedef struct _IMAGE_DOS_HEADER {
       } u1;
     } IMAGE_THUNK_DATA32;
     typedef IMAGE_THUNK_DATA32 *PIMAGE_THUNK_DATA32;
-
 
 
 #ifdef _WIN64
@@ -800,7 +792,6 @@ DECLARE_HANDLE(HWINEVENTHOOK);
     DWORD time;
     POINT pt;
   } MSG,*PMSG,*NPMSG,*LPMSG;
-
 
 
 #endif
