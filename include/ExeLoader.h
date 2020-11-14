@@ -99,11 +99,26 @@ typedef int  (*funcPtrIntIntPtr_int)(void*,int,int,void*);
 #define showfunc_ret(name, ...) _EXE_LOADER_DEBUG(0, "\n-->Retour: " name, "\n-->Return: " name , __VA_ARGS__);
 #define showinf(name, ...) _EXE_LOADER_DEBUG(0, "\n--: " name, "\n---: " name , __VA_ARGS__);
 
+
+
 extern int exe_arg_nb;
 extern char** exe_arg;
 extern HINSTANCE hExeloader;
-extern HWND hwnd_View;
-extern void pixView_update(HWND _hwnd);
+//extern HWND hwnd_View;
+
+typedef struct {
+	HWND hwnd_View;
+	void* pixels;
+	int idx;
+	int width;
+	int height;
+} ContextInf;
+extern int aContext_count;
+extern ContextInf aContext[50];
+
+HWND pixView_createWindow( HINSTANCE hInstance, ContextInf* _context);
+void pixView_update(ContextInf* _context);
+void pixView_MakeSurface(ContextInf* _context);
 
 #ifdef Show_AllFuncTable
 #define showfunc_opt showfunc

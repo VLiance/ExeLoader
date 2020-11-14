@@ -57,15 +57,12 @@ DWORD WINAPI sys_GetLastError(VOID){
 }
 
 //!HDC GetDC(HWND hWnd)
-int aDC[10] = {};
-int aDC_curr = 0;
 inline HDC WINAPI sys_GetDC(HWND hWnd){
 	showfunc("GetDC( lpModuleName: %p)", hWnd); 
 	#ifdef Func_Win
 		return GetDC(hWnd);
 	#else
-		aDC_curr++;
-		return (HDC)aDC_curr;  //TODO
+		return (HDC)hWnd; //HDC is same as HWND (not necessary to dissociate them) //800
 	#endif
 }
 
@@ -75,7 +72,7 @@ inline WINAPI HWND pipe_WindowFromDC(HDC hDC){
 	#ifdef Func_Win
 	return WindowFromDC(hDC);
 	#else
-	return (HWND)hDC;//Test (Required for SetPixelFormat)
+	return (HWND)hDC; //HDC is same as HWND (not necessary to dissociate them) //800
 	#endif
 }
 
@@ -87,7 +84,20 @@ HWND WINAPI pipe_CreateWindowExW(DWORD dwExStyle,LPCWSTR lpClassName,LPCWSTR lpW
 	#ifdef Func_Win
 		return CreateWindowExW( dwExStyle, lpClassName, lpWindowName, dwStyle, X, Y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam );
 	#else
-		return (HWND)1; //TODO
+		//Create a new Window Context
+		aContext_count++; //Important: Skip the zero index (NULL)
+		int idx = aContext_count;
+		
+		aContext[idx].idx = idx;
+		aContext[idx].width = nWidth;
+		aContext[idx].height = nHeight;
+		#ifdef ShowPixView
+		aContext[idx].hwnd_View = pixView_createWindow(hExeloader, &aContext[idx]);
+		#endif
+
+		showinf("create hwnd_View( hwnd_View: %d )", aContext[idx].hwnd_View );
+	
+		return (HWND)idx;//800
 	#endif
 }
 

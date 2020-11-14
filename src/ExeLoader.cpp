@@ -19,15 +19,18 @@
 #include "ExeLoader.h"
 #include "Debug.h"
 
-
 ManagedAlloc instance_AllocManager = {1024};
 
+char* DLL_LOADED[512] = {0};
+void* DLL_HANDLE[512] = {0};
 
-char * DLL_LOADED[512] = {0};
-void * DLL_HANDLE[512] = {0};
+int aContext_count = 0;
+ContextInf aContext[50] = {0};
+
+
 int nTotalDLL = 0;
 HINSTANCE hExeloader = 0;
-HWND hwnd_View = 0;
+//HWND hwnd_View = 0;
 
 char* aExeFileData;
 long nExeFileSize;
@@ -142,25 +145,11 @@ long nExeFileSize;
 		FILE*  f = fopen((char*)_sFullPath, "rb+");
 		unsigned char *result;
 
-		if (f != NULL)
-		{
-			WIN32_FILE_ATTRIBUTE_DATA fa;
-			/*
-			if (!GetFileAttributesExW((LPCWSTR)(gzUInt16*)_wcFile, GetFileExInfoStandard, &fa)){
-			// error handling
-			}*/
-			/*
-			if (!GetFileAttributesEx((LPCSTR)(gzUInt8*)_sFullPath, GetFileExInfoStandard, &fa)){
-			// error handling
-			}*/
-			//  int  size = ftell(f);
-			// obtain file size:
-			
+		if (f != NULL){
 			long lSize;
 			fseek (f , 0 , SEEK_END);
 			lSize = ftell (f);
 			rewind (f);
-			// gzUIntX _nSize =   ((gzUInt64)fa.nFileSizeHigh << 32) | fa.nFileSizeLow;
 			size_t _nSize = lSize;
 
 			uint8_t* _aData = new uint8_t[_nSize];
@@ -235,26 +224,6 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 }
 
 
-
-
-/*
-bool GDB_Send_RunCmd_AndWait(int _timeout = 1000){ //1000 = 1 seconde
-
-	printf("Cmd(add)[GDB]:Continue\n");
-	printf("Cmd(run)[GDB]:(waiting)\n");
-	
-	#ifdef ImWin
-	while(_timeout>0){
-		Sleep(1);
-		_timeout--;
-		if(_timeout == 5){
-			return true;
-		}
-	}
-	#endif
-	return false;
-}*/
-
 void GDB_Send_AddSymbolFile(char* _path, void* _text_adress, int _timeout = 1000){
 //add-symbol-file "E:/.../app.exe" 0xXXXXX
 	//fflush(stdout);fflush(stderr);//To be sure we receive the cmd
@@ -264,7 +233,7 @@ void GDB_Send_AddSymbolFile(char* _path, void* _text_adress, int _timeout = 1000
 }
 
 
-#define ShowPixView
+
 #ifdef ShowPixView
 #include "Util/PixView.h"
 #endif
@@ -274,23 +243,16 @@ int exe_arg_nb=0;
 char** exe_arg=0;
 MemoryModule* memory_module = 0;
 bool fMainExeLoader(const char* _sPath){
-	//setbuf(stdout, NULL);//Just to test
+
 	#ifdef ImWin
 		 setbuf(stdout, NULL);//Required to see every printf
 		 setbuf(stderr, NULL);//Required to see every printf
 		 registerSignal();
 	#endif
 	
-
 	#ifdef ShowPixView
-		hwnd_View=pixView_createWindow(hExeloader);
-		//while(1){
-		//Sleep(10);
-		//pixView_update(hwnd_View);
-		//}
+	//	hwnd_View=pixView_createWindow(hExeloader);
 	#endif
-
-
 
 	if(strlen(_sPath) <= 0){
 		_EXE_LOADER_DEBUG(5, "Aucun fichier spécifié", "No Input files");
@@ -299,15 +261,10 @@ bool fMainExeLoader(const char* _sPath){
 		_EXE_LOADER_DEBUG(5, "Fichier: %s", "File: %s", _sPath);
 	}
 
-//raise(SIGTRAP);
-
-
-
 	// Instancier MemoryModule
 	std::unique_ptr<MemoryModule> memory_module_instance(new MemoryModule());
 	memory_module = memory_module_instance.get();
 	
-
 	void *data;
 	long filesize;
 //	std::unique_ptr<HMEMORYMODULE> handle_ptr{new HMEMORYMODULE};
@@ -612,13 +569,9 @@ bool fStartExeLoader(const char* _sPath) {
 	#endif
 	
 	bool resultat = fMainExeLoader(_sPath);
-	
-	// Tout nettoyer!
+
 	instance_AllocManager.ManagedAlloc_clean();
-	
 	return resultat;
-	
-	
 	// MemoryFreeLibrary(handle);
 }
 
@@ -641,5 +594,4 @@ int main(int argc, char* argv[]) {
 	// MemoryFreeLibrary(handle);
 	return 0;
 }*/
-
 #endif

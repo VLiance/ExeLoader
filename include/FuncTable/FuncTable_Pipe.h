@@ -131,7 +131,6 @@ extern pixel** container_pixels;
 int WINAPI pipe_StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int DestHeight,int xSrc,int ySrc, int SrcWidth, int SrcHeight, const VOID *lpBits, const BITMAPINFO *lpbmi, UINT iUsage, DWORD rop){
 	showfunc("StretchDIBits( hdc: %p )", hdc);
 	#ifdef Func_Win
-		//_sapp.wgl.ChoosePixelFormat(_sapp.wgl.msg_dc, &pfd);
 		return StretchDIBits(hdc, xDest, yDest, DestWidth, DestHeight, xSrc, ySrc, SrcWidth, SrcHeight, lpBits, lpbmi, iUsage, rop);
 	#else
 		/*
@@ -150,14 +149,15 @@ int WINAPI pipe_StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int Dest
 		showinf("lpbmi.bmiColors[0].rgbRed: %d", lpbmi->bmiColors[0].rgbRed );
 		showinf("lpbmi.bmiColors[0].rgbReserved: %d", lpbmi->bmiColors[0].rgbReserved );
 		*/
-		memcpy(pixels, lpBits, 800*600*4);
-		pixView_update(hwnd_View);
-		/*
-		//pixels = (pixel*)lpBits;
-		*container_pixels = (pixel*)lpBits;
-		pixView_update(hwnd_View);
-		*/
-		return false;
+	
+		int idx = (int)hdc; //HDC is same as HWND (not necessary to dissociate them)
+		
+		pixView_MakeSurface(&aContext[idx]);
+		memcpy(aContext[idx].pixels, lpBits, aContext[idx].height * aContext[idx].width *4);
+		pixView_update(&aContext[idx]);
+		
+		showinf("use hwnd_View( hwnd_View: %d )", aContext[idx].hwnd_View);
+		return aContext[idx].height; //number of scan lines copied
 	#endif
 }
 
@@ -420,6 +420,8 @@ BOOL WINAPI pipe_SetWindowPos(HWND hWnd,HWND hWndInsertAfter,int  X,int  Y,int  
 	#ifdef Func_Win
 	return SetWindowPos(hWnd, hWndInsertAfter, X, Y, cx, cy, uFlags);
 	#else
+	//here
+	
 	return true;
 	#endif	
 }
