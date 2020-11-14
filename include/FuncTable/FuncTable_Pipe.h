@@ -154,6 +154,7 @@ int WINAPI pipe_StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int Dest
 	
 	
 		memcpy(pixels, lpBits, 800*600*4);
+		pixView_update(hwnd_View);
 	/*
 	//pixels = (pixel*)lpBits;
 	*container_pixels = (pixel*)lpBits;

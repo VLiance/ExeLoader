@@ -322,8 +322,8 @@ WINBOOL WINAPI sys_GetClientRect(HWND hWnd,LPRECT lpRect){
 	#else
 		lpRect->left = 0;
 		lpRect->top = 0;
-		lpRect->right = 600;
-		lpRect->bottom = 800;
+		lpRect->right = 800;
+		lpRect->bottom = 600;
 		return true;
 	#endif
 }
@@ -336,8 +336,8 @@ WINBOOL WINAPI sys_GetWindowRect(HWND hWnd,LPRECT lpRect){
 	#else
 		lpRect->left = 0;
 		lpRect->top = 0;
-		lpRect->right = 600;
-		lpRect->bottom = 800;
+		lpRect->right = 800;
+		lpRect->bottom = 600;
 		return true;
 	#endif
 }
