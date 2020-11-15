@@ -61,7 +61,7 @@
 	
 #ifndef UseWinFunc
 	//onCpcDos
-	#include "FuncTableRemap_CpcDos.h"
+//	#include "FuncTableRemap_CpcDos.h"
 #endif
 
  sFunc aTableFunc[] = {

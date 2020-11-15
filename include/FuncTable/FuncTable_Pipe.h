@@ -301,7 +301,7 @@ inline int pipe_setvbuf( FILE * stream, char * buffer, int mode, size_t size ){
 //!HANDLE  CreateToolhelp32Snapshot(DWORD  dwFlags,DWORD  th32ProcessID)
 inline HANDLE pipe_CreateToolhelp32Snapshot(DWORD  dwFlags,DWORD  th32ProcessID){
 	showfunc("CreateToolhelp32Snapshot( dwFlags: %p, th32ProcessID: %p )", dwFlags,th32ProcessID);
-	return 0;
+	return INVALID_HANDLE_VALUE;//INVALID_HANDLE_VALUE //TODO
 }
 
 //!BOOL Thread32First(HANDLE hSnapshot,LPTHREADENTRY32 lpte)

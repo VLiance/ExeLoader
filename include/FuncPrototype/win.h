@@ -1193,6 +1193,7 @@
 	#pragma pop_macro("BOOL")
 	#endif /* _DEF_WINBOOL_ */
 	
+	#define INVALID_HANDLE_VALUE ((HANDLE) (LONG_PTR)-1)
 	
 	
 	

@@ -10,6 +10,9 @@
 ;Generate executable
 -o obj/cpp_{_sOpt}/ -#To _out/{_sOpt}/ExeLoader.*
 >
+;Generate executable
+-o obj/cpp_{_sOpt}/ -#To _out/{_sOpt}/ExeLoader.*
+>
 ;-#Run _out/{_sOpt}/ExeLoader.exe "E:/Data/setting/Sokol_Exp/_cwc/sapp/_out/blend-sapp/CpcDos_Debug_wasm/blend-sapp.exe"
 ;-#Run _out/{_sOpt}/ExeLoader.exe sgl-lines-sapp.exe
 ;-#Run _out/{_sOpt}/ExeLoader.exe shadows-sapp.exe
