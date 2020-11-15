@@ -299,26 +299,26 @@ inline int pipe_setvbuf( FILE * stream, char * buffer, int mode, size_t size ){
 }
 
 //!HANDLE  CreateToolhelp32Snapshot(DWORD  dwFlags,DWORD  th32ProcessID)
-inline HANDLE pipe_CreateToolhelp32Snapshot(DWORD  dwFlags,DWORD  th32ProcessID){
+inline HANDLE WINAPI pipe_CreateToolhelp32Snapshot(DWORD  dwFlags,DWORD  th32ProcessID){
 	showfunc("CreateToolhelp32Snapshot( dwFlags: %p, th32ProcessID: %p )", dwFlags,th32ProcessID);
 	return INVALID_HANDLE_VALUE;//INVALID_HANDLE_VALUE //TODO
 }
 
 //!BOOL Thread32First(HANDLE hSnapshot,LPTHREADENTRY32 lpte)
-BOOL pipe_Thread32First(HANDLE hSnapshot,void* lpte){
+BOOL WINAPI pipe_Thread32First(HANDLE hSnapshot,void* lpte){
 	showfunc("Thread32First( hSnapshot: %p, lpte: %p )", hSnapshot,lpte);
 	return 0;
 }
 
 //!BOOL Thread32Next(HANDLE hSnapshot,LPTHREADENTRY32 lpte)
-BOOL pipe_Thread32Next(HANDLE hSnapshot,void* lpte){
+BOOL WINAPI pipe_Thread32Next(HANDLE hSnapshot,void* lpte){
 	showfunc("Thread32Next( hSnapshot: %p, lpte: %p )", hSnapshot,lpte);
 	return 0;
 }
 
 //!HANDLE CreateSemaphoreA(_In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,_In_ LONG lInitialCount, _In_ LONG lMaximumCount, _In_opt_ LPCTSTR lpName)
 //!HANDLE CreateSemaphoreW(_In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,_In_ LONG lInitialCount, _In_ LONG lMaximumCount, _In_opt_ LPCWSTR lpName)
-HANDLE  WINAPI  pipe_CreateSemaphoreA( //Must have __stdcall
+HANDLE WINAPI  pipe_CreateSemaphoreA( //Must have __stdcall
  _In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,
   _In_     LONG                  lInitialCount,
   _In_     LONG                  lMaximumCount,
@@ -346,7 +346,7 @@ HANDLE  WINAPI  pipe_CreateSemaphoreW( //Must have __stdcall
 }
 
 //!void GetSystemInfo( LPSYSTEM_INFO lpSystemInfo)
-inline void pipe_GetSystemInfo( LPSYSTEM_INFO lpSystemInfo){
+inline void WINAPI pipe_GetSystemInfo( LPSYSTEM_INFO lpSystemInfo){
 	//A pointer to a SYSTEM_INFO structure that receives the information.
 	showfunc("GetSystemInfo( lpSystemInfo:%p )",lpSystemInfo);
 	#ifdef Func_Win
