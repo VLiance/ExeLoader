@@ -40,13 +40,13 @@
 #include <time.h>
 #include "MemoryModule.h"
 
-#define Use_HeapAlloc
+//#define Use_HeapAlloc
 // #include "malloc.h" 
  
 #ifdef CpcDos
 #define CustomLoader
 #else
-#define OnWin 
+//#define OnWin //TODO
 #endif
 // Temp
 #define CustomLoader
@@ -105,7 +105,9 @@ OutputLastError(const char *msg) {
 static BOOL
 CheckSize(size_t size, size_t expected) {
 	if (size < expected) {
+		#ifdef ImWin
 		SetLastError(ERROR_INVALID_DATA);
+		#endif
 		return FALSE;
 	}
 	return TRUE;
@@ -404,7 +406,9 @@ static BOOL BuildImportTable(PMEMORYMODULE module, ManagedAlloc &AllocManager /*
 
 		HCUSTOMMODULE handle = module->loadLibrary((LPCSTR) (codeBase + importDesc->Name), module->userdata, (ManagedAlloc&) AllocManager);
 		if (handle == NULL) {
+			#ifdef ImWin
 			SetLastError(ERROR_MOD_NOT_FOUND);
+			#endif
 			result = FALSE;
 			break;
 		}
@@ -421,7 +425,9 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 		// tmp = (HCUSTOMMODULE *) malloc((module->numModules+1)*(sizeof(HCUSTOMMODULE)));
 		if (tmp == 0) {
 			module->freeLibrary(handle, module->userdata);
+			#ifdef ImWin
 			SetLastError(ERROR_OUTOFMEMORY);
+			#endif
 			result = FALSE;
 			break;
 		}
@@ -462,8 +468,9 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 		if (!result) {
 			
 			module->freeLibrary(handle, module->userdata);
+			#ifdef ImWin
 			SetLastError(ERROR_PROC_NOT_FOUND);
-			
+			#endif
 			break;
 		}
 		module->freeLibrary(handle, module->userdata);
@@ -648,7 +655,9 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 	
 	dos_header = (PIMAGE_DOS_HEADER)data;
 	if (dos_header->e_magic != IMAGE_DOS_SIGNATURE) {
+		#ifdef ImWin
 		SetLastError(ERROR_BAD_EXE_FORMAT);
+		#endif
 		return NULL;
 	}
 
@@ -867,7 +876,9 @@ FARPROC MemoryModule::MemoryGetProcAddress(HMEMORYMODULE module, LPCSTR name) {
 	if (HIWORD(name) == 0) {
 		// load function by ordinal value
 		if (LOWORD(name) < exports->Base) {
+			#ifdef ImWin
 			SetLastError(ERROR_PROC_NOT_FOUND);
+			#endif
 			return NULL;
 		}
 
@@ -942,7 +953,7 @@ void MemoryModule::MemoryFreeLibrary(HMEMORYMODULE mod) {
 	#ifdef Use_HeapAlloc
 		HeapFree(GetProcessHeap(), 0, module);
 	#else
-		module->free_(module);
+		module->free_(module, 0, MEM_RELEASE, module->userdata, instance_AllocManager);
 	//	instance_AllocManager.ManagedFree(module);
 		// free(module);
 	#endif

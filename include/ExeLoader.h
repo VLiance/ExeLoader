@@ -30,18 +30,19 @@
 #include <wchar.h>
 #include "ConvertUTF.h"
 
+extern void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...);
+//#define _EXE_LOADER_DEBUG_S(_msg, ...)  _EXE_LOADER_DEBUG(0, _msg, _msg);
+#define _EXE_LOADER_DEBUG_(_msg, ...)  _EXE_LOADER_DEBUG(0, _msg, _msg,  __VA_ARGS__);
+
+
+#include "FuncPrototype/win.h"
+#include "MemoryModule.h"
 
 
 #ifdef CpcDos
 	#include "Lib_GZ/SysUtils/CpcDosHeader.h"
 #endif
 
-extern void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...);
-//#define _EXE_LOADER_DEBUG_S(_msg, ...)  _EXE_LOADER_DEBUG(0, _msg, _msg);
-#define _EXE_LOADER_DEBUG_(_msg, ...)  _EXE_LOADER_DEBUG(0, _msg, _msg,  __VA_ARGS__);
-
-#include "FuncPrototype/win.h"
-#include "MemoryModule.h"
 
 #ifndef STDCALL
 	#define STDCALL __stdcall
@@ -138,7 +139,7 @@ void pixView_MakeSurface(ContextInf* _context);
 #define showfunc_opt
 #endif
 
-
+/*
 /// STRING ///
 class WStr {
   public:
@@ -165,7 +166,7 @@ class WStr {
 	~WStr(){
 		free(utf8);
 	}
-};
+};*/
 ////////////////
 
 #ifndef No_vswprintf

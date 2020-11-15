@@ -129,7 +129,7 @@ WINBOOL WINAPI sys_QueryPerformanceCounter (LARGE_INTEGER *lpPerformanceCount){
 		return QueryPerformanceCounter( lpPerformanceCount);
 	#else
 		static int i = 0; i++;
-		LARGE_INTEGER lpPerformanceCount_ = {521891041 + i};//Dummy value
+		LARGE_INTEGER lpPerformanceCount_ = {(DWORD)521891041 + i};//Dummy value
 		*lpPerformanceCount = lpPerformanceCount_;
 		return true;
 	#endif

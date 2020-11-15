@@ -41,7 +41,7 @@
 
 
 
-#ifdef CpcDos
+#ifdef NoSetLastError
 	#define  SetLastError(x)
 #endif
 

@@ -60,7 +60,7 @@ FARPROC WINAPI  imp_GetProcAddress(  HMODULE hModule, LPCSTR  lpProcName){
 }
 
 //!void __cdecl _initterm(PVFV *,PVFV *);
-typedef void (__cdecl *_PVFV)();
+typedef void (CDECL *_PVFV)();
 inline void imp_initterm(_PVFV* ppfn,_PVFV* end){
 	showfunc("_initterm( ppfn: %p, end: %p )", ppfn,end);
 	do {
@@ -71,7 +71,7 @@ inline void imp_initterm(_PVFV* ppfn,_PVFV* end){
 }
 
 //!void __cdecl _initterm(PVFV *,PVFV *);
-typedef int  (__cdecl *_PIFV)();
+typedef int  (CDECL *_PIFV)();
 inline int imp_initterm_e(_PIFV* ppfn,_PIFV* end){
 	showfunc("_initterm_e( ppfn: %p, end: %p )", ppfn,end);
 	do {
@@ -417,9 +417,12 @@ inline int imp_fwprintf (FILE* stream, const wchar_t* format, ...){
 	wchar_t BUFFER[8192]; //TODO GLOBAL BUFF or malloc?
 	vswprintf_ARG(format, BUFFER, 8192, ret);
 	
+	#ifndef No_wprintf
 	//Convert to cstr?
 	wprintf(BUFFER);
-	
+	#else
+	showinf("[No wprintf]", "");
+	#endif
 	return ret;
 }
 

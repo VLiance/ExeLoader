@@ -35,12 +35,12 @@
 #define EXELOADER_FuncTable_H
 
 #include "ExeLoader.h"
-
+/*
 #ifndef ImWin
 #define InCpcDosCore
 #include "CPC_WPR.h"
 #endif // ImWin
-
+*/
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
@@ -66,7 +66,7 @@
 
  sFunc aTableFunc[] = {
  ////////// CPC DOS ///////////////////
-#include "FuncTable/CpcDosFuncTable.h"
+//#include "FuncTable/CpcDosFuncTable.h"
 //////////////////////////////////////
 
 {"func_NotImplemented" 		,(FUNC_) func_NotImplemented }, //Must be first
@@ -353,7 +353,7 @@
 ////////////////////////////////////
 
 /////////// STRING ///////////////
-{"wcslen"  	,(FUNC_) wcslen },
+//{"wcslen"  	,(FUNC_) wcslen }, //Not in DJGPP
 {"strcmp"  	,(FUNC_) strcmp },
 {"stricmp"	,(FUNC_) stricmp },
 {"sprintf"  ,(FUNC_) sprintf },

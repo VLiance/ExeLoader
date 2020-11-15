@@ -418,14 +418,18 @@ void GetLibraryExportTable(PMEMORYMODULE module){
 	PIMAGE_DATA_DIRECTORY directory = GET_HEADER_DICTIONARY((PMEMORYMODULE)module, IMAGE_DIRECTORY_ENTRY_EXPORT);
 	if (directory->Size == 0) {
 		// no export table found
+		#ifdef ImWin
 		SetLastError(ERROR_PROC_NOT_FOUND);
+		#endif
 		return;
 	}
 
 	exports = (PIMAGE_EXPORT_DIRECTORY) (codeBase + directory->VirtualAddress);
 	if (exports->NumberOfNames == 0 || exports->NumberOfFunctions == 0) {
 		// DLL doesn't export anything
+		#ifdef ImWin
 		SetLastError(ERROR_PROC_NOT_FOUND);
+		#endif
 		return;
 	}
 
@@ -585,7 +589,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nSh
 	// MemoryFreeLibrary(handle);
 	return 0;
 }
-/*
+#else
 int main(int argc, char* argv[]) {
 	printf("#\nMainCalled!! %d, %s", argc, argv[0]);
 	fMainExeLoader(argv[1]);  // argv[0] is path
@@ -593,5 +597,5 @@ int main(int argc, char* argv[]) {
 	system("Pause");
 	// MemoryFreeLibrary(handle);
 	return 0;
-}*/
+}
 #endif

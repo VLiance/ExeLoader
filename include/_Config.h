@@ -71,5 +71,12 @@
 	#undef USE_Platform_ThreadStorage
 #endif
 
+#ifdef __DJGPP__
+#undef ShowPixView
+#undef ImWin
+#define No_vswprintf
+#define No_wprintf
+#define NoSetLastError
+#endif
 
 #endif //EXELOADER_Config_H
