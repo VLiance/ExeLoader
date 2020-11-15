@@ -40,7 +40,8 @@ extern void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* form
 
 
 #ifdef CpcDos
-	#include "Lib_GZ/SysUtils/CpcDosHeader.h"
+	#include "FuncPrototype/CPC_WPR.h"
+	//#include "Lib_GZ/SysUtils/CpcDosHeader.h"
 #endif
 
 

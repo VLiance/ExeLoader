@@ -37,7 +37,7 @@ long nExeFileSize;
 
 #ifdef CpcDos /* It's Cpcdos */
 
-	gzSp<CpcdosOSx_CPintiCore> oCpc = gzSp<CpcdosOSx_CPintiCore>(new CpcdosOSx_CPintiCore);
+	CpcdosOSx_CPintiCore* oCpc = new CpcdosOSx_CPintiCore; //TODO free
 	
 	void _EXE_LOADER_DEBUG(int alert, const char* format_FR, const char* format_EN, ...)
 	{
@@ -58,14 +58,14 @@ long nExeFileSize;
 	
 		// TODO: Faire une condition si l'instance est en Francais ou non
 
-	gzBool fExeCpcDosLoadFile(const char* _sFullPath)
+	bool fExeCpcDosLoadFile(const char* _sFullPath)
 	{
 
 		nExeFileSize = 0;
 		aExeFileData = 0;
 		
 		_EXE_LOADER_DEBUG(0, "\nExeLoader: Test de l'existence de '%s'\n", "\nExeLoader: Test existence  '%s'\n", _sFullPath);
-		gzUInt _nExist = oCpc->File_exist((char*) _sFullPath);
+		unsigned int _nExist = oCpc->File_exist((char*) _sFullPath);
 		if(_nExist > 0)
 		{
 			// Recuperer la taille du fichier

@@ -77,6 +77,7 @@
 #define No_vswprintf
 #define No_wprintf
 #define NoSetLastError
+#define CpcDos //TODO
 #endif
 
 #endif //EXELOADER_Config_H
