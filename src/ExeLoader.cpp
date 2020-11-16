@@ -27,6 +27,8 @@ void* DLL_HANDLE[512] = {0};
 int aContext_count = 0;
 ContextInf aContext[50] = {0};
 
+// fflush() la sortie stdout
+const bool DEBUG_FFLUSH = true;
 
 int nTotalDLL = 0;
 HINSTANCE hExeloader = 0;
@@ -52,6 +54,12 @@ long nExeFileSize;
 		va_end (arg);
 		
 		oCpc->debug_log_plus((const char*) BUFFER, 1, 1, alert, 0, 0, 0,  1100, NULL); 	
+		
+		if(DEBUG_FFLUSH)
+		{
+			fflush(stdout);
+			fflush(stderr);
+		}
 		
 		BUFFER[0] = '\0';
 	}
