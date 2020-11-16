@@ -548,7 +548,7 @@ VOID WINAPI pipe_GetStartupInfoW(LPSTARTUPINFOW lpStartupInfo){
 
 //!char* setlocale(int category, const char* locale)
 char* pipe_setlocale(int category, const char* locale){
-	showfunc_opt("setlocale( category: %d, locale: %s )", category, locale);
+	// showfunc_opt("setlocale( category: %d, locale: %s )", category, locale);
 	return setlocale(category, locale); //required?
 }
 
@@ -570,7 +570,7 @@ int WINAPI pipe_WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWCH lpWideC
 
 //!int WINAPI MultiByteToWideChar (UINT CodePage, DWORD dwFlags, LPCCH lpMultiByteStr, int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar)
 int WINAPI pipe_MultiByteToWideChar (UINT CodePage, DWORD dwFlags, LPCCH lpMultiByteStr, int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar){
-	showfunc_opt("MultiByteToWideChar( ... )", "");
+	// showfunc_opt("MultiByteToWideChar( ... )", "");
 	#ifdef Func_Win 
 	return MultiByteToWideChar(CodePage, dwFlags, lpMultiByteStr, cbMultiByte, lpWideCharStr, cchWideChar);
 	#else

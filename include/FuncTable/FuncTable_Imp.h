@@ -286,7 +286,7 @@ DWORD WINAPI imp_TlsAlloc(void){
 		 aTlsNewMem = _aNewMem;
 		 
 		 _nMax = _nNewSize;
-		_EXE_LOADER_DEBUG(3,"TlsAlloc() : [ReAlloc] size: %d\n","TlsAlloc() : [ReAlloc] size: %d\n", _nNewSize);
+		// _EXE_LOADER_DEBUG(3,"TlsAlloc() : [ReAlloc] size: %d\n","TlsAlloc() : [ReAlloc] size: %d\n", _nNewSize);
 	}
 	
 	_EXE_LOADER_DEBUG(3,"TlsAlloc() : %d\n","TlsAlloc() : %d\n", _nIndex);
@@ -296,7 +296,7 @@ DWORD WINAPI imp_TlsAlloc(void){
 
 //!BOOL TlsSetValue(DWORD  dwTlsIndex,LPVOID lpTlsValue)
 BOOL  WINAPI imp_TlsSetValue(DWORD dwTlsIndex, _In_opt_ LPVOID lpTlsValue){
-	showfunc_opt("TlsSetValue( dwTlsIndex: %d, lpTlsValue: %p )", dwTlsIndex, lpTlsValue);
+	// showfunc_opt("TlsSetValue( dwTlsIndex: %d, lpTlsValue: %p )", dwTlsIndex, lpTlsValue);
 	//if(lpTlsValue != 0){showfunc_opt(3,"TlsSetValue() : %d [0x%p] value : %d\n","TlsSetValue() : %d [0x%p] value : %d\n", dwTlsIndex, lpTlsValue, *(int*)lpTlsValue );
 	//}else{showfunc_opt(3,"TlsSetValue() : %d [0x%p]\n"		    ,"TlsSetValue() : %d [0x%p]\n",			   dwTlsIndex, lpTlsValue);}
    aTlsNewMem[dwTlsIndex] = lpTlsValue;
@@ -305,7 +305,7 @@ BOOL  WINAPI imp_TlsSetValue(DWORD dwTlsIndex, _In_opt_ LPVOID lpTlsValue){
 
 //!LPVOID TlsGetValue(DWORD dwTlsIndex)
 LPVOID WINAPI imp_TlsGetValue(DWORD dwTlsIndex){
-	showfunc_opt("TlsGetValue( dwTlsIndex: %d )", dwTlsIndex);
+	// showfunc_opt("TlsGetValue( dwTlsIndex: %d )", dwTlsIndex);
    //if(aTlsNewMem[dwTlsIndex] != 0){_EXE_LOADER_DEBUG(3,"TlsGetValue() : %d [0x%p] value : %d\n","TlsGetValue() : %d [0x%p] value : %d\n", dwTlsIndex, aTlsNewMem[dwTlsIndex], *(int*)aTlsNewMem[dwTlsIndex]);
    //}else{_EXE_LOADER_DEBUG(3,"TlsGetValue() : %d [0x%p]\n"		     ,"TlsGetValue() : %d [0x%p]\n",		   dwTlsIndex, aTlsNewMem[dwTlsIndex]);}
    return aTlsNewMem[dwTlsIndex];
