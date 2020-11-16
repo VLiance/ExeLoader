@@ -42,7 +42,7 @@
 #define Show_FuncTable
 
 //Some function are irrelevant and may be annoying, but sometime we need it for debugging purpose
-#define Show_AllFuncTable
+//#define Show_AllFuncTable
 
 //Use the standard Widows VirtualAlloc allocation or the more portable ExeLoader version
 //#define USE_Windows_VirtualAlloc
@@ -78,6 +78,7 @@
 #define No_wprintf
 #define NoSetLastError
 #define CpcDos //TODO
+#define USE_sbrk
 #endif
 
 #endif //EXELOADER_Config_H

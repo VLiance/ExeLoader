@@ -51,8 +51,9 @@ bool ManagedAlloc::ManagedFree(void* ptr)
 	// Vider un emplacement connu
 	fprintf(stdout, "[%s] ManagedFree() [0x%p]\n", this->name, (void*) ptr);
 	if(ptr != 0)
-		if(ptr < sbrk(0))
-		{
+		#ifdef USE_sbrk
+		if(ptr < sbrk(0)){
+		#endif
 			for(int index = 0; index < this->managed_alloc_max; index++)
 				if(this->Alloc_Array[index] == ptr)
 				{
@@ -61,12 +62,11 @@ bool ManagedAlloc::ManagedFree(void* ptr)
 					return true;
 				
 				}
-		}
-		else
-		{
+		#ifdef USE_sbrk
+		}else{
 			fprintf(stdout, "[%s] ManagedFree() !! WARNING SEGMENT VIOLATION !! Max memory zone [0x%p]\n", this->name, sbrk(0));
 		}
-	
+		#endif
 	return false;
 }
 
