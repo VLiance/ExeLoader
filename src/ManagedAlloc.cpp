@@ -17,6 +17,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include "ManagedAlloc.h"
 
@@ -50,13 +51,21 @@ bool ManagedAlloc::ManagedFree(void* ptr)
 	// Vider un emplacement connu
 	fprintf(stdout, "[%s] ManagedFree() [0x%p]\n", this->name, (void*) ptr);
 	if(ptr != 0)
-		for(int index = 0; index < this->managed_alloc_max; index++)
-			if(this->Alloc_Array[index] == ptr)
-			{
-				free(ptr);
-				this->Alloc_Array[index] = 0;
-				return true;
-			}
+		if(ptr < sbrk(0))
+		{
+			for(int index = 0; index < this->managed_alloc_max; index++)
+				if(this->Alloc_Array[index] == ptr)
+				{
+					free(ptr);
+					this->Alloc_Array[index] = 0;
+					return true;
+				
+				}
+		}
+		else
+		{
+			fprintf(stdout, "[%s] ManagedFree() !! WARNING SEGMENT VIOLATION !! Max memory zone [0x%p]\n", this->name, sbrk(0));
+		}
 	
 	return false;
 }
