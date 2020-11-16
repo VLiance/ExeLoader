@@ -366,7 +366,7 @@ inline WINAPI BOOL pipe_ClientToScreen(HWND hWnd,LPPOINT lpPoint){
 }
 
 //!LPVOID VirtualAlloc(LPVOID lpAddress,SIZE_T dwSize,DWORD flAllocationType,DWORD flProtect)
-inline LPVOID pipe_VirtualAlloc(LPVOID lpAddress,SIZE_T dwSize,DWORD flAllocationType,DWORD flProtect){
+inline LPVOID WINAPI pipe_VirtualAlloc(LPVOID lpAddress,SIZE_T dwSize,DWORD flAllocationType,DWORD flProtect){
 	showfunc("VirtualAlloc( lpAddress %p, dwSize: %d, flAllocationType: %d, flProtect:%d )", lpAddress, dwSize, flAllocationType, flProtect);
 	#ifdef USE_Windows_VirtualAlloc
 	return VirtualAlloc(lpAddress, dwSize, flAllocationType, flProtect); 
@@ -381,7 +381,7 @@ inline LPVOID pipe_VirtualAlloc(LPVOID lpAddress,SIZE_T dwSize,DWORD flAllocatio
 }
 
 //!BOOL VirtualFree(LPVOID lpAddress,SIZE_T dwSize,DWORD  dwFreeType)
-inline BOOL pipe_VirtualFree(LPVOID lpAddress,SIZE_T dwSize,DWORD  dwFreeType){
+inline BOOL WINAPI pipe_VirtualFree(LPVOID lpAddress,SIZE_T dwSize,DWORD  dwFreeType){
 	showfunc("VirtualFree( lpAddress %p, dwSize: %d, dwFreeType:%d )", lpAddress, dwSize, dwFreeType);
 	#ifdef USE_Windows_VirtualAlloc
     return VirtualFree(lpAddress, dwSize, dwFreeType); 
