@@ -325,11 +325,10 @@
 */
 
 
-
-{"malloc"  ,(FUNC_) malloc },
-{"calloc"  ,(FUNC_) calloc },
-{"realloc"  ,(FUNC_) realloc },
-{"free"  ,(FUNC_) free },
+{"malloc"  	,(FUNC_) imp_malloc },
+{"calloc"  	,(FUNC_) imp_calloc },
+{"realloc"  ,(FUNC_) imp_realloc },
+{"free"  	,(FUNC_) imp_free },
 
 {"scanf"  ,(FUNC_) scanf },
 /////////////////////////////////////////////

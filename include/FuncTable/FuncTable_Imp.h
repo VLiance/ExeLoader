@@ -444,6 +444,30 @@ int imp_stricmp(const char *string1,const char *string2){
 	return stricmp(string1, string2);
 }
 
+//!void* malloc( size_t size )
+void* imp_malloc( size_t size ){
+	showfunc_opt("malloc( size: %d )", size); 
+	malloc(size);
+}
+
+//!void *calloc(size_t nitems, size_t size)
+void* imp_calloc(size_t nitems, size_t size){
+	showfunc_opt("calloc( nitems : %d, size: %d )", nitems, size); 
+	calloc(nitems, size);
+}
+
+//!void *realloc(void *ptr, size_t size)
+void* imp_realloc(void *ptr, size_t size){
+	showfunc_opt("calloc( ptr : %p, size: %d )", ptr, size); 
+	realloc(ptr, size);
+}
+
+//!void free (void* ptr)
+void imp_free(void* ptr){
+	showfunc_opt("free( ptr : %p )", ptr); 
+	free(ptr);
+}
+
 
 
 /*

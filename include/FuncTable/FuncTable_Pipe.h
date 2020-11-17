@@ -555,6 +555,7 @@ char* pipe_setlocale(int category, const char* locale){
 //!char* getenv (const char* name)
 char* pipe_getenv(const char* name){
 	showfunc("getenv( name: %s )", name);
+		//TODO "MESA_DEBUG"
 	return getenv(name);
 }
 
