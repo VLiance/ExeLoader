@@ -468,8 +468,11 @@ void imp_free(void* ptr){
 	free(ptr);
 }
 
-
-
+//!int sprintf ( char * str, const char * format, ... )
+int imp_sprintf( char * str, const char * format, va_list __local_argv){
+	showfunc_opt("imp_sprintf( s: %p, format: %p, ... )", str,format); 
+	return sprintf(str, format, __local_argv);
+}
 /*
 LPVOID WINAPI LocalLock (HLOCAL hMem);
 SIZE_T WINAPI LocalShrink (HLOCAL hMem, UINT cbNewSize);

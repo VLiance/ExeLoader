@@ -353,9 +353,11 @@
 
 /////////// STRING ///////////////
 //{"wcslen"  	,(FUNC_) wcslen }, //Not in DJGPP
+{"sprintf"  ,(FUNC_) imp_sprintf },
+
 {"strcmp"  	,(FUNC_) strcmp },
 {"stricmp"	,(FUNC_) stricmp },
-{"sprintf"  ,(FUNC_) sprintf },
+
 {"strcat"  	,(FUNC_) strcat },
 {"strchr"  	,(FUNC_) strchr },
 {"strcpy"  	,(FUNC_) strcpy },
