@@ -964,7 +964,8 @@ int MemoryModule::MemoryCallEntryPoint(HMEMORYMODULE mod) {
 	
 	fprintf(stdout, "Adresse %p \n", module->exeEntry);
 
-	if (module == NULL || module->isDLL || module->exeEntry == NULL || !module->isRelocated) {
+	//if (module == NULL || module->isDLL || module->exeEntry == NULL || !module->isRelocated) {
+	if (module == NULL || module->isDLL || module->exeEntry == NULL ) {
 		fprintf(stdout, "ARF.....\n");
 		return -1;
 	}

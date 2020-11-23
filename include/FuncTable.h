@@ -178,6 +178,11 @@
 
 {"GetConsoleWindow"  	,(FUNC_) pipe_GetConsoleWindow },
 
+{"GetStdHandle"  				,(FUNC_) pipe_GetStdHandle },
+{"GetConsoleScreenBufferInfo"  	,(FUNC_) pipe_GetConsoleScreenBufferInfo },
+
+
+
 
 
 {"InitializeCriticalSectionEx" 			,(FUNC_) pipe_InitializeCriticalSectionEx },
@@ -266,8 +271,10 @@
 
 {"abort"  		,(FUNC_) abort },  //TODO custom abort
 
-{"vfprintf"  ,(FUNC_) vfprintf },
 {"_stricmp"  ,(FUNC_) imp_stricmp },
+
+
+
 
 
 #ifdef USE_Platform_ThreadStorage
@@ -330,12 +337,18 @@
 {"realloc"  ,(FUNC_) imp_realloc },
 {"free"  	,(FUNC_) imp_free },
 
-{"scanf"  ,(FUNC_) scanf },
+
+
+{"_snprintf"  ,(FUNC_) snprintf },
+
 /////////////////////////////////////////////
 /////////// DIRECT MAPPING //////////////////
 /// *safe enough for a direct replacement* ///
 /////////////////////////////////////////////
 /////////////////////////////////////////////
+
+{"vfprintf"  ,(FUNC_) vfprintf },
+{"scanf"  ,(FUNC_) scanf },
 
 /////////// LOG ////////////////////
 {"printf"  ,(FUNC_) printf }, // maybe not safe

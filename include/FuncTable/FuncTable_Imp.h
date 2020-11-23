@@ -504,6 +504,13 @@ int imp_sprintf( char * str, const char * format, va_list __local_argv){
 	showfunc_opt("sprintf( s: %p, format: %p, ... )", str,format); 
 	return sprintf(str, format, __local_argv);
 }
+
+//!int sprintf ( char * str, const char * format, ... )
+int imp_snprintf( char * str, size_t n, const char * format, va_list __local_argv){
+	showfunc_opt("imp_snprintf( s: %p, format: %p, ... )", str,format); 
+	return snprintf(str, n, format, __local_argv);
+}
+
 /*
 LPVOID WINAPI LocalLock (HLOCAL hMem);
 SIZE_T WINAPI LocalShrink (HLOCAL hMem, UINT cbNewSize);
