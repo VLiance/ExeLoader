@@ -109,58 +109,6 @@ inline int WINAPI pipe_DescribePixelFormat(HDC hdc,int iPixelFormat,UINT nBytes,
 	
 }
 
-extern funcPtr_bool _dFunc_wglSwapBuffers;
-//!BOOL SwapBuffers(HDC Arg1)
-inline BOOL WINAPI pipe_SwapBuffers(HDC hdc){
-	showfunc("SwapBuffers( hdc: %p )", hdc);
-	if(_dFunc_wglSwapBuffers != 0){
-		return _dFunc_wglSwapBuffers(hdc);
-	}
-	#ifdef Func_Win
-		//_sapp.wgl.ChoosePixelFormat(_sapp.wgl.msg_dc, &pfd);
-		return SwapBuffers((HDC)hdc);
-	#else
-		return false;
-	#endif
-}
-
-//!int StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int DestHeight,int xSrc,int ySrc, int SrcWidth, int SrcHeight, const VOID *lpBits, const BITMAPINFO *lpbmi, UINT iUsage, DWORD rop)
-struct pixel;
-extern pixel* pixels;
-extern pixel** container_pixels;
-int WINAPI pipe_StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int DestHeight,int xSrc,int ySrc, int SrcWidth, int SrcHeight, const VOID *lpBits, const BITMAPINFO *lpbmi, UINT iUsage, DWORD rop){
-	showfunc("StretchDIBits( hdc: %p )", hdc);
-	#ifdef Func_Win
-		return StretchDIBits(hdc, xDest, yDest, DestWidth, DestHeight, xSrc, ySrc, SrcWidth, SrcHeight, lpBits, lpbmi, iUsage, rop);
-	#else
-		/*
-		showinf("lpbmi.bmiHeader.biWidth: %d", lpbmi->bmiHeader.biWidth);
-		showinf("lpbmi.bmiHeader.biHeight: %d", lpbmi->bmiHeader.biHeight);
-		showinf("lpbmi.bmiHeader.biPlanes: %d", lpbmi->bmiHeader.biPlanes);
-		showinf("lpbmi.bmiHeader.biBitCount: %d", lpbmi->bmiHeader.biBitCount);
-		showinf("lpbmi.bmiHeader.biCompression: %d", lpbmi->bmiHeader.biCompression);
-		showinf("lpbmi.bmiHeader.biSizeImage: %d", lpbmi->bmiHeader.biSizeImage);
-		showinf("lpbmi.bmiHeader.biXPelsPerMeter: %d", lpbmi->bmiHeader.biXPelsPerMeter);
-		showinf("lpbmi.bmiHeader.biYPelsPerMeter: %d", lpbmi->bmiHeader.biYPelsPerMeter);
-		showinf("lpbmi.bmiHeader.biClrUsed: %d", lpbmi->bmiHeader.biClrUsed);
-		showinf("lpbmi.bmiHeader.biClrImportant: %d", lpbmi->bmiHeader.biClrImportant);
-		showinf("lpbmi.bmiColors[0].rgbBlue: %d", lpbmi->bmiColors[0].rgbBlue );
-		showinf("lpbmi.bmiColors[0].rgbGreen: %d", lpbmi->bmiColors[0].rgbGreen );
-		showinf("lpbmi.bmiColors[0].rgbRed: %d", lpbmi->bmiColors[0].rgbRed );
-		showinf("lpbmi.bmiColors[0].rgbReserved: %d", lpbmi->bmiColors[0].rgbReserved );
-		*/
-	
-		int idx = (int)hdc; //HDC is same as HWND (not necessary to dissociate them)
-		#ifdef ShowPixView
-			pixView_MakeSurface(&aContext[idx]);
-			memcpy(aContext[idx].pixels, lpBits, aContext[idx].height * aContext[idx].width *4);
-			pixView_update(&aContext[idx]);
-		#endif
-		showinf("use hwnd_View( hwnd_View: %d )", aContext[idx].hwnd_View);
-		return aContext[idx].height; //number of scan lines copied
-	#endif
-}
-
 //!BOOL AdjustWindowRectEx(LPRECT lpRect,DWORD  dwStyle,BOOL bMenu,DWORD  dwExStyle)
 inline BOOL WINAPI pipe_AdjustWindowRectEx(LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle){
 	showfunc("AdjustWindowRectEx( lpRect: %p, dwStyle: %d, bMenu: %d, dwExStyle: %p )", lpRect, dwStyle, bMenu, dwExStyle);
@@ -555,7 +503,31 @@ char* pipe_setlocale(int category, const char* locale){
 //!char* getenv (const char* name)
 char* pipe_getenv(const char* name){
 	showfunc("getenv( name: %s )", name);
-		//TODO "MESA_DEBUG"
+	
+	if(strcmp(name, "ST_DEBUG") == 0 ){
+		return "tgsi";
+	}
+	
+	
+	if(strcmp(name, "MESA_DEBUG") == 0 ){
+	 // { "silent", DEBUG_SILENT }, /* turn off debug messages */
+     // { "flush", DEBUG_ALWAYS_FLUSH }, /* flush after each drawing command */
+     // { "incomplete_tex", DEBUG_INCOMPLETE_TEXTURE },
+      //{ "incomplete_fbo", DEBUG_INCOMPLETE_FBO },
+     // { "context", DEBUG_CONTEXT } /* force set GL_CONTEXT_FLAG_DEBUG_BIT flag */
+		return "yes";
+	}
+	if(strcmp(name, "MESA_VERBOSE") == 0 ){
+		return "yes";
+	}
+	if(strcmp(name, "LIBGL_DEBUG") == 0 ){
+		return "verbose";
+	}
+	if(strcmp(name, "LIBGL_SHOW_FPS") == 0 ){
+		return "yes";
+	}
+
+	
 	return getenv(name);
 }
 
@@ -599,7 +571,7 @@ VOID WINAPI pipe_OutputDebugStringW (LPCWSTR lpOutputString){
 
 //!HWND WINAPI GetConsoleWindow(VOID)
 HWND WINAPI pipe_GetConsoleWindow(VOID){
-	showfunc("GetConsoleWindow( )", "");
+	showfunc_opt("GetConsoleWindow( )", "");
 	#ifdef Func_Win 
 	return GetConsoleWindow();
 	#else

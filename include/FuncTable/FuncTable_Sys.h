@@ -18,6 +18,10 @@
 * FuncTable_Sys is an attempt to remake system functions, or redirect them, 
 * this is a mix between FuncTable_Pipe & FuncTable_Imp
 * 
+* Warning: Windows WINAPI function are __stdcall instead of __cdecl. 
+* __stdcall remapped function must have the EXACT same paramters and must be specified as __stdcall
+*  If not, your app will likely crash when the function return.
+*
 */
 
 //!VOID WINAPI SetLastError (DWORD dwErrCode)
@@ -102,6 +106,60 @@ HWND WINAPI pipe_CreateWindowExW(DWORD dwExStyle,LPCWSTR lpClassName,LPCWSTR lpW
 		return (HWND)idx;
 	#endif
 }
+
+
+//!int StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int DestHeight,int xSrc,int ySrc, int SrcWidth, int SrcHeight, const VOID *lpBits, const BITMAPINFO *lpbmi, UINT iUsage, DWORD rop)
+struct pixel;
+extern pixel* pixels;
+extern pixel** container_pixels;
+int WINAPI pipe_StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int DestHeight,int xSrc,int ySrc, int SrcWidth, int SrcHeight, const VOID *lpBits, const BITMAPINFO *lpbmi, UINT iUsage, DWORD rop){
+	showfunc("StretchDIBits( hdc: %p )", hdc);
+	#ifdef Func_Win
+		return StretchDIBits(hdc, xDest, yDest, DestWidth, DestHeight, xSrc, ySrc, SrcWidth, SrcHeight, lpBits, lpbmi, iUsage, rop);
+	#else
+		/*
+		showinf("lpbmi.bmiHeader.biWidth: %d", lpbmi->bmiHeader.biWidth);
+		showinf("lpbmi.bmiHeader.biHeight: %d", lpbmi->bmiHeader.biHeight);
+		showinf("lpbmi.bmiHeader.biPlanes: %d", lpbmi->bmiHeader.biPlanes);
+		showinf("lpbmi.bmiHeader.biBitCount: %d", lpbmi->bmiHeader.biBitCount);
+		showinf("lpbmi.bmiHeader.biCompression: %d", lpbmi->bmiHeader.biCompression);
+		showinf("lpbmi.bmiHeader.biSizeImage: %d", lpbmi->bmiHeader.biSizeImage);
+		showinf("lpbmi.bmiHeader.biXPelsPerMeter: %d", lpbmi->bmiHeader.biXPelsPerMeter);
+		showinf("lpbmi.bmiHeader.biYPelsPerMeter: %d", lpbmi->bmiHeader.biYPelsPerMeter);
+		showinf("lpbmi.bmiHeader.biClrUsed: %d", lpbmi->bmiHeader.biClrUsed);
+		showinf("lpbmi.bmiHeader.biClrImportant: %d", lpbmi->bmiHeader.biClrImportant);
+		showinf("lpbmi.bmiColors[0].rgbBlue: %d", lpbmi->bmiColors[0].rgbBlue );
+		showinf("lpbmi.bmiColors[0].rgbGreen: %d", lpbmi->bmiColors[0].rgbGreen );
+		showinf("lpbmi.bmiColors[0].rgbRed: %d", lpbmi->bmiColors[0].rgbRed );
+		showinf("lpbmi.bmiColors[0].rgbReserved: %d", lpbmi->bmiColors[0].rgbReserved );
+		*/
+	
+		int idx = (int)hdc; //HDC is same as HWND (not necessary to dissociate them)
+		#ifdef ShowPixView
+			pixView_MakeSurface(&aContext[idx]);
+			memcpy(aContext[idx].pixels, lpBits, aContext[idx].height * aContext[idx].width *4);
+			pixView_update(&aContext[idx]);
+		#endif
+		showinf("use hwnd_View( hwnd_View: %d )", aContext[idx].hwnd_View);
+		return aContext[idx].height; //number of scan lines copied
+	#endif
+}
+
+extern funcPtr_bool _dFunc_wglSwapBuffers;
+//!BOOL SwapBuffers(HDC Arg1)
+inline BOOL WINAPI pipe_SwapBuffers(HDC hdc){
+	showfunc("SwapBuffers( hdc: %p )", hdc);
+	if(_dFunc_wglSwapBuffers != 0){
+		return _dFunc_wglSwapBuffers(hdc);
+	}
+	#ifdef Func_Win
+		//_sapp.wgl.ChoosePixelFormat(_sapp.wgl.msg_dc, &pfd);
+		return SwapBuffers((HDC)hdc);
+	#else
+		return false;
+	#endif
+}
+
 
 //!HRESULT GetDpiForMonitor(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType,UINT *dpiX,UINT *dpiY)
 HRESULT sys_GetDpiForMonitor(HMONITOR hmonitor,int dpiType,UINT* dpiX,UINT* dpiY){

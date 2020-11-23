@@ -386,7 +386,7 @@ inline LPWSTR* imp_CommandLineToArgvW(LPCWSTR lpCmdLine,int* pNumArgs){
 
 //!int snprintf ( char * s, size_t n, const char * format, ... )
 inline int  imp_snwprintf( wchar_t* s, size_t n, const wchar_t* format, ... ){
-	showfunc("snwprintf( s: %p, n: %d, format: %p, ... )", s,n,format); 
+	showfunc_opt("snwprintf( s: %p, n: %d, format: %p, ... )", s,n,format); 
 /*
 	size_t len = wcslen(format);
 	printf("\nlength: %d \n", len);
@@ -426,9 +426,40 @@ inline int imp_fwprintf (FILE* stream, const wchar_t* format, ...){
 	return ret;
 }
 
+//copy d:
+//gdb cpcldr
+//set arg nogui
+//r
+//sys /debug = 2
+//sys /debug /cpinticore = p1
+//exe/ /win32 blend2.exe
+
+
 //!int vsnprintf (char * __restrict__ __stream, size_t __n, const char * __restrict__ __format, va_list __local_argv);
 int imp_vsnprintf (char* s, size_t n, const char *  format, va_list __local_argv){
-	showfunc_opt("vsnprintf( s: %p, n: %d, format: %p, ... )", s,n,format); 
+	/*
+	showfunc("vsnprintf( s: %u, n: %d, format: %s, ... )", s,n,format); 
+	
+	static int count = 0;
+	count++;
+	if(n == 4048){
+		printf("\nhere");
+	}
+	
+	return vsnprintf(s, n, format, __local_argv);
+	*/
+	
+	showfunc_opt("vsnprintf( s: %p, n: %u, format: %s, ... )  --  %u", s, n, format);
+	if(n > INT_MAX) 
+		n = INT_MAX;
+	
+	/*
+	if(strcmp(format, "#version %I64i%s%s") == 0)
+	{
+		format = "#version %llu%s%s";
+		showfunc("CORRECTED : vsnprintf( s: %p, n: %u, format: %s, ... )", s, n, format);
+	}
+	*/
 	return vsnprintf(s, n, format, __local_argv);
 }
 
@@ -470,7 +501,7 @@ void imp_free(void* ptr){
 
 //!int sprintf ( char * str, const char * format, ... )
 int imp_sprintf( char * str, const char * format, va_list __local_argv){
-	showfunc_opt("imp_sprintf( s: %p, format: %p, ... )", str,format); 
+	showfunc_opt("sprintf( s: %p, format: %p, ... )", str,format); 
 	return sprintf(str, format, __local_argv);
 }
 /*

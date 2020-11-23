@@ -79,6 +79,7 @@
 #define NoSetLastError
 #define CpcDos //TODO
 #define USE_sbrk
+#define USE_limit_on_vsnprintf  2147483647 /*INT_MAX*/
 #endif
 
 #endif //EXELOADER_Config_H
