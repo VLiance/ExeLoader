@@ -620,3 +620,24 @@ struct lconv* pipe_localeconv(void){
 	#endif	
 	*/
 }
+
+//!HANDLE WINAPI GetStdHandle (DWORD nStdHandle)
+HANDLE WINAPI pipe_GetStdHandle (DWORD nStdHandle){
+	showfunc("GetStdHandle( nStdHandle: %d )", nStdHandle);
+	#ifdef Func_Win 
+	return GetStdHandle(nStdHandle);
+	#else
+	return 0;//If an application does not have associated standard handles, such as a service running on an interactive desktop, and has not redirected them, the return value is NULL.
+	#endif	
+
+}
+
+//!WINBOOL WINAPI GetConsoleScreenBufferInfo(HANDLE hConsoleOutput,PCONSOLE_SCREEN_BUFFER_INFO lpConsoleScreenBufferInfo);
+WINBOOL WINAPI pipe_GetConsoleScreenBufferInfo(HANDLE hConsoleOutput,PCONSOLE_SCREEN_BUFFER_INFO lpConsoleScreenBufferInfo){
+	showfunc("GetConsoleScreenBufferInfo( hConsoleOutput: %d,  lpConsoleScreenBufferInfo: %p )", hConsoleOutput, lpConsoleScreenBufferInfo);
+	#ifdef Func_Win 
+	return GetConsoleScreenBufferInfo(nStdHandle, lpConsoleScreenBufferInfo);
+	#else
+	return 0;
+	#endif	
+} 
