@@ -636,7 +636,7 @@ HANDLE WINAPI pipe_GetStdHandle (DWORD nStdHandle){
 WINBOOL WINAPI pipe_GetConsoleScreenBufferInfo(HANDLE hConsoleOutput,PCONSOLE_SCREEN_BUFFER_INFO lpConsoleScreenBufferInfo){
 	showfunc("GetConsoleScreenBufferInfo( hConsoleOutput: %d,  lpConsoleScreenBufferInfo: %p )", hConsoleOutput, lpConsoleScreenBufferInfo);
 	#ifdef Func_Win 
-	return GetConsoleScreenBufferInfo(nStdHandle, lpConsoleScreenBufferInfo);
+	return GetConsoleScreenBufferInfo(hConsoleOutput, lpConsoleScreenBufferInfo);
 	#else
 	return 0;
 	#endif	

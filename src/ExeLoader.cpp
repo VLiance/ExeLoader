@@ -140,6 +140,7 @@ long nExeFileSize;
 	bool fExeCpcDosLoadFile(const char* _sFullPath)
 	{
 	
+
 		if(_sFullPath == 0){
 			printf("\n Error: No file to load. \n ");
 			return false;
