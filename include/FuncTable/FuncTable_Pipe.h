@@ -501,7 +501,7 @@ char* pipe_setlocale(int category, const char* locale){
 }
 
 //!char* getenv (const char* name)
-char* pipe_getenv(const char* name){
+const char* pipe_getenv(const char* name){
 	showfunc("getenv( name: %s )", name);
 	
 	if(strcmp(name, "ST_DEBUG") == 0 ){

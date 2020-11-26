@@ -22,12 +22,13 @@
 
 //!HMODULE LoadLibraryW(LPCWSTR lpLibFileName)
 inline HMODULE WINAPI imp_LoadLibraryW(LPCWSTR lpLibFileName){
-	showfunc("LoadLibraryW( lpLibFileName: %s )", lpLibFileName);
+	WStr _sFile(lpLibFileName);
+	showfunc("LoadLibraryW( lpLibFileName: %s )", _sFile.ToCStr());
 	#ifdef USE_Windows_LoadLibrary
 		HMODULE _ret = LoadLibraryW(lpLibFileName);
 		if(!_ret){My_GetLastError();}return _ret;
 	#else
-		return (HMODULE)AddLibrary(lpLibFileName);
+		return (HMODULE)AddLibrary(_sFile.ToCStr());
 	#endif
 }
 
@@ -490,19 +491,19 @@ int imp_stricmp(const char *string1,const char *string2){
 //!void* malloc( size_t size )
 void* imp_malloc( size_t size ){
 	showfunc_opt("malloc( size: %d )", size); 
-	malloc(size);
+	return malloc(size);
 }
 
 //!void *calloc(size_t nitems, size_t size)
 void* imp_calloc(size_t nitems, size_t size){
 	showfunc_opt("calloc( nitems : %d, size: %d )", nitems, size); 
-	calloc(nitems, size);
+	return calloc(nitems, size);
 }
 
 //!void *realloc(void *ptr, size_t size)
 void* imp_realloc(void *ptr, size_t size){
 	showfunc_opt("calloc( ptr : %p, size: %d )", ptr, size); 
-	realloc(ptr, size);
+	return realloc(ptr, size);
 }
 
 //!void free (void* ptr)
