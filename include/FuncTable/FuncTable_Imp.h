@@ -507,10 +507,54 @@ int imp_sprintf( char * str, const char * format, va_list __local_argv){
 
 //!int sprintf ( char * str, const char * format, ... )
 int imp_snprintf( char * str, size_t n, const char * format, va_list __local_argv){
-	showfunc_opt("imp_snprintf( s: %p, format: %p, ... )", str,format); 
+	showfunc_opt("snprintf( s: %p, format: %p, ... )", str,format); 
 	return snprintf(str, n, format, __local_argv);
 }
 
+//!uintptr_t _beginthreadex( void *security, unsigned stack_size, unsigned ( __stdcall *start_address )( void * ),void *arglist,unsigned initflag,unsigned *thrdaddr)
+WINAPI uintptr_t imp_beginthreadex( void *security, unsigned stack_size, unsigned ( __stdcall *start_address )( void * ),void* arglist,unsigned initflag,unsigned *thrdaddr){
+	showfunc("beginthreadex( security: %p, stack_size: %p, start_address: %p, arglist: %p, initflag: %d, thrdaddr: %d )", security,stack_size,start_address,arglist, initflag, thrdaddr); 
+	return 0;
+}
+
+//!int* CDECL _errno(void )
+static int _errno_ = 0;
+int* imp_errno(void ){
+	showfunc_opt("errno()", ""); 
+	//  return &(msvcrt_get_thread_data()->thread_errno);
+	return &_errno_;
+}
+//!intptr_t _get_osfhandle(int fd)
+#define EBADF            9      /* Bad file number */
+intptr_t imp_get_osfhandle(int fd){
+	showfunc("_get_osfhandle( fd: %d )", fd); 
+	//File descriptor 0 stdint, 1 stdout, 2 strerr
+	//If execution is allowed to continue, it returns INVALID_HANDLE_VALUE (-1). It also sets errno to EBADF, indicating an invalid file handle.
+	return -1;
+}
+
+//!long _lseek(int fd,long offset,int origin)
+long imp_lseek(int fd,long offset,int origin){
+	showfunc("_lseek( fd: %d, offset: %d, origin: %d )", fd, offset, origin); 
+	//File descriptor 0 stdint, 1 stdout, 2 strerr
+	//If execution is allowed to continue, these functions set errno to EBADF and return -1L.
+	return ((long)-1);
+}
+
+
+//!int _write(int fd,const void *buffer, unsigned int count)
+int imp_write(int fd,const void *buffer, unsigned int count){
+	showfunc("_write( fd: %d, buffer: %p, count: %d )", fd, buffer, count);
+	return printf ("%.*s\n",count, buffer);
+	
+}
+
+//!int _isatty( int fd )
+int imp_isatty( int fd ){
+	showfunc("isatty( fd: %d)", fd);
+	//_isatty returns a nonzero value if the descriptor is associated with a character device. Otherwise, _isatty returns 0.
+	return 1;
+}
 /*
 LPVOID WINAPI LocalLock (HLOCAL hMem);
 SIZE_T WINAPI LocalShrink (HLOCAL hMem, UINT cbNewSize);

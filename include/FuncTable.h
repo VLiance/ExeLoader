@@ -257,6 +257,18 @@
 
 {"GetLastError"  			,(FUNC_) sys_GetLastError },
 {"SetLastError"  			,(FUNC_) sys_SetLastError },
+{"GetFileType"  			,(FUNC_) sys_GetFileType },
+{"VerSetConditionMask"  	,(FUNC_) sys_VerSetConditionMask },
+{"VerifyVersionInfoW"  		,(FUNC_) sys_VerifyVersionInfoW },
+
+
+
+{"_get_osfhandle"  			,(FUNC_) imp_get_osfhandle },
+{"_lseek"  					,(FUNC_) imp_lseek },
+{"_write"  					,(FUNC_) imp_write},
+{"_isatty"  				,(FUNC_) imp_isatty},
+
+
 
 
 {"CreateSemaphoreA"  		,(FUNC_) pipe_CreateSemaphoreA },
@@ -339,7 +351,10 @@
 
 
 
+
 {"_snprintf"  ,(FUNC_) snprintf },
+{"_beginthreadex"  ,(FUNC_) imp_beginthreadex },
+{"_errno"  	,(FUNC_) imp_errno },
 
 /////////////////////////////////////////////
 /////////// DIRECT MAPPING //////////////////

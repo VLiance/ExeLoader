@@ -441,3 +441,38 @@ VOID WINAPI sys_Sleep (DWORD dwMilliseconds){
 	#else
 	#endif
 }
+
+//!DWORD GetFileType(HANDLE hFile)
+DWORD sys_GetFileType(HANDLE hFile){
+	showfunc("GetFileType( hFile: %p )", hFile);
+	#ifdef Func_Win
+		GetFileType(hFile);
+	#else
+	return 0;
+	#endif
+}
+
+//!ULONGLONG NTAPI VerSetConditionMask (ULONGLONG ConditionMask, DWORD TypeMask, BYTE Condition);
+ULONGLONG NTAPI sys_VerSetConditionMask (ULONGLONG ConditionMask, DWORD TypeMask, BYTE Condition){
+	showfunc("VerSetConditionMask( ConditionMask: %p, TypeMask: %d, Condition: %d )", ConditionMask, TypeMask, Condition);
+	#ifdef Func_Win
+		VerSetConditionMask(ConditionMask, TypeMask, Condition);
+	#else
+		return 0;
+	#endif
+
+}
+
+//!WINBOOL WINAPI VerifyVersionInfoW (LPOSVERSIONINFOEXW lpVersionInformation, DWORD dwTypeMask, DWORDLONG dwlConditionMask)
+WINBOOL WINAPI sys_VerifyVersionInfoW (LPOSVERSIONINFOEXW lpVersionInformation, DWORD dwTypeMask, DWORDLONG dwlConditionMask){
+	showfunc("VerifyVersionInfoW( lpVersionInformation: %p, dwTypeMask: %d, dwlConditionMask: %d )", lpVersionInformation, dwTypeMask, dwlConditionMask);
+	#ifdef Func_Win
+		VerSetConditionMask(lpVersionInformation, dwTypeMask, dwlConditionMask)
+	#else
+		//If the currently running operating system satisfies the specified requirements, the return value is a nonzero value.
+		return 1;
+	#endif
+}
+
+
+

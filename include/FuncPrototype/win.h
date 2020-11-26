@@ -35,6 +35,7 @@
 	#else // CpcDos
 	#define STDCALL __attribute__((stdcall))
 	#endif
+	#define NTAPI STDCALL
 
 	#ifdef ImWin
 	#undef CDECL

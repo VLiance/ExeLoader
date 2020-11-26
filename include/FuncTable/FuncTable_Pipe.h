@@ -613,3 +613,4 @@ WINBOOL WINAPI pipe_GetConsoleScreenBufferInfo(HANDLE hConsoleOutput,PCONSOLE_SC
 	return 0;
 	#endif	
 } 
+
