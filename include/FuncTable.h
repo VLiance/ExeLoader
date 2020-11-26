@@ -72,6 +72,7 @@
 {"func_NotImplemented" 		,(FUNC_) func_NotImplemented }, //Must be first
 {"GetProcAddress" 			,(FUNC_) imp_GetProcAddress }, 	//Special
 {"LoadLibraryA"    			,(FUNC_) imp_LoadLibraryA },  	//Special
+{"LoadLibraryW"    			,(FUNC_) imp_LoadLibraryW},  	//Special
 //{"LoadLibraryExW"  			,(FUNC_) LoadLibraryExW }, 			//TODO
 
 {"CommandLineToArgvW"  		,(FUNC_) imp_CommandLineToArgvW },

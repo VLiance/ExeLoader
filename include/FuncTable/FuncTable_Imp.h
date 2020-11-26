@@ -20,6 +20,18 @@
 * 
 */
 
+//!HMODULE LoadLibraryW(LPCWSTR lpLibFileName)
+inline HMODULE WINAPI imp_LoadLibraryW(LPCWSTR lpLibFileName){
+	showfunc("LoadLibraryW( lpLibFileName: %s )", lpLibFileName);
+	#ifdef USE_Windows_LoadLibrary
+		HMODULE _ret = LoadLibraryW(lpLibFileName);
+		if(!_ret){My_GetLastError();}return _ret;
+	#else
+		return (HMODULE)AddLibrary(lpLibFileName);
+	#endif
+}
+
+
 //!HMODULE LoadLibraryA(LPCSTR lpLibFileName)
 inline HMODULE WINAPI imp_LoadLibraryA(LPCSTR lpLibFileName){
 	showfunc("LoadLibraryA( lpLibFileName: %s )", lpLibFileName);
