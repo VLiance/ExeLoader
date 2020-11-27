@@ -300,6 +300,44 @@ inline void WINAPI pipe_GetSystemInfo( LPSYSTEM_INFO lpSystemInfo){
 	#ifdef Func_Win
 	GetSystemInfo(lpSystemInfo);
 	#else
+	
+	GetSystemInfo(lpSystemInfo);
+	printf("\n wProcessorArchitecture: %d", lpSystemInfo->wProcessorArchitecture);
+	printf("\n wReserved: %d", lpSystemInfo->wReserved);
+	printf("\n dwPageSize: %d", lpSystemInfo->dwPageSize);
+	printf("\n lpMinimumApplicationAddress: %d", lpSystemInfo->lpMinimumApplicationAddress);
+	printf("\n lpMaximumApplicationAddress: %d", lpSystemInfo->lpMaximumApplicationAddress);
+	printf("\n dwActiveProcessorMask: %d", lpSystemInfo->dwActiveProcessorMask);
+	printf("\n dwNumberOfProcessors: %d", lpSystemInfo->dwNumberOfProcessors);
+	printf("\n dwProcessorType: %d", lpSystemInfo->dwProcessorType);
+	printf("\n dwAllocationGranularity: %d", lpSystemInfo->dwAllocationGranularity);
+	printf("\n wProcessorLevel: %d", lpSystemInfo->wProcessorLevel);
+	printf("\n wProcessorRevision: %d", lpSystemInfo->wProcessorRevision);
+/*
+O>  wProcessorArchitecture: 0
+O>  wReserved: 0
+O>  dwPageSize: 4096
+O>  lpMinimumApplicationAddress: 65536
+O>  lpMaximumApplicationAddress: -65537
+O>  dwActiveProcessorMask: 255
+O>  dwNumberOfProcessors: 8
+O>  dwProcessorType: 586
+O>  dwAllocationGranularity: 65536
+O>  wProcessorLevel: 6
+O>  wProcessorRevision: 15363
+*/
+//>Call: VirtualAlloc( lpAddress 00000000, dwSize: 65536, flAllocationType: 12288, flProtect:4 )
+//>Call: VirtualAlloc( lpAddress 00000000, dwSize: 65536, flAllocationType: 12288, flProtect:4 )
+	
+	/*
+	//LLVM
+	  SYSTEM_INFO  Info;
+	  ::GetSystemInfo(&Info);
+	  if (Info.dwPageSize > Info.dwAllocationGranularity)
+		return Info.dwPageSize;
+	  else
+		return Info.dwAllocationGranularity;
+	*/
 	#endif
 }
 
@@ -322,7 +360,7 @@ inline LPVOID WINAPI pipe_VirtualAlloc(LPVOID lpAddress,SIZE_T dwSize,DWORD flAl
 	if(flAllocationType == 0x01000){
 		return instance_AllocManager.ManagedCalloc(dwSize, sizeof(char));
 	}else{
-		return 0;
+		return 0;//damn VirtualAlloc( lpAddress 00000000, dwSize: 65536, flAllocationType: 12288, flProtect:4 )
 	}
 	#endif
 	
