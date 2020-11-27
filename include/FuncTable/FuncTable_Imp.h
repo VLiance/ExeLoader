@@ -22,13 +22,16 @@
 
 //!HMODULE LoadLibraryW(LPCWSTR lpLibFileName)
 inline HMODULE WINAPI imp_LoadLibraryW(LPCWSTR lpLibFileName){
-	WStr _sFile(lpLibFileName);
-	showfunc("LoadLibraryW( lpLibFileName: %s )", _sFile.ToCStr());
+	WStr _swFile(lpLibFileName);const char* _sFile = _swFile.ToCStr();
+	showfunc("LoadLibraryW( lpLibFileName: %s )", _sFile);
 	#ifdef USE_Windows_LoadLibrary
 		HMODULE _ret = LoadLibraryW(lpLibFileName);
 		if(!_ret){My_GetLastError();}return _ret;
 	#else
-		return (HMODULE)AddLibrary(_sFile.ToCStr());
+		if(strcmp(_sFile, "Dbghelp.dll") == 0){ //required for Mesa
+			return (HMODULE)1; //Fake availability
+		}
+		return (HMODULE)AddLibrary(_sFile);
 	#endif
 }
 
@@ -548,7 +551,7 @@ intptr_t imp_get_osfhandle(int fd){
 
 //!long _lseek(int fd,long offset,int origin)
 long imp_lseek(int fd,long offset,int origin){
-	showfunc("_lseek( fd: %d, offset: %d, origin: %d )", fd, offset, origin); 
+	showfunc_opt("_lseek( fd: %d, offset: %d, origin: %d )", fd, offset, origin); 
 	//File descriptor 0 stdint, 1 stdout, 2 strerr
 	//If execution is allowed to continue, these functions set errno to EBADF and return -1L.
 	return ((long)-1);
@@ -556,15 +559,17 @@ long imp_lseek(int fd,long offset,int origin){
 
 
 //!int _write(int fd,const void *buffer, unsigned int count)
-int imp_write(int fd,const void *buffer, unsigned int count){
-	showfunc("_write( fd: %d, buffer: %p, count: %d )", fd, buffer, count);
-	return printf ("%.*s\n",count, buffer);
+int imp_write(int fd,const void* buffer, unsigned int count){
+	showfunc_opt("_write( fd: %d, buffer: %p, count: %d )", fd, buffer, count);
+	int _bytes = printf ("%.*s\n",count, buffer)-1;
+	if(_bytes > count){_bytes = count;}
+	return _bytes;
 	
 }
 
 //!int _isatty( int fd )
 int imp_isatty( int fd ){
-	showfunc("isatty( fd: %d)", fd);
+	showfunc_opt("isatty( fd: %d)", fd);
 	//_isatty returns a nonzero value if the descriptor is associated with a character device. Otherwise, _isatty returns 0.
 	return 1;
 }

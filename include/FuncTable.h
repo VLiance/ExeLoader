@@ -251,6 +251,12 @@
 {"LeaveCriticalSection" 		,(FUNC_) sys_LeaveCriticalSection },
 {"DeleteCriticalSection" 		,(FUNC_) sys_DeleteCriticalSection },
 
+{"EnumerateLoadedModules64" 	,(FUNC_) sys_EnumerateLoadedModules64 },
+
+
+
+
+
 {"SetErrorMode"  			,(FUNC_) sys_SetErrorMode },
 
 {"DefWindowProcW"  			,(FUNC_) sys_DefWindowProcW },
