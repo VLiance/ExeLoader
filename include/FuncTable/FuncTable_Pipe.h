@@ -301,6 +301,18 @@ inline void WINAPI pipe_GetSystemInfo( LPSYSTEM_INFO lpSystemInfo){
 	GetSystemInfo(lpSystemInfo);
 	#else
 	
+//In 32bit System, value is 64KB(65536 Bytes)
+//It would depend on the CPU architecture and its implementation of pages and paging table
+
+//"Page size and granularity are the same."  Wrong!
+//Page size is the size of each memory "page" in the memory paging model of virtual memory.  It's the size of the span of addresses having the same address translation (between virtual addresses and physical addresses).  
+//Although x86 CPUs support 2 MiB pages and 4 MiB pages, and x64 CPUs support 1 GiB pages (and multiple sizes ranging from 4 kiB through 256 MiB), I think only 4 kiB pages have been in commonplace use for personal computer users.
+//Allocation granularity is a rather arbitrary value that Microsoft selected.  From the MSDN documentation for the SYSTEM_INFO structure: dwAllocationGranularity
+//The granularity with which virtual memory is allocated.
+//For example, a VirtualAlloc request to allocate 1 byte will reserve an address space of dwAllocationGranularity bytes.
+//This value was hard coded as 64 KB in the past, but other hardware architectures may require different values.
+//On my 64-bit Windows 7 system, with 12 GiB of RAM, "dwPageSize" is 4096 bytes, and "dwAllocationGranularity" is 65536 bytes (i.e., 64 kiB, which was imprecisely called "64 KB" in the documentation).
+/*
 	GetSystemInfo(lpSystemInfo);
 	printf("\n wProcessorArchitecture: %d", lpSystemInfo->wProcessorArchitecture);
 	printf("\n wReserved: %d", lpSystemInfo->wReserved);
@@ -310,9 +322,10 @@ inline void WINAPI pipe_GetSystemInfo( LPSYSTEM_INFO lpSystemInfo){
 	printf("\n dwActiveProcessorMask: %d", lpSystemInfo->dwActiveProcessorMask);
 	printf("\n dwNumberOfProcessors: %d", lpSystemInfo->dwNumberOfProcessors);
 	printf("\n dwProcessorType: %d", lpSystemInfo->dwProcessorType);
-	printf("\n dwAllocationGranularity: %d", lpSystemInfo->dwAllocationGranularity);
+	printf("\n dwAllocationGranularity: %d", lpSystemInfo->dwAllocationGranularity); //Needed for mesa
 	printf("\n wProcessorLevel: %d", lpSystemInfo->wProcessorLevel);
 	printf("\n wProcessorRevision: %d", lpSystemInfo->wProcessorRevision);
+	*/
 /*
 O>  wProcessorArchitecture: 0
 O>  wReserved: 0
@@ -325,21 +338,109 @@ O>  dwProcessorType: 586
 O>  dwAllocationGranularity: 65536
 O>  wProcessorLevel: 6
 O>  wProcessorRevision: 15363
+/////////////////////////////
+O>  wProcessorArchitecture: 0
+O>  wReserved: 0
+O>  dwPageSize: 4096
+O>  lpMinimumApplicationAddress: 65536
+O>  lpMaximumApplicationAddress: -65537
+O>  dwActiveProcessorMask: 15
+O>  dwNumberOfProcessors: 4
+O>  dwProcessorType: 586
+O>  dwAllocationGranularity: 65536
+O>  wProcessorLevel: 6
+O>  wProcessorRevision: 10759
 */
-//>Call: VirtualAlloc( lpAddress 00000000, dwSize: 65536, flAllocationType: 12288, flProtect:4 )
-//>Call: VirtualAlloc( lpAddress 00000000, dwSize: 65536, flAllocationType: 12288, flProtect:4 )
-	
-	/*
-	//LLVM
-	  SYSTEM_INFO  Info;
-	  ::GetSystemInfo(&Info);
-	  if (Info.dwPageSize > Info.dwAllocationGranularity)
-		return Info.dwPageSize;
-	  else
-		return Info.dwAllocationGranularity;
-	*/
+
+//Hardcoded typical data
+lpSystemInfo->wProcessorArchitecture = 0;
+lpSystemInfo->wReserved = 0;
+lpSystemInfo->dwPageSize = 4096;
+lpSystemInfo->lpMinimumApplicationAddress = (void*) 65536;
+lpSystemInfo->lpMaximumApplicationAddress = (void*)-65537;
+lpSystemInfo->dwActiveProcessorMask = 0;//TODO
+lpSystemInfo->dwNumberOfProcessors = 4;	//TODO
+lpSystemInfo->dwProcessorType = 586;	//TODO
+lpSystemInfo->dwAllocationGranularity = 65536; //Needed for LLVM
+lpSystemInfo->wProcessorLevel = 6; 		//TODO
+lpSystemInfo->wProcessorRevision = 0;
+
+/*
+//LLVM
+  SYSTEM_INFO  Info;
+  ::GetSystemInfo(&Info);
+  if (Info.dwPageSize > Info.dwAllocationGranularity)
+	return Info.dwPageSize;
+  else
+	return Info.dwAllocationGranularity;
+*/
 	#endif
 }
+
+
+//!VOID WINAPI pipe_GetNativeSystemInfo (LPSYSTEM_INFO lpSystemInfo)
+VOID WINAPI pipe_GetNativeSystemInfo(LPSYSTEM_INFO lpSystemInfo){
+	showfunc("GetNativeSystemInfo( lpSystemInfo:%p )", lpSystemInfo);
+	#ifdef Func_Win
+	GetNativeSystemInfo(lpSystemInfo);
+	#else
+/*	
+	GetNativeSystemInfo(lpSystemInfo);
+	printf("\n wProcessorArchitecture: %d", lpSystemInfo->wProcessorArchitecture);
+	printf("\n wReserved: %d", lpSystemInfo->wReserved);
+	printf("\n dwPageSize: %d", lpSystemInfo->dwPageSize);
+	printf("\n lpMinimumApplicationAddress: %d", lpSystemInfo->lpMinimumApplicationAddress);
+	printf("\n lpMaximumApplicationAddress: %d", lpSystemInfo->lpMaximumApplicationAddress);
+	printf("\n dwActiveProcessorMask: %d", lpSystemInfo->dwActiveProcessorMask);
+	printf("\n dwNumberOfProcessors: %d", lpSystemInfo->dwNumberOfProcessors);
+	printf("\n dwProcessorType: %d", lpSystemInfo->dwProcessorType);
+	printf("\n dwAllocationGranularity: %d", lpSystemInfo->dwAllocationGranularity); //Needed for mesa
+	printf("\n wProcessorLevel: %d", lpSystemInfo->wProcessorLevel);
+	printf("\n wProcessorRevision: %d", lpSystemInfo->wProcessorRevision);
+
+O>  wProcessorArchitecture: 9
+O>  wReserved: 0
+O>  dwPageSize: 4096
+O>  lpMinimumApplicationAddress: 65536
+O>  lpMaximumApplicationAddress: -65537
+O>  dwActiveProcessorMask: 15
+O>  dwNumberOfProcessors: 4
+O>  dwProcessorType: 8664
+O>  dwAllocationGranularity: 65536
+O>  wProcessorLevel: 6
+O>  wProcessorRevision: 10759.
+*/
+//Hardcoded typical data
+lpSystemInfo->wProcessorArchitecture = 0;
+lpSystemInfo->wReserved = 0;
+lpSystemInfo->dwPageSize = 4096;
+lpSystemInfo->lpMinimumApplicationAddress = (void*) 65536;
+lpSystemInfo->lpMaximumApplicationAddress = (void*)-65537;
+lpSystemInfo->dwActiveProcessorMask = 0;//TODO
+lpSystemInfo->dwNumberOfProcessors = 4;	//TODO
+lpSystemInfo->dwProcessorType = 586;	//TODO (May be different from GetSystemInfo)
+lpSystemInfo->dwAllocationGranularity = 65536; //Needed for LLVM
+lpSystemInfo->wProcessorLevel = 6; 		//TODO
+lpSystemInfo->wProcessorRevision = 0;
+
+	#endif
+}
+
+//!WINBOOL WINAPI FlushInstructionCache (HANDLE hProcess, LPCVOID lpBaseAddress, SIZE_T dwSize)
+WINBOOL WINAPI pipe_FlushInstructionCache (HANDLE hProcess, LPCVOID lpBaseAddress, SIZE_T dwSize){
+	showfunc("FlushInstructionCache( hProcess:%p, lpBaseAddress:%d, dwSize:%d )",hProcess, lpBaseAddress, dwSize);
+	#ifdef Func_Win
+	return FlushInstructionCache(hProcess, lpBaseAddress, dwSize);
+	#else
+	//Applications should call FlushInstructionCache if they generate or modify code in memory. 
+	//The CPU cannot detect the change, and may execute the old code it cached.
+	return FlushInstructionCache(hProcess, lpBaseAddress, dwSize); //TODO
+	#endif
+
+}
+ 
+
+
 
 //!BOOL ClientToScreen(HWND    hWnd,LPPOINT lpPoint)
 inline WINAPI BOOL pipe_ClientToScreen(HWND hWnd,LPPOINT lpPoint){
@@ -357,13 +458,23 @@ inline LPVOID WINAPI pipe_VirtualAlloc(LPVOID lpAddress,SIZE_T dwSize,DWORD flAl
 	#ifdef USE_Windows_VirtualAlloc
 	return VirtualAlloc(lpAddress, dwSize, flAllocationType, flProtect); 
 	#else
-	if(flAllocationType == 0x01000){
+	if((flAllocationType & 0x01000) == 0x01000){
 		return instance_AllocManager.ManagedCalloc(dwSize, sizeof(char));
 	}else{
 		return 0;//damn VirtualAlloc( lpAddress 00000000, dwSize: 65536, flAllocationType: 12288, flProtect:4 )
 	}
 	#endif
 	
+}
+  
+//!WINBOOL WINAPI VirtualProtect (LPVOID lpAddress, SIZE_T dwSize, DWORD flNewProtect, PDWORD lpflOldProtect)
+inline WINBOOL WINAPI pipe_VirtualProtect (LPVOID lpAddress, SIZE_T dwSize, DWORD flNewProtect, PDWORD lpflOldProtect){
+	showfunc("VirtualProtect( lpAddress %p, dwSize: %d, flNewProtect: %d, lpflOldProtect:%p )", lpAddress, dwSize, flNewProtect, lpflOldProtect);
+	#ifdef USE_Windows_VirtualAlloc
+    return VirtualProtect(lpAddress, dwSize, flNewProtect, lpflOldProtect); 
+	#else
+	return true;
+	#endif
 }
 
 //!BOOL VirtualFree(LPVOID lpAddress,SIZE_T dwSize,DWORD  dwFreeType)

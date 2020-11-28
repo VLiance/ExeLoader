@@ -126,6 +126,8 @@
 
 {"VirtualAlloc"  		,(FUNC_) pipe_VirtualAlloc },
 {"VirtualFree"  		,(FUNC_) pipe_VirtualFree },
+{"VirtualProtect"  		,(FUNC_) pipe_VirtualProtect },
+{"FlushInstructionCache",(FUNC_) pipe_FlushInstructionCache },
 
 {"setvbuf"  			,(FUNC_) pipe_setvbuf },
 {"_set_error_mode" 		,(FUNC_) pipe_set_error_mode },
@@ -136,6 +138,7 @@
 {"DispatchMessageA"  	,(FUNC_) pipe_DispatchMessageA }, 
 
 {"GetSystemInfo"  		,(FUNC_) pipe_GetSystemInfo }, 
+{"GetNativeSystemInfo"  ,(FUNC_) pipe_GetNativeSystemInfo }, 
 {"WindowFromDC"  		,(FUNC_) pipe_WindowFromDC }, 
 {"ClientToScreen"  		,(FUNC_) pipe_ClientToScreen }, 
 
