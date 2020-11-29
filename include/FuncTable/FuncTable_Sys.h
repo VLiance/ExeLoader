@@ -23,6 +23,7 @@
 *  If not, your app will likely crash when the function return.
 *
 */
+//#define Func_Win
 
 //!VOID WINAPI SetLastError (DWORD dwErrCode)
 DWORD last_error = 0;
@@ -101,7 +102,9 @@ HWND WINAPI pipe_CreateWindowExW(DWORD dwExStyle,LPCWSTR lpClassName,LPCWSTR lpW
 		aContext[idx].hwnd_View = pixView_createWindow(hExeloader, &aContext[idx]);
 		#endif
 
-		showinf("create hwnd_View( hwnd_View: %d )", aContext[idx].hwnd_View );
+		showinf("PixView= idx: %d, height: %d, width: %d", idx,  aContext[idx].height,  aContext[idx].width);
+		
+		showinf("create hwnd_View( hwnd_View: %d, idx: %d, height: %d, width: %d )", aContext[idx].hwnd_View,  idx,  aContext[idx].height,  aContext[idx].width );
 	
 		return (HWND)idx;
 	#endif
@@ -136,12 +139,53 @@ int WINAPI pipe_StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int Dest
 	
 		int idx = (int)hdc; //HDC is same as HWND (not necessary to dissociate them)
 		#ifdef ShowPixView
+			// aContext[idx].width & SrcWidth may differ (+32pix for depth buffer?)
 			pixView_MakeSurface(&aContext[idx]);
-			memcpy(aContext[idx].pixels, lpBits, aContext[idx].height * aContext[idx].width *4);
+			uint32_t* pix_src = (uint32_t*)lpBits;
+			uint32_t* pix_dest = (uint32_t*)aContext[idx].pixels;
+			
+			for(int y = 0; y <  aContext[idx].height; y++){
+				memcpy(pix_dest + (y * aContext[idx].width), pix_src + (y * SrcWidth), aContext[idx].width *4);
+			}
+			
+			//( aContext[idx].width & SrcWidth may differ )
+			//memcpy(aContext[idx].pixels, lpBits, aContext[idx].height * aContext[idx].width *4);
+			
 			pixView_update(&aContext[idx]);
+			showinf("PixView= idx: %d, height: %d, width: %d", idx,  aContext[idx].height,  aContext[idx].width);
 		#endif
 		showinf("use hwnd_View( hwnd_View: %d )", aContext[idx].hwnd_View);
 		return aContext[idx].height; //number of scan lines copied
+	#endif
+}
+
+
+//!WINBOOL WINAPI GetClientRect(HWND hWnd,LPRECT lpRect)
+//struct RECT {LONG left; LONG top;LONG right;LONG bottom;}
+WINBOOL WINAPI sys_GetClientRect(HWND hWnd,LPRECT lpRect){
+ 	showfunc("GetClientRect( hWnd: %p, lpRect: %p )", hWnd, lpRect);
+	#ifdef Func_Win
+		return GetClientRect(hWnd, lpRect);
+	#else
+		lpRect->left = 0;
+		lpRect->top  = 0;
+		lpRect->right  = aContext[(int)hWnd].width;
+		lpRect->bottom = aContext[(int)hWnd].height;
+		return true;
+	#endif
+}
+
+//!WINBOOL WINAPI GetWindowRect(HWND hWnd,LPRECT lpRect)
+WINBOOL WINAPI sys_GetWindowRect(HWND hWnd,LPRECT lpRect){
+	showfunc("GetWindowRect( hWnd: %p, lpRect: %p )", hWnd, lpRect);
+	#ifdef Func_Win
+		return GetWindowRect(hWnd, lpRect);
+	#else
+		lpRect->left = 0;
+		lpRect->top  = 0;
+		lpRect->right  = aContext[(int)hWnd].width;
+		lpRect->bottom = aContext[(int)hWnd].height;
+		return true;
 	#endif
 }
 
@@ -184,7 +228,7 @@ inline HRESULT sys_SetProcessDpiAwareness(int value){
 //!WINBOOL WINAPI QueryPerformanceCounter (LARGE_INTEGER *lpPerformanceCount)
 
 WINBOOL WINAPI sys_QueryPerformanceCounter (LARGE_INTEGER *lpPerformanceCount){
-   	showfunc("QueryPerformanceCounter(lpPerformanceCount)", lpPerformanceCount);
+   	showfunc_opt("QueryPerformanceCounter(lpPerformanceCount)", lpPerformanceCount);
 	#ifdef Func_Win
 		return QueryPerformanceCounter( lpPerformanceCount);
 	#else
@@ -384,36 +428,6 @@ UINT WINAPI sys_SetErrorMode(UINT uMode){
 	#endif
 }
 
-//!WINBOOL WINAPI GetClientRect(HWND hWnd,LPRECT lpRect)
-//struct RECT {LONG left; LONG top;LONG right;LONG bottom;}
-WINBOOL WINAPI sys_GetClientRect(HWND hWnd,LPRECT lpRect){
- 	showfunc("GetClientRect( hWnd: %p, lpRect: %p )", hWnd, lpRect);
-	#ifdef Func_Win
-		return GetClientRect(hWnd, lpRect);
-	#else
-		lpRect->left = 0;
-		lpRect->top  = 0;
-		lpRect->right  = aContext[(int)hWnd].width;
-		lpRect->bottom = aContext[(int)hWnd].height;
-		return true;
-	#endif
-}
-
-//!WINBOOL WINAPI GetWindowRect(HWND hWnd,LPRECT lpRect)
-WINBOOL WINAPI sys_GetWindowRect(HWND hWnd,LPRECT lpRect){
-	showfunc("GetWindowRect( hWnd: %p, lpRect: %p )", hWnd, lpRect);
-	#ifdef Func_Win
-		return GetWindowRect(hWnd, lpRect);
-	#else
-		lpRect->left = 0;
-		lpRect->top  = 0;
-		lpRect->right  = aContext[(int)hWnd].width;
-		lpRect->bottom = aContext[(int)hWnd].height;
-		return true;
-	#endif
-}
-
-
 //!LRESULT WINAPI DefWindowProcA (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 //!LRESULT WINAPI DefWindowProcW (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 LRESULT WINAPI sys_DefWindowProcA (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam){
@@ -446,7 +460,7 @@ VOID WINAPI sys_Sleep (DWORD dwMilliseconds){
 DWORD sys_GetFileType(HANDLE hFile){
 	showfunc("GetFileType( hFile: %p )", hFile);
 	#ifdef Func_Win
-		GetFileType(hFile);
+		return GetFileType(hFile);
 	#else
 	return 0;
 	#endif
@@ -456,7 +470,7 @@ DWORD sys_GetFileType(HANDLE hFile){
 ULONGLONG NTAPI sys_VerSetConditionMask (ULONGLONG ConditionMask, DWORD TypeMask, BYTE Condition){
 	showfunc_opt("VerSetConditionMask( ConditionMask: %p, TypeMask: %d, Condition: %d )", ConditionMask, TypeMask, Condition);
 	#ifdef Func_Win
-		VerSetConditionMask(ConditionMask, TypeMask, Condition);
+		return VerSetConditionMask(ConditionMask, TypeMask, Condition);
 	#else
 		return 0;
 	#endif
@@ -467,7 +481,7 @@ ULONGLONG NTAPI sys_VerSetConditionMask (ULONGLONG ConditionMask, DWORD TypeMask
 WINBOOL WINAPI sys_VerifyVersionInfoW (LPOSVERSIONINFOEXW lpVersionInformation, DWORD dwTypeMask, DWORDLONG dwlConditionMask){
 	showfunc_opt("VerifyVersionInfoW( lpVersionInformation: %p, dwTypeMask: %d, dwlConditionMask: %d )", lpVersionInformation, dwTypeMask, dwlConditionMask);
 	#ifdef Func_Win
-		VerSetConditionMask(lpVersionInformation, dwTypeMask, dwlConditionMask)
+		return VerifyVersionInfoW(lpVersionInformation, dwTypeMask, dwlConditionMask);
 	#else
 		//If the currently running operating system satisfies the specified requirements, the return value is a nonzero value.
 		return 1;
@@ -478,9 +492,31 @@ WINBOOL WINAPI sys_VerifyVersionInfoW (LPOSVERSIONINFOEXW lpVersionInformation, 
 //!BOOL IMAGEAPI EnumerateLoadedModules64(__in HANDLE hProcess,__in PENUMLOADED_MODULES_CALLBACK64 EnumLoadedModulesCallback,__in PVOID UserContext)
 typedef BOOL (CALLBACK *PENUMLOADED_MODULES_CALLBACK64)( PCSTR ModuleName, ULONG ModuleBase, ULONG ModuleSize, PVOID UserContext);
 BOOL WINAPI sys_EnumerateLoadedModules64( HANDLE hProcess, PENUMLOADED_MODULES_CALLBACK64 EnumLoadedModulesCallback, PVOID UserContext){
-	showfunc("EnumerateLoadedModules64( hProcess: %p, EnumLoadedModulesCallback: %p, UserContext: %p )", hProcess, EnumLoadedModulesCallback, UserContext);
+	showfunc_opt("EnumerateLoadedModules64( hProcess: %p, EnumLoadedModulesCallback: %p, UserContext: %p )", hProcess, EnumLoadedModulesCallback, UserContext);
 	// static BOOL CALLBACK ELM_Callback(WIN32_ELMCB_PCSTR ModuleName, DWORD64 ModuleBase,ULONG ModuleSize, PVOID UserContext);
 	//Just send a fake Module 
 	EnumLoadedModulesCallback(0,0,0,0);
 	return true;
+}
+
+//!DWORD WINAPI GetCurrentDirectoryA (DWORD nBufferLength, LPSTR lpBuffer)
+//!DWORD WINAPI GetCurrentDirectoryW (DWORD nBufferLength, LPWSTR lpBuffer)
+DWORD WINAPI sys_GetCurrentDirectoryA (DWORD nBufferLength, LPSTR lpBuffer){
+	showfunc_opt("GetCurrentDirectoryA( nBufferLength: %d, lpBuffer: %p )", nBufferLength, lpBuffer);
+	#ifdef Func_Win
+		return GetCurrentDirectoryA( nBufferLength, lpBuffer);
+	#else
+		//If the currently running operating system satisfies the specified requirements, the return value is a nonzero value.
+		return 1;
+	#endif
+}
+DWORD WINAPI sys_GetCurrentDirectoryW (DWORD nBufferLength, LPWSTR lpBuffer){
+	showfunc_opt("GetCurrentDirectoryW( nBufferLength: %d, lpBuffer: %p )", nBufferLength, lpBuffer);
+	#ifdef Func_Win
+		return GetCurrentDirectoryW( nBufferLength, lpBuffer);
+	#else
+		return GetCurrentDirectoryW( nBufferLength, lpBuffer);//TODO
+		//If the currently running operating system satisfies the specified requirements, the return value is a nonzero value.
+		return 1;
+	#endif
 }

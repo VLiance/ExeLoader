@@ -268,6 +268,8 @@
 {"GetLastError"  			,(FUNC_) sys_GetLastError },
 {"SetLastError"  			,(FUNC_) sys_SetLastError },
 {"GetFileType"  			,(FUNC_) sys_GetFileType },
+{"GetCurrentDirectoryA"  	,(FUNC_) sys_GetCurrentDirectoryA },
+{"GetCurrentDirectoryW"  	,(FUNC_) sys_GetCurrentDirectoryW },
 {"VerSetConditionMask"  	,(FUNC_) sys_VerSetConditionMask },
 {"VerifyVersionInfoW"  		,(FUNC_) sys_VerifyVersionInfoW },
 
@@ -277,6 +279,7 @@
 {"_lseek"  					,(FUNC_) imp_lseek },
 {"_write"  					,(FUNC_) imp_write},
 {"_isatty"  				,(FUNC_) imp_isatty},
+
 
 
 
@@ -294,6 +297,7 @@
 {"abort"  		,(FUNC_) abort },  //TODO custom abort
 
 {"_stricmp"  ,(FUNC_) imp_stricmp },
+
 
 
 
@@ -366,6 +370,13 @@
 {"_beginthreadex"  ,(FUNC_) imp_beginthreadex },
 {"_errno"  	,(FUNC_) imp_errno },
 
+
+
+{"__register_frame"  	,(FUNC_) imp_register_frame },
+{"__deregister_frame"  	,(FUNC_) imp_deregister_frame },
+
+
+
 /////////////////////////////////////////////
 /////////// DIRECT MAPPING //////////////////
 /// *safe enough for a direct replacement* ///
@@ -376,22 +387,36 @@
 {"scanf"  ,(FUNC_) scanf },
 
 /////////// LOG ////////////////////
-{"printf"  ,(FUNC_) printf }, // maybe not safe
-{"fflush"  	,(FUNC_) fflush },
-{"fprintf"  ,(FUNC_) fprintf },
-{"fwrite"  ,(FUNC_) fwrite },
+{"printf"  	,(FUNC_) printf }, // maybe not safe
+{"fflush"  	,(FUNC_) imp_fflush },
+{"fwrite"  	,(FUNC_) imp_fwrite },
+
+{"fprintf"  ,(FUNC_) imp_fprintf },
+{"sprintf"  ,(FUNC_) imp_sprintf },
+
+
+{"putc"  	,(FUNC_) imp_putc },
+{"fputc"  	,(FUNC_) imp_fputc },
+{"puts"  	,(FUNC_) imp_puts },
+{"fputs"  	,(FUNC_) imp_fputs },
+{"putchar"  ,(FUNC_) imp_putchar },
+
 ////////////////////////////////////
 
 /////////// MEM ////////////////////
 {"memcmp"  		,(FUNC_) memcmp },
 {"memmove"  	,(FUNC_) memmove },
-{"memcpy"  ,(FUNC_) memcpy },
-{"memset"  ,(FUNC_) memset },
+{"memcpy"  		,(FUNC_) memcpy },
+{"memset"  		,(FUNC_) memset },
 ////////////////////////////////////
 
 /////////// STRING ///////////////
-//{"wcslen"  	,(FUNC_) wcslen }, //Not in DJGPP
-{"sprintf"  ,(FUNC_) imp_sprintf },
+#ifdef ImWin
+{"wcslen"  	,(FUNC_) wcslen }, //Not in DJGPP
+#endif
+
+{"isalnum"  ,(FUNC_) isalnum},
+
 
 {"strcmp"  	,(FUNC_) strcmp },
 {"stricmp"	,(FUNC_) stricmp },
@@ -414,13 +439,8 @@
 ////////////////////////////////
 
 /////////// CHAR ////////////////
-{"putchar"  ,(FUNC_) putchar },
-{"puts"  	,(FUNC_) puts },
 {"getc"  	,(FUNC_) getc },
 {"fgetc"  	,(FUNC_) fgetc },
-{"putc"  	,(FUNC_) putc },
-{"fputs"  	,(FUNC_) fputs },
-{"putchar"  ,(FUNC_) putchar },
 {"getchar"  ,(FUNC_) getchar },
 {"getch"  	,(FUNC_) getch },
 /////////////////////////////////

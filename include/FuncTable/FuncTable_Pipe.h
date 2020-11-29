@@ -428,7 +428,7 @@ lpSystemInfo->wProcessorRevision = 0;
 
 //!WINBOOL WINAPI FlushInstructionCache (HANDLE hProcess, LPCVOID lpBaseAddress, SIZE_T dwSize)
 WINBOOL WINAPI pipe_FlushInstructionCache (HANDLE hProcess, LPCVOID lpBaseAddress, SIZE_T dwSize){
-	showfunc("FlushInstructionCache( hProcess:%p, lpBaseAddress:%d, dwSize:%d )",hProcess, lpBaseAddress, dwSize);
+	showfunc_opt("FlushInstructionCache( hProcess:%p, lpBaseAddress:%d, dwSize:%d )",hProcess, lpBaseAddress, dwSize);
 	#ifdef Func_Win
 	return FlushInstructionCache(hProcess, lpBaseAddress, dwSize);
 	#else
@@ -454,13 +454,14 @@ inline WINAPI BOOL pipe_ClientToScreen(HWND hWnd,LPPOINT lpPoint){
 
 //!LPVOID VirtualAlloc(LPVOID lpAddress,SIZE_T dwSize,DWORD flAllocationType,DWORD flProtect)
 inline LPVOID WINAPI pipe_VirtualAlloc(LPVOID lpAddress,SIZE_T dwSize,DWORD flAllocationType,DWORD flProtect){
-	showfunc("VirtualAlloc( lpAddress %p, dwSize: %d, flAllocationType: %d, flProtect:%d )", lpAddress, dwSize, flAllocationType, flProtect);
+	showfunc_opt("VirtualAlloc( lpAddress %p, dwSize: %d, flAllocationType: %d, flProtect:%d )", lpAddress, dwSize, flAllocationType, flProtect);
 	#ifdef USE_Windows_VirtualAlloc
 	return VirtualAlloc(lpAddress, dwSize, flAllocationType, flProtect); 
 	#else
 	if((flAllocationType & 0x01000) == 0x01000){
 		return instance_AllocManager.ManagedCalloc(dwSize, sizeof(char));
 	}else{
+		showinf("Warning VirtualAlloc","");
 		return 0;//damn VirtualAlloc( lpAddress 00000000, dwSize: 65536, flAllocationType: 12288, flProtect:4 )
 	}
 	#endif
@@ -469,7 +470,7 @@ inline LPVOID WINAPI pipe_VirtualAlloc(LPVOID lpAddress,SIZE_T dwSize,DWORD flAl
   
 //!WINBOOL WINAPI VirtualProtect (LPVOID lpAddress, SIZE_T dwSize, DWORD flNewProtect, PDWORD lpflOldProtect)
 inline WINBOOL WINAPI pipe_VirtualProtect (LPVOID lpAddress, SIZE_T dwSize, DWORD flNewProtect, PDWORD lpflOldProtect){
-	showfunc("VirtualProtect( lpAddress %p, dwSize: %d, flNewProtect: %d, lpflOldProtect:%p )", lpAddress, dwSize, flNewProtect, lpflOldProtect);
+	showfunc_opt("VirtualProtect( lpAddress %p, dwSize: %d, flNewProtect: %d, lpflOldProtect:%p )", lpAddress, dwSize, flNewProtect, lpflOldProtect);
 	#ifdef USE_Windows_VirtualAlloc
     return VirtualProtect(lpAddress, dwSize, flNewProtect, lpflOldProtect); 
 	#else
@@ -479,7 +480,7 @@ inline WINBOOL WINAPI pipe_VirtualProtect (LPVOID lpAddress, SIZE_T dwSize, DWOR
 
 //!BOOL VirtualFree(LPVOID lpAddress,SIZE_T dwSize,DWORD  dwFreeType)
 inline BOOL WINAPI pipe_VirtualFree(LPVOID lpAddress,SIZE_T dwSize,DWORD  dwFreeType){
-	showfunc("VirtualFree( lpAddress %p, dwSize: %d, dwFreeType:%d )", lpAddress, dwSize, dwFreeType);
+	showfunc_opt("VirtualFree( lpAddress %p, dwSize: %d, dwFreeType:%d )", lpAddress, dwSize, dwFreeType);
 	#ifdef USE_Windows_VirtualAlloc
     return VirtualFree(lpAddress, dwSize, dwFreeType); 
 	#else
@@ -595,7 +596,7 @@ LONG WINAPI pipe_UnhandledExceptionFilter(_EXCEPTION_POINTERS* ExceptionInfo){
 
 //!HANDLE WINAPI GetCurrentProcess()
 HANDLE WINAPI pipe_GetCurrentProcess(){
-	showfunc("GetCurrentProcess( )", "");
+	showfunc_opt("GetCurrentProcess( )", "");
 	#ifdef Func_Win 
 	return GetCurrentProcess();
 	#else
@@ -682,11 +683,12 @@ const char* pipe_getenv(const char* name){
 
 //!int WINAPI WideCharToMultiByte (UINT CodePage, DWORD dwFlags, LPCWCH lpWideCharStr, int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCCH lpDefaultChar, LPBOOL lpUsedDefaultChar)
 int WINAPI pipe_WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWCH lpWideCharStr, int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCCH lpDefaultChar, LPBOOL lpUsedDefaultChar){
-	showfunc("WideCharToMultiByte( ... )", "");
+	showfunc_opt("WideCharToMultiByte( ... )", "");
 	#ifdef Func_Win 
 	return WideCharToMultiByte(CodePage, dwFlags, lpWideCharStr, cchWideChar, lpMultiByteStr, cbMultiByte, lpDefaultChar, lpUsedDefaultChar);
 	#else
-	return 0;
+	return WideCharToMultiByte(CodePage, dwFlags, lpWideCharStr, cchWideChar, lpMultiByteStr, cbMultiByte, lpDefaultChar, lpUsedDefaultChar);
+	return 0;//TODO
 	#endif	
 }
 
@@ -696,7 +698,8 @@ int WINAPI pipe_MultiByteToWideChar (UINT CodePage, DWORD dwFlags, LPCCH lpMulti
 	#ifdef Func_Win 
 	return MultiByteToWideChar(CodePage, dwFlags, lpMultiByteStr, cbMultiByte, lpWideCharStr, cchWideChar);
 	#else
-	return 0;
+	return MultiByteToWideChar(CodePage, dwFlags, lpMultiByteStr, cbMultiByte, lpWideCharStr, cchWideChar);
+	return 0;//TODO
 	#endif	
 }
 
