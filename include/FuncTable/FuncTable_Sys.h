@@ -204,102 +204,6 @@ inline BOOL WINAPI pipe_SwapBuffers(HDC hdc){
 }
 
 
-//!HRESULT GetDpiForMonitor(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType,UINT *dpiX,UINT *dpiY)
-HRESULT sys_GetDpiForMonitor(HMONITOR hmonitor,int dpiType,UINT* dpiX,UINT* dpiY){
-	showfunc("GetDpiForMonitor( hmonitor: %p, dpiType: %d, dpiX: %p,  dpiY: %p )", hmonitor, dpiType, dpiX, dpiY);
-	*dpiX = 0;
-	*dpiY = 0;
-	return 0;
-}
-
-//!BOOL SetProcessDPIAware()
-inline BOOL sys_SetProcessDPIAware(){
-	showfunc("SetProcessDPIAware( )","");
-	return true;
-}
-
-//!HRESULT SetProcessDpiAwareness(PROCESS_DPI_AWARENESS value)
-inline HRESULT sys_SetProcessDpiAwareness(int value){
-	showfunc("SetProcessDpiAwareness( value: %d )",value);
-	return 0;
-}
-
-//!WINBOOL WINAPI QueryPerformanceCounter (LARGE_INTEGER *lpPerformanceCount)
-
-WINBOOL WINAPI sys_QueryPerformanceCounter (LARGE_INTEGER *lpPerformanceCount){
-   	showfunc_opt("QueryPerformanceCounter(lpPerformanceCount)", lpPerformanceCount);
-	#ifdef Func_Win
-		return QueryPerformanceCounter( lpPerformanceCount);
-	#else
-		static int i = 0; i++;
-		LARGE_INTEGER lpPerformanceCount_ = {(DWORD)521891041 + i};//Dummy value
-		*lpPerformanceCount = lpPerformanceCount_;
-		return true;
-	#endif
-}
-
-//!WINBOOL WINAPI QueryPerformanceFrequency (LARGE_INTEGER *lpFrequency)
-WINBOOL WINAPI sys_QueryPerformanceFrequency(LARGE_INTEGER *lpFrequency){
-   	showfunc("QueryPerformanceFrequency( lpFrequency: %p )", lpFrequency);
-	#ifdef Func_Win
-		return QueryPerformanceFrequency( lpFrequency);
-	#else
-		LARGE_INTEGER lpFrequency_ = {8221038}; //Dummy value
-		*lpFrequency = lpFrequency_;
-		return true;
-	#endif
-}
-
-//!DWORD WINAPI GetTickCount (VOID)
-DWORD WINAPI sys_GetTickCount(){
- 	showfunc("GetTickCount( )", "");
-	#ifdef Func_Win
-		return GetTickCount();
-	#else
-		return 0;
-	#endif
-}
-
-//!DWORD WINAPI GetCurrentThreadId (VOID)
-DWORD WINAPI sys_GetCurrentThreadId(){
- 	showfunc("GetCurrentThreadId( )", "");
-	#ifdef Func_Win
-		return GetCurrentThreadId();
-	#else
-		return 1;//TODO
-	#endif
-}
-
-//!DWORD WINAPI GetCurrentThreadId (VOID)
-DWORD WINAPI sys_GetCurrentProcessId(){
- 	showfunc("GetCurrentProcessId( )", "");
-	#ifdef Func_Win
-		return GetCurrentProcessId();
-	#else
-		return 1;//TODO
-	#endif
-}
-
- //!VOID WINAPI GetSystemTimeAsFileTime (LPFILETIME lpSystemTimeAsFileTime)
- VOID WINAPI sys_GetSystemTimeAsFileTime(LPFILETIME lpSystemTimeAsFileTime){
-	 showfunc("GetSystemTimeAsFileTime( lpSystemTimeAsFileTime: %p )", lpSystemTimeAsFileTime);
-	#ifdef Func_Win
-		GetSystemTimeAsFileTime(lpSystemTimeAsFileTime);
-	#else
-	#endif
- }
- 
-//!LPTOP_LEVEL_EXCEPTION_FILTER WINAPI SetUnhandledExceptionFilter (LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter)
-LPTOP_LEVEL_EXCEPTION_FILTER WINAPI sys_SetUnhandledExceptionFilter(LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter){
- 	showfunc("SetUnhandledExceptionFilter( lpTopLevelExceptionFilter: %p )", lpTopLevelExceptionFilter);
-	#ifdef Func_Win
-		return SetUnhandledExceptionFilter(lpTopLevelExceptionFilter);
-	#else
-		return 0;
-	#endif
-}
- 
-
 //!WINBOOL WINAPI TranslateMessage(CONST MSG *lpMsg)
 WINBOOL WINAPI sys_TranslateMessage(CONST MSG *lpMsg){
  	showfunc_opt("TranslateMessage( lpMsg: %p )", lpMsg);
@@ -487,7 +391,6 @@ WINBOOL WINAPI sys_VerifyVersionInfoW (LPOSVERSIONINFOEXW lpVersionInformation, 
 	#endif
 }
 
-
 //!BOOL IMAGEAPI EnumerateLoadedModules64(__in HANDLE hProcess,__in PENUMLOADED_MODULES_CALLBACK64 EnumLoadedModulesCallback,__in PVOID UserContext)
 typedef BOOL (CALLBACK *PENUMLOADED_MODULES_CALLBACK64)( PCSTR ModuleName, ULONG ModuleBase, ULONG ModuleSize, PVOID UserContext);
 BOOL WINAPI sys_EnumerateLoadedModules64( HANDLE hProcess, PENUMLOADED_MODULES_CALLBACK64 EnumLoadedModulesCallback, PVOID UserContext){
@@ -519,3 +422,99 @@ DWORD WINAPI sys_GetCurrentDirectoryW (DWORD nBufferLength, LPWSTR lpBuffer){
 		return 1;
 	#endif
 }
+
+//!HRESULT GetDpiForMonitor(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType,UINT *dpiX,UINT *dpiY)
+HRESULT sys_GetDpiForMonitor(HMONITOR hmonitor,int dpiType,UINT* dpiX,UINT* dpiY){
+	showfunc("GetDpiForMonitor( hmonitor: %p, dpiType: %d, dpiX: %p,  dpiY: %p )", hmonitor, dpiType, dpiX, dpiY);
+	*dpiX = 0;
+	*dpiY = 0;
+	return 0;
+}
+
+//!BOOL SetProcessDPIAware()
+inline BOOL sys_SetProcessDPIAware(){
+	showfunc("SetProcessDPIAware( )","");
+	return true;
+}
+
+//!HRESULT SetProcessDpiAwareness(PROCESS_DPI_AWARENESS value)
+inline HRESULT sys_SetProcessDpiAwareness(int value){
+	showfunc("SetProcessDpiAwareness( value: %d )",value);
+	return 0;
+}
+
+//!WINBOOL WINAPI QueryPerformanceCounter (LARGE_INTEGER *lpPerformanceCount)
+
+WINBOOL WINAPI sys_QueryPerformanceCounter (LARGE_INTEGER *lpPerformanceCount){
+   	showfunc_opt("QueryPerformanceCounter(lpPerformanceCount)", lpPerformanceCount);
+	#ifdef Func_Win
+		return QueryPerformanceCounter( lpPerformanceCount);
+	#else
+		static int i = 0; i++;
+		LARGE_INTEGER lpPerformanceCount_ = {(DWORD)521891041 + i};//Dummy value
+		*lpPerformanceCount = lpPerformanceCount_;
+		return true;
+	#endif
+}
+
+//!WINBOOL WINAPI QueryPerformanceFrequency (LARGE_INTEGER *lpFrequency)
+WINBOOL WINAPI sys_QueryPerformanceFrequency(LARGE_INTEGER *lpFrequency){
+   	showfunc("QueryPerformanceFrequency( lpFrequency: %p )", lpFrequency);
+	#ifdef Func_Win
+		return QueryPerformanceFrequency( lpFrequency);
+	#else
+		LARGE_INTEGER lpFrequency_ = {8221038}; //Dummy value
+		*lpFrequency = lpFrequency_;
+		return true;
+	#endif
+}
+
+//!DWORD WINAPI GetTickCount (VOID)
+DWORD WINAPI sys_GetTickCount(){
+ 	showfunc("GetTickCount( )", "");
+	#ifdef Func_Win
+		return GetTickCount();
+	#else
+		return 0;
+	#endif
+}
+
+//!DWORD WINAPI GetCurrentThreadId (VOID)
+DWORD WINAPI sys_GetCurrentThreadId(){
+ 	showfunc("GetCurrentThreadId( )", "");
+	#ifdef Func_Win
+		return GetCurrentThreadId();
+	#else
+		return 1;//TODO
+	#endif
+}
+
+//!DWORD WINAPI GetCurrentThreadId (VOID)
+DWORD WINAPI sys_GetCurrentProcessId(){
+ 	showfunc("GetCurrentProcessId( )", "");
+	#ifdef Func_Win
+		return GetCurrentProcessId();
+	#else
+		return 1;//TODO
+	#endif
+}
+
+ //!VOID WINAPI GetSystemTimeAsFileTime (LPFILETIME lpSystemTimeAsFileTime)
+ VOID WINAPI sys_GetSystemTimeAsFileTime(LPFILETIME lpSystemTimeAsFileTime){
+	 showfunc("GetSystemTimeAsFileTime( lpSystemTimeAsFileTime: %p )", lpSystemTimeAsFileTime);
+	#ifdef Func_Win
+		GetSystemTimeAsFileTime(lpSystemTimeAsFileTime);
+	#else
+	#endif
+ }
+ 
+//!LPTOP_LEVEL_EXCEPTION_FILTER WINAPI SetUnhandledExceptionFilter (LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter)
+LPTOP_LEVEL_EXCEPTION_FILTER WINAPI sys_SetUnhandledExceptionFilter(LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter){
+ 	showfunc("SetUnhandledExceptionFilter( lpTopLevelExceptionFilter: %p )", lpTopLevelExceptionFilter);
+	#ifdef Func_Win
+		return SetUnhandledExceptionFilter(lpTopLevelExceptionFilter);
+	#else
+		return 0;
+	#endif
+}
+ 

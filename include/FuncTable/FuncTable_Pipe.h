@@ -454,7 +454,7 @@ WINBOOL WINAPI pipe_FlushInstructionCache (HANDLE hProcess, LPCVOID lpBaseAddres
 	#else
 	//Applications should call FlushInstructionCache if they generate or modify code in memory. 
 	//The CPU cannot detect the change, and may execute the old code it cached.
-	//return FlushInstructionCache(hProcess, lpBaseAddress, dwSize); //TODO
+	return FlushInstructionCache(hProcess, lpBaseAddress, dwSize); //TODO
 	return true;
 	#endif
 
