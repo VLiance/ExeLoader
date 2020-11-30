@@ -590,7 +590,7 @@ int imp_snprintf( char * str, size_t n, const char * format, va_list __local_arg
 }
 
 //!uintptr_t _beginthreadex( void *security, unsigned stack_size, unsigned ( __stdcall *start_address )( void * ),void *arglist,unsigned initflag,unsigned *thrdaddr)
-WINAPI uintptr_t imp_beginthreadex( void *security, unsigned stack_size, unsigned ( __stdcall *start_address )( void * ),void* arglist,unsigned initflag,unsigned *thrdaddr){
+uintptr_t imp_beginthreadex( void *security, unsigned stack_size, unsigned ( __stdcall *start_address )( void * ),void* arglist,unsigned initflag,unsigned *thrdaddr){
 	showfunc("beginthreadex( security: %p, stack_size: %p, start_address: %p, arglist: %p, initflag: %d, thrdaddr: %d )", security,stack_size,start_address,arglist, initflag, thrdaddr); 
 	return 0;
 }
