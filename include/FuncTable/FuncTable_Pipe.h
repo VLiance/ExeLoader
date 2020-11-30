@@ -293,6 +293,26 @@ HANDLE  WINAPI  pipe_CreateSemaphoreW( //Must have __stdcall
 	return 0;
 }
 
+//!BOOL ReleaseSemaphore(HANDLE hSemaphore,LONG   lReleaseCount,LPLONG lpPreviousCount)
+BOOL WINAPI pipe_ReleaseSemaphore(HANDLE hSemaphore,LONG   lReleaseCount,LPLONG lpPreviousCount){
+	showfunc_opt("ReleaseSemaphore( hSemaphore: %p,  lReleaseCount: %p, lpPreviousCount: %p )", hSemaphore, lReleaseCount, lpPreviousCount);
+	#ifdef Func_Win 
+	return ReleaseSemaphore(hSemaphore, lReleaseCount, lpPreviousCount);
+	#else
+	return true;
+	#endif	
+}
+
+ //!DWORD WINAPI WaitForSingleObject (HANDLE hHandle, DWORD dwMilliseconds);
+ DWORD WINAPI pipe_WaitForSingleObject(HANDLE hHandle, DWORD dwMilliseconds){
+	showfunc_opt("WaitForSingleObject( hHandle: %p,  dwMilliseconds: %d)", hHandle, dwMilliseconds);
+	#ifdef Func_Win 
+	return WaitForSingleObject(hHandle, dwMilliseconds);
+	#else
+	return true;
+	#endif	
+ }
+
 //!void GetSystemInfo( LPSYSTEM_INFO lpSystemInfo)
 inline void WINAPI pipe_GetSystemInfo( LPSYSTEM_INFO lpSystemInfo){
 	//A pointer to a SYSTEM_INFO structure that receives the information.
@@ -434,7 +454,8 @@ WINBOOL WINAPI pipe_FlushInstructionCache (HANDLE hProcess, LPCVOID lpBaseAddres
 	#else
 	//Applications should call FlushInstructionCache if they generate or modify code in memory. 
 	//The CPU cannot detect the change, and may execute the old code it cached.
-	return FlushInstructionCache(hProcess, lpBaseAddress, dwSize); //TODO
+	//return FlushInstructionCache(hProcess, lpBaseAddress, dwSize); //TODO
+	return true;
 	#endif
 
 }
@@ -765,4 +786,5 @@ WINBOOL WINAPI pipe_GetConsoleScreenBufferInfo(HANDLE hConsoleOutput,PCONSOLE_SC
 	return 0;
 	#endif	
 } 
+
 

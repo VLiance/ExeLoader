@@ -282,10 +282,11 @@
 
 
 
-
-
 {"CreateSemaphoreA"  		,(FUNC_) pipe_CreateSemaphoreA },
 {"CreateSemaphoreW"  		,(FUNC_) pipe_CreateSemaphoreW },
+{"WaitForSingleObject"  	,(FUNC_) pipe_WaitForSingleObject },
+{"ReleaseSemaphore"  		,(FUNC_) pipe_ReleaseSemaphore },
+
 
 {"_vsnprintf"  	,(FUNC_) imp_vsnprintf },
 {"_snwprintf"  	,(FUNC_) imp_snwprintf },
@@ -374,6 +375,9 @@
 
 {"__register_frame"  	,(FUNC_) imp_register_frame },
 {"__deregister_frame"  	,(FUNC_) imp_deregister_frame },
+
+
+
 
 
 

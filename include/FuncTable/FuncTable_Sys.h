@@ -23,7 +23,6 @@
 *  If not, your app will likely crash when the function return.
 *
 */
-//#define Func_Win
 
 //!VOID WINAPI SetLastError (DWORD dwErrCode)
 DWORD last_error = 0;
@@ -152,9 +151,9 @@ int WINAPI pipe_StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int Dest
 			//memcpy(aContext[idx].pixels, lpBits, aContext[idx].height * aContext[idx].width *4);
 			
 			pixView_update(&aContext[idx]);
-			showinf("PixView= idx: %d, height: %d, width: %d", idx,  aContext[idx].height,  aContext[idx].width);
+			//showinf("PixView= idx: %d, height: %d, width: %d", idx,  aContext[idx].height,  aContext[idx].width);
 		#endif
-		showinf("use hwnd_View( hwnd_View: %d )", aContext[idx].hwnd_View);
+		//showinf("use hwnd_View( hwnd_View: %d )", aContext[idx].hwnd_View);
 		return aContext[idx].height; //number of scan lines copied
 	#endif
 }
@@ -200,7 +199,7 @@ inline BOOL WINAPI pipe_SwapBuffers(HDC hdc){
 		//_sapp.wgl.ChoosePixelFormat(_sapp.wgl.msg_dc, &pfd);
 		return SwapBuffers((HDC)hdc);
 	#else
-		return false;
+		return true;
 	#endif
 }
 
@@ -450,7 +449,7 @@ LRESULT WINAPI sys_DefWindowProcW (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lP
 //!VOID WINAPI Sleep (DWORD dwMilliseconds)
 VOID WINAPI sys_Sleep (DWORD dwMilliseconds){
 	showfunc("Sleep( dwMilliseconds: %d )", dwMilliseconds);
-	#ifdef Func_Win
+	#if defined(Func_Win) || !defined(NO_Windows_Sleep)
 		Sleep(dwMilliseconds);
 	#else
 	#endif
@@ -515,7 +514,7 @@ DWORD WINAPI sys_GetCurrentDirectoryW (DWORD nBufferLength, LPWSTR lpBuffer){
 	#ifdef Func_Win
 		return GetCurrentDirectoryW( nBufferLength, lpBuffer);
 	#else
-		return GetCurrentDirectoryW( nBufferLength, lpBuffer);//TODO
+		//return GetCurrentDirectoryW( nBufferLength, lpBuffer);//TODO
 		//If the currently running operating system satisfies the specified requirements, the return value is a nonzero value.
 		return 1;
 	#endif

@@ -50,6 +50,7 @@
 //Use standard TlsAlloc instead of the Exeloader one
 //#define USE_Platform_ThreadStorage
 
+//#define NO_Windows_Sleep
 
 #define ShowPixView //Temp
 
@@ -80,6 +81,7 @@
 #define CpcDos //TODO
 #define USE_sbrk
 #define USE_limit_on_vsnprintf  2147483647 /*INT_MAX*/
+#define NO_Windows_Sleep
 #endif
 
 #endif //EXELOADER_Config_H
