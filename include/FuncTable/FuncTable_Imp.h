@@ -82,21 +82,31 @@ FARPROC WINAPI  imp_GetProcAddress(  HMODULE hModule, LPCSTR  lpProcName){
 
 //!VOID imp_chkstk(DWORD size)
 static void* ntdll = 0;
-typedef int  (*funcPtr_chkstk)(DWORD);
+typedef ULONG  (*funcPtr_chkstk)();
 static funcPtr_chkstk _func = 0;
-VOID WINAPI imp_chkstk(DWORD size){
+//https://metricpanda.com/rival-fortress-update-45-dealing-with-__chkstk-__chkstk_ms-when-cross-compiling-for-windows/
+//https://stackoverflow.com/questions/52406183/mingw-stack-size-reserved-or-committed
+ //WINIWE: https://github.com/wine-mirror/wine/blob/master/dlls/ntdll/signal_i386.c
+
+//This issue was not only due to ntdll.dll. Potentially it could be on "large-address-aware" with JIT.I have missed to consider the case that JIT memory pool would not be within 2GB area.
+ULONG imp_chkstk(){
 	//Windows pages in extra stack for your thread as it is used. At the end of the stack, there is one guard page mapped as inaccessible memory -- if the program accesses it (because it is trying to use more stack than is currently mapped), there's an access violation. The OS catches the fault, maps in another page of stack at the same address as the old guard page, creates a new guard page just beyond the old one, and resumes from the instruction that caused the violation.
-	showfunc("chkstk(size: %d)", size);
+	//alloca is partially intrinsic function, implemented by compiler. but internally it call _alloca_probe_16 (for x86) or __chkstk(x64) for move guard page down on stack. implementation of this functions exist in alloca16.obj and chkstk.objwhich can be found in VC subfolder (where exacly depended from VC version) - you can add this obj for link process or even first convert it to lib. also in latest WDK libs - exist ntdllp.lib (not confuse with ntdll.lib) - it also containing all need for implementation ( ntdll.dll export _chkstk (for x86) and __chkstk (for x64))
+	showfunc("chkstk( )", "");
+	//showfunc("chkstk(size: %d)", size);
 	if(ntdll == 0){
-		HMODULE _hmod = LoadLibraryA("ntdll.dll");
+		//HMODULE _hmod = LoadLibraryA("ntdll.dll");
+		HMODULE _hmod = LoadLibraryA("C:/Windows/System32/ntdll.dll");
+		//HMODULE _hmod = LoadLibraryA("C:/Windows/SysWOW64/ntdll.dll");
 		if(_hmod != 0){
 			printf("\nLoaded");
+			//_func = (funcPtr_chkstk)GetProcAddress(_hmod,"_chkstk");
 			_func = (funcPtr_chkstk)GetProcAddress(_hmod,"_chkstk");
 		}
 	}
 	if(_func != 0){
 		showinf("Found chkstk: Call it %p", _func);
-		_func(size);
+		return _func();
 	}else{
 		showinf("Error: No function 'chkstk'","");
 	}
