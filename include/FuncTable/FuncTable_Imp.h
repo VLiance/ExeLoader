@@ -71,10 +71,38 @@ FARPROC WINAPI  imp_GetProcAddress(  HMODULE hModule, LPCSTR  lpProcName){
 		return func;
 	}else{
 		_EXE_LOADER_DEBUG(0, "GetTableAddress[%s] --> %s() ...", "GetTableAddress[%s] --> %s() ...", _sDllName, lpProcName);
-		return MyMemoryDefaultGetProcAddress(0, lpProcName, 0); //Look in our function table
+		//// malloc name to keep track of it ///
+		int len = strlen(lpProcName)+1;
+		char* _sName = (char*)malloc(len);
+		memcpy(_sName, lpProcName, len);
+		//TODO free it at end of Exeloading
+		return MyMemoryDefaultGetProcAddress(0, _sName, 0); //Look in our function table
 	}
 }
 
+//!VOID imp_chkstk(DWORD size)
+static void* ntdll = 0;
+typedef int  (*funcPtr_chkstk)(DWORD);
+static funcPtr_chkstk _func = 0;
+VOID WINAPI imp_chkstk(DWORD size){
+	//Windows pages in extra stack for your thread as it is used. At the end of the stack, there is one guard page mapped as inaccessible memory -- if the program accesses it (because it is trying to use more stack than is currently mapped), there's an access violation. The OS catches the fault, maps in another page of stack at the same address as the old guard page, creates a new guard page just beyond the old one, and resumes from the instruction that caused the violation.
+	showfunc("chkstk(size: %d)", size);
+	if(ntdll == 0){
+		HMODULE _hmod = LoadLibraryA("ntdll.dll");
+		if(_hmod != 0){
+			printf("\nLoaded");
+			_func = (funcPtr_chkstk)GetProcAddress(_hmod,"_chkstk");
+		}
+	}
+	if(_func != 0){
+		showinf("Found chkstk: Call it %p", _func);
+		_func(size);
+	}else{
+		showinf("Error: No function 'chkstk'","");
+	}
+	//Load ntdll.dll: __chkstk
+}
+ 
 //!void __cdecl _initterm(PVFV *,PVFV *);
 typedef void (CDECL *_PVFV)();
 inline void imp_initterm(_PVFV* ppfn,_PVFV* end){
