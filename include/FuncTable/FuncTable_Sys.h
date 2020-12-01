@@ -251,6 +251,7 @@ WINBOOL WINAPI sys_PeekMessageW(LPMSG lpMsg,HWND hWnd,UINT wMsgFilterMin,UINT wM
 		return 0;
 	#endif
 }
+
 /*
 typedef struct _RTL_CRITICAL_SECTION {
   PRTL_CRITICAL_SECTION_DEBUG DebugInfo;
@@ -331,6 +332,7 @@ UINT WINAPI sys_SetErrorMode(UINT uMode){
 	#endif
 }
 
+
 //!LRESULT WINAPI DefWindowProcA (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 //!LRESULT WINAPI DefWindowProcW (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 LRESULT WINAPI sys_DefWindowProcA (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam){
@@ -350,6 +352,11 @@ LRESULT WINAPI sys_DefWindowProcW (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lP
 	#endif
 }
 
+
+///////////////////// HERE OK
+///////////////////// HERE OK
+///////////////////// HERE OK
+  
 //!VOID WINAPI Sleep (DWORD dwMilliseconds)
 VOID WINAPI sys_Sleep (DWORD dwMilliseconds){
 	showfunc("Sleep( dwMilliseconds: %d )", dwMilliseconds);
@@ -507,7 +514,7 @@ DWORD WINAPI sys_GetCurrentProcessId(){
 	#else
 	#endif
  }
- 
+
 //!LPTOP_LEVEL_EXCEPTION_FILTER WINAPI SetUnhandledExceptionFilter (LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter)
 LPTOP_LEVEL_EXCEPTION_FILTER WINAPI sys_SetUnhandledExceptionFilter(LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter){
  	showfunc("SetUnhandledExceptionFilter( lpTopLevelExceptionFilter: %p )", lpTopLevelExceptionFilter);
@@ -517,4 +524,7 @@ LPTOP_LEVEL_EXCEPTION_FILTER WINAPI sys_SetUnhandledExceptionFilter(LPTOP_LEVEL_
 		return 0;
 	#endif
 }
- 
+
+
+//temp
+#define Func_Win

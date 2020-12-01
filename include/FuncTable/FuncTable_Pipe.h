@@ -44,6 +44,14 @@ inline LRESULT WINAPI pipe_DispatchMessageA(const MSG *lpMsg){
 	#endif
 }
 
+/*
+> -->Call:  GetProcAddress( hModule: 61980000, lpProcName: wglCreateContext)
+O> -->Call: GetProcAddress( hModule: 61980000, lpProcName: wglDeleteContext)
+O> -->Call: GetProcAddress( hModule: 61980000, lpProcName: wglGetProcAddress)
+O> -->Call: GetProcAddress( hModule: 61980000, lpProcName: wglGetCurrentDC)
+O> -->Call: GetProcAddress( hModule: 61980000, lpProcName: wglMakeCurrent)
+*/
+
 extern funcPtr_int _dFunc_wglGetPixelFormat;
 //!int GetPixelFormat(HDC hdc)
 inline BOOL WINAPI pipe_GetPixelFormat(HDC hdc){
@@ -148,6 +156,10 @@ inline HMODULE  WINAPI pipe_GetModuleHandleW(LPCWSTR lpModuleName){
 		return 0;
 	#endif
 }
+
+///////////////// HERE OK ////////////
+//#undef Func_Win
+////////////////////////////////
 
 //!HCURSOR LoadCursorA(HINSTANCE hInstance,LPCSTR lpCursorName)
 //!HCURSOR LoadCursorW(HINSTANCE hInstance,LPCWSTR lpCursorName)

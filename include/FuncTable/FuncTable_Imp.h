@@ -47,6 +47,16 @@ inline HMODULE WINAPI imp_LoadLibraryA(LPCSTR lpLibFileName){
 	#endif
 }
 
+//!WINBOOL WINAPI FreeLibrary (HMODULE hLibModule)
+WINBOOL WINAPI imp_FreeLibrary(HMODULE hLibModule){
+	#ifdef USE_Windows_LoadLibrary
+		WINBOOL _ret = FreeLibrary(hLibModule);
+		if(!_ret){sys_GetLastError();}return _ret;
+	#else
+		return true; //TODO free lib?
+	#endif
+}
+
 //!FARPROC GetProcAddress(HMODULE hModule,LPCSTR  lpProcName)
 FARPROC WINAPI  imp_GetProcAddress(  HMODULE hModule, LPCSTR  lpProcName){
 	showfunc("GetProcAddress( hModule: %p, lpProcName: %s)",hModule, lpProcName);

@@ -85,6 +85,7 @@ extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 {"GetProcAddress" 			,(FUNC_) imp_GetProcAddress }, 	//Special
 {"LoadLibraryA"    			,(FUNC_) imp_LoadLibraryA },  	//Special
 {"LoadLibraryW"    			,(FUNC_) imp_LoadLibraryW},  	//Special
+{"FreeLibrary"    			,(FUNC_) imp_FreeLibrary},  	
 //{"LoadLibraryExW"  			,(FUNC_) LoadLibraryExW }, 			//TODO
 
 {"CommandLineToArgvW"  		,(FUNC_) imp_CommandLineToArgvW },

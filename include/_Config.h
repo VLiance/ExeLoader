@@ -51,12 +51,12 @@
 #define USE_Platform_ThreadStorage
 
 //Use standard Windows LocalAlloc
-#define USE_Platform_LocalAlloc
+//#define USE_Platform_LocalAlloc
 
 //Use standard compiler AlignedAlloc
 //#define USE_Platform_AlignedAlloc
 
-#define USE_Platform_RegisterFrame
+//#define USE_Platform_RegisterFrame
 
 #define USE_Window_LastError
 
