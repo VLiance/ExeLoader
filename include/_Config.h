@@ -53,6 +53,8 @@
 //Use standard Windows LocalAlloc
 #define USE_Platform_LocalAlloc
 
+#define USE_Window_LastError
+
 //#define NO_Windows_Sleep
 
 #define ShowPixView //Temp

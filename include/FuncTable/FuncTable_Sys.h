@@ -30,7 +30,7 @@ VOID WINAPI sys_SetLastError (DWORD dwErrCode){
 	if(dwErrCode != 0){
 		showfunc("SetLastError( dwErrCode: %d)", dwErrCode); 
 	}
-	#ifdef Func_Win
+	#if defined(Func_Win) || defined(USE_Window_LastError) 
 		SetLastError(dwErrCode);
 	#else
 	last_error = dwErrCode;
@@ -40,7 +40,7 @@ VOID WINAPI sys_SetLastError (DWORD dwErrCode){
 //!DWORD WINAPI GetLastError (VOID)
 DWORD WINAPI sys_GetLastError(VOID){
 	showfunc_opt("GetLastError( )", ""); 
-	#ifdef Func_Win
+	#if defined(Func_Win) || defined(USE_Window_LastError) 
 	DWORD error = GetLastError();
 	if (error){
 		LPVOID lpMsgBuf;

@@ -99,16 +99,16 @@ extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 //{"__register_frame"  	,(FUNC_) imp_register_frame },
 //{"__deregister_frame"  	,(FUNC_) imp_deregister_frame },
 
-/*
+
 {"_aligned_malloc"	,(FUNC_) _aligned_malloc },
 {"_aligned_realloc"	,(FUNC_) _aligned_realloc },
 {"_aligned_free"  	,(FUNC_) _aligned_free },
-*/
 
+/*
 {"_aligned_malloc"	,(FUNC_) imp_aligned_malloc },
 {"_aligned_realloc"	,(FUNC_) imp_aligned_realloc },
 {"_aligned_free"  	,(FUNC_) imp_aligned_free },
-
+*/
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////// FUNC TABLE /////////////////////////////////////////////////
