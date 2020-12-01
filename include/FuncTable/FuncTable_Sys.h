@@ -27,9 +27,9 @@
 //!VOID WINAPI SetLastError (DWORD dwErrCode)
 DWORD last_error = 0;
 VOID WINAPI sys_SetLastError (DWORD dwErrCode){
-	//if(dwErrCode != 0)
-	showfunc_opt("SetLastError( dwErrCode: %d)", dwErrCode); 
-	
+	if(dwErrCode != 0){
+		showfunc("SetLastError( dwErrCode: %d)", dwErrCode); 
+	}
 	#ifdef Func_Win
 		SetLastError(dwErrCode);
 	#else
@@ -190,7 +190,7 @@ WINBOOL WINAPI sys_GetWindowRect(HWND hWnd,LPRECT lpRect){
 
 extern funcPtr_bool _dFunc_wglSwapBuffers;
 //!BOOL SwapBuffers(HDC Arg1)
-inline BOOL WINAPI pipe_SwapBuffers(HDC hdc){
+BOOL WINAPI pipe_SwapBuffers(HDC hdc){
 	showfunc("SwapBuffers( hdc: %p )", hdc);
 	if(_dFunc_wglSwapBuffers != 0){
 		return _dFunc_wglSwapBuffers(hdc);

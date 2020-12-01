@@ -189,7 +189,7 @@ HICON WINAPI pipe_LoadIconW(HINSTANCE hInstance, LPCWSTR lpIconName){
 }
 
 //!BOOL WINAPI CloseHandle(HANDLE hObject)
-inline BOOL WINAPI pipe_CloseHandle(HANDLE hObject){
+ BOOL WINAPI pipe_CloseHandle(HANDLE hObject){
 	showfunc("CloseHandle( hObject: %p)", hObject); 
 	#ifdef Func_Win
 		return CloseHandle(hObject);
@@ -199,7 +199,7 @@ inline BOOL WINAPI pipe_CloseHandle(HANDLE hObject){
 }
 
 //!SetWindowsHookExA(int idHook,HOOKPROC lpfn,HINSTANCE hmod,DWORD     dwThreadId)
-inline HHOOK WINAPI pipe_SetWindowsHookExA(int idHook,HOOKPROC lpfn,HINSTANCE hmod,DWORD     dwThreadId){
+ HHOOK WINAPI pipe_SetWindowsHookExA(int idHook,HOOKPROC lpfn,HINSTANCE hmod,DWORD     dwThreadId){
 	showfunc("SetWindowsHookExA( idHook: %d, lpfn:%p, hmod:%p, dwThreadId:%p )", idHook, lpfn, hmod, dwThreadId);
 	#ifdef Func_Win
 		return SetWindowsHookExA(idHook,lpfn,hmod,dwThreadId);
@@ -209,7 +209,7 @@ inline HHOOK WINAPI pipe_SetWindowsHookExA(int idHook,HOOKPROC lpfn,HINSTANCE hm
 }
 
 //!LRESULT CallNextHookEx(HHOOK hhk, int nCode, WPARAM wParam,LPARAM lParam)
-inline LRESULT WINAPI pipe_CallNextHookEx(HHOOK hhk, int nCode, WPARAM wParam,LPARAM lParam){
+ LRESULT WINAPI pipe_CallNextHookEx(HHOOK hhk, int nCode, WPARAM wParam,LPARAM lParam){
 	showfunc("CallNextHookEx( hhk: %d, nCode:%d, wParam:%p, lParam:%p )", hhk, nCode, wParam, lParam);
 	#ifdef Func_Win
 		return CallNextHookEx(hhk,nCode,wParam,lParam);
@@ -219,7 +219,7 @@ inline LRESULT WINAPI pipe_CallNextHookEx(HHOOK hhk, int nCode, WPARAM wParam,LP
 }
 
 //!BOOL EnumDisplaySettingsA(LPCSTR lpszDeviceName,DWORD ModeNum,DEVMODEA *lpDevMode)
-inline BOOL WINAPI pipe_EnumDisplaySettingsA(LPCSTR lpszDeviceName,DWORD ModeNum,DEVMODEA *lpDevMode){
+ BOOL WINAPI pipe_EnumDisplaySettingsA(LPCSTR lpszDeviceName,DWORD ModeNum,DEVMODEA *lpDevMode){
 	showfunc("EnumDisplaySettingsA( lpszDeviceName: %p, ModeNum: %d, lpDevMode: %d)", lpszDeviceName, ModeNum, lpDevMode);
 	#ifdef Func_Win
 		return EnumDisplaySettingsA(lpszDeviceName,ModeNum,lpDevMode);
@@ -272,7 +272,7 @@ HANDLE WINAPI  pipe_CreateSemaphoreA( //Must have __stdcall
   _In_     LONG                  lMaximumCount,
   _In_opt_ LPCTSTR               lpName
 ){
-	showfunc_unimplt("_CreateSemaphoreA(  )","");
+	showfunc_unimplt("CreateSemaphoreA(  )","");
 	#ifdef Func_Win
 	return CreateSemaphoreA(lpSemaphoreAttributes, lInitialCount, lMaximumCount, lpName);
 	#else
@@ -285,7 +285,7 @@ HANDLE  WINAPI  pipe_CreateSemaphoreW( //Must have __stdcall
   _In_     LONG                  lMaximumCount,
   _In_opt_ LPCWSTR                lpName
 ){
-	showfunc_unimplt("_CreateSemaphoreW(  )","");
+	showfunc_unimplt("CreateSemaphoreW(  )","");
 	#ifdef Func_Win
 	return CreateSemaphoreW(lpSemaphoreAttributes, lInitialCount, lMaximumCount, lpName);
 	#else
@@ -309,12 +309,12 @@ BOOL WINAPI pipe_ReleaseSemaphore(HANDLE hSemaphore,LONG   lReleaseCount,LPLONG 
 	#ifdef Func_Win 
 	return WaitForSingleObject(hHandle, dwMilliseconds);
 	#else
-	return true;
+	return 0;
 	#endif	
  }
 
 //!void GetSystemInfo( LPSYSTEM_INFO lpSystemInfo)
-inline void WINAPI pipe_GetSystemInfo( LPSYSTEM_INFO lpSystemInfo){
+void WINAPI pipe_GetSystemInfo( LPSYSTEM_INFO lpSystemInfo){
 	//A pointer to a SYSTEM_INFO structure that receives the information.
 	showfunc("GetSystemInfo( lpSystemInfo:%p )",lpSystemInfo);
 	#ifdef Func_Win
@@ -770,6 +770,7 @@ struct lconv* pipe_localeconv(void){
 HANDLE WINAPI pipe_GetStdHandle (DWORD nStdHandle){
 	showfunc("GetStdHandle( nStdHandle: %d )", nStdHandle);
 	#ifdef Func_Win 
+
 	return GetStdHandle(nStdHandle);
 	#else
 	return 0;//If an application does not have associated standard handles, such as a service running on an interactive desktop, and has not redirected them, the return value is NULL.

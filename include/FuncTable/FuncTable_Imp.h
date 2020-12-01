@@ -26,7 +26,7 @@ inline HMODULE WINAPI imp_LoadLibraryW(LPCWSTR lpLibFileName){
 	showfunc("LoadLibraryW( lpLibFileName: %s )", _sFile);
 	#ifdef USE_Windows_LoadLibrary
 		HMODULE _ret = LoadLibraryW(lpLibFileName);
-		if(!_ret){My_GetLastError();}return _ret;
+		if(!_ret){sys_GetLastError();}return _ret;
 	#else
 		if(strcmp(_sFile, "Dbghelp.dll") == 0){ //required for Mesa
 			return (HMODULE)1; //Fake availability
@@ -41,7 +41,7 @@ inline HMODULE WINAPI imp_LoadLibraryA(LPCSTR lpLibFileName){
 	showfunc("LoadLibraryA( lpLibFileName: %s )", lpLibFileName);
 	#ifdef USE_Windows_LoadLibrary
 		HMODULE _ret = LoadLibraryA(lpLibFileName);
-		if(!_ret){My_GetLastError();}return _ret;
+		if(!_ret){sys_GetLastError();}return _ret;
 	#else
 		return (HMODULE)AddLibrary(lpLibFileName);
 	#endif
@@ -79,7 +79,7 @@ FARPROC WINAPI  imp_GetProcAddress(  HMODULE hModule, LPCSTR  lpProcName){
 		return MyMemoryDefaultGetProcAddress(0, _sName, 0); //Look in our function table
 	}
 }
-
+/*
 //!VOID imp_chkstk(DWORD size)
 static void* ntdll = 0;
 typedef ULONG  (*funcPtr_chkstk)();
@@ -110,9 +110,10 @@ ULONG imp_chkstk(){
 	}else{
 		showinf("Error: No function 'chkstk'","");
 	}
+	return 0;
 	//Load ntdll.dll: __chkstk
 }
- 
+ */
 //!void __cdecl _initterm(PVFV *,PVFV *);
 typedef void (CDECL *_PVFV)();
 inline void imp_initterm(_PVFV* ppfn,_PVFV* end){

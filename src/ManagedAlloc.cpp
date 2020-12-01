@@ -74,7 +74,7 @@ bool ManagedAlloc::ManagedFree(void* ptr)
 	#else
 		free(ptr);
 	#endif
-
+	return true;
 }
 
 void* ManagedAlloc::ManagedMalloc(size_t size__)

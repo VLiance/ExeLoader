@@ -53,9 +53,10 @@
 #include <stdlib.h>  
 
 #include "FuncTable/DummyTable.h"
-#include "FuncTable/FuncTable_Imp.h"
+
 #include "FuncTable/FuncTable_Sys.h"
 #include "FuncTable/FuncTable_Pipe.h"
+#include "FuncTable/FuncTable_Imp.h"
 //#include "FuncTable/FuncTable_Remap_Common.h"
 //#include "FuncTable/FuncTable_Remap_Windows.h"
 	
@@ -66,6 +67,14 @@
 
 
 extern "C" ULONG __chkstk();
+extern "C" ULONG __chkstk();
+
+extern "C" void __register_frame(void* ptr);
+extern "C" void __deregister_frame(void* ptr);
+
+extern "C" void* _aligned_malloc(size_t size,size_t alignment);
+extern "C" void  _aligned_free(void *memblock);
+extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 
  sFunc aTableFunc[] = {
  ////////// CPC DOS ///////////////////
@@ -82,6 +91,25 @@ extern "C" ULONG __chkstk();
 {"GetCommandLineW"  		,(FUNC_) imp_GetCommandLineW },
 //{"chkstk"  					,(FUNC_) imp_chkstk },
 {"chkstk"  					,(FUNC_) __chkstk },
+
+
+{"__register_frame"  	,(FUNC_) __register_frame },
+{"__deregister_frame"  	,(FUNC_) __deregister_frame },
+
+//{"__register_frame"  	,(FUNC_) imp_register_frame },
+//{"__deregister_frame"  	,(FUNC_) imp_deregister_frame },
+
+/*
+{"_aligned_malloc"	,(FUNC_) _aligned_malloc },
+{"_aligned_realloc"	,(FUNC_) _aligned_realloc },
+{"_aligned_free"  	,(FUNC_) _aligned_free },
+*/
+
+{"_aligned_malloc"	,(FUNC_) imp_aligned_malloc },
+{"_aligned_realloc"	,(FUNC_) imp_aligned_realloc },
+{"_aligned_free"  	,(FUNC_) imp_aligned_free },
+
+
 /////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////// FUNC TABLE /////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -99,9 +127,7 @@ extern "C" ULONG __chkstk();
 /////////////////////////////
 
 //////// Implemented ////////////////////////////////////////
-{"_aligned_malloc"	,(FUNC_) imp_aligned_malloc },
-{"_aligned_realloc"	,(FUNC_) imp_aligned_realloc },
-{"_aligned_free"  	,(FUNC_) imp_aligned_free },
+
 
 {"_strdup"  		,(FUNC_) imp_strdup },
 {"strncpy"  		,(FUNC_) imp_strncpy },
@@ -308,6 +334,19 @@ extern "C" ULONG __chkstk();
 
 
 
+#ifdef USE_Platform_LocalAlloc
+{"LocalAlloc"  		,(FUNC_) LocalAlloc },
+{"LocalReAlloc"		,(FUNC_) LocalReAlloc },
+{"LocalSize"  		,(FUNC_) LocalSize },
+{"LocalFree"  		,(FUNC_) LocalFree },
+#else
+{"LocalAlloc"  		,(FUNC_) imp_LocalAlloc },
+{"LocalReAlloc"		,(FUNC_) imp_LocalReAlloc },
+{"LocalSize"  		,(FUNC_) imp_LocalSize },
+{"LocalFree"  		,(FUNC_) imp_LocalFree },
+#endif
+
+
 
 #ifdef USE_Platform_ThreadStorage
 	{"TlsAlloc"  ,	 (FUNC_) TlsAlloc },
@@ -350,11 +389,6 @@ extern "C" ULONG __chkstk();
 
 
 
-{"LocalAlloc"  		,(FUNC_) imp_LocalAlloc },
-{"LocalReAlloc"		,(FUNC_) imp_LocalReAlloc },
-{"LocalSize"  		,(FUNC_) imp_LocalSize },
-{"LocalFree"  		,(FUNC_) imp_LocalFree },
-
 
 
 /*
@@ -372,14 +406,12 @@ extern "C" ULONG __chkstk();
 
 
 
-{"_snprintf"  ,(FUNC_) snprintf },
+{"_snprintf"  		,(FUNC_) snprintf },
 {"_beginthreadex"  ,(FUNC_) imp_beginthreadex },
-{"_errno"  	,(FUNC_) imp_errno },
+{"_errno"  			,(FUNC_) imp_errno },
 
 
 
-{"__register_frame"  	,(FUNC_) imp_register_frame },
-{"__deregister_frame"  	,(FUNC_) imp_deregister_frame },
 
 
 

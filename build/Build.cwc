@@ -3,7 +3,7 @@
 >
 ;Generate executable
 -o obj/cpp_{_sOpt}/ -#To _out/{_sOpt}/ExeLoader.* -lgdi32 
-;-Wl,--large-address-aware
+-Wl,--large-address-aware
 >
 ;-#Run _out/{_sOpt}/ExeLoader.exe "E:/Data/setting/Sokol_Exp/_cwc/sapp/_out/blend-sapp/CpcDos_Debug_wasm/blend-sapp.exe"
 ;-#Run _out/{_sOpt}/ExeLoader.exe sgl-lines-sapp.exe
