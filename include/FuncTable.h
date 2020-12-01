@@ -92,23 +92,24 @@ extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 //{"chkstk"  					,(FUNC_) imp_chkstk },
 {"chkstk"  					,(FUNC_) __chkstk },
 
-
+#ifdef USE_Platform_RegisterFrame
 {"__register_frame"  	,(FUNC_) __register_frame },
 {"__deregister_frame"  	,(FUNC_) __deregister_frame },
+#else
+{"__register_frame"  	,(FUNC_) imp_register_frame },
+{"__deregister_frame"  	,(FUNC_) imp_deregister_frame },
+#endif
 
-//{"__register_frame"  	,(FUNC_) imp_register_frame },
-//{"__deregister_frame"  	,(FUNC_) imp_deregister_frame },
 
-
+#ifdef USE_Platform_AlignedAlloc
 {"_aligned_malloc"	,(FUNC_) _aligned_malloc },
 {"_aligned_realloc"	,(FUNC_) _aligned_realloc },
 {"_aligned_free"  	,(FUNC_) _aligned_free },
-
-/*
+#else
 {"_aligned_malloc"	,(FUNC_) imp_aligned_malloc },
 {"_aligned_realloc"	,(FUNC_) imp_aligned_realloc },
 {"_aligned_free"  	,(FUNC_) imp_aligned_free },
-*/
+#endif
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////// FUNC TABLE /////////////////////////////////////////////////
@@ -125,6 +126,13 @@ extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 {"_onexit"  		,(FUNC_) imp_onexit },
 
 /////////////////////////////
+
+//Temp
+{"GetModuleFileNameW"  	,(FUNC_) GetModuleFileNameW },
+{"wcscpy"  				,(FUNC_) wcscpy },
+//Temp
+
+
 
 //////// Implemented ////////////////////////////////////////
 

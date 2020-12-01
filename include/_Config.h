@@ -27,16 +27,16 @@
 #endif
 
 #define Func_Win //Temp
-#undef Func_Win //Temp
+//#undef Func_Win //Temp
 
 
 ////////////////////////////////////////////////////
 /////////////  CUSTOM SETTINGS  ////////////////////
 ////////////////////////////////////////////////////
 
-//Use the Windows Stanard LoadLibraryA or undef to use the ExeLaoder AddLibrary similar to loading .exe from memory
-//#define USE_Windows_LoadLibrary
-
+//Use the Windows Standard LoadLibraryA or undef to use the ExeLaoder AddLibrary similar to loading .exe from memory
+#define USE_Windows_LoadLibrary
+#define USE_Windows_GetProcAddress
 
 //Show when function are called from the fonction table, with is parameters
 #define Show_FuncTable
@@ -52,6 +52,11 @@
 
 //Use standard Windows LocalAlloc
 #define USE_Platform_LocalAlloc
+
+//Use standard compiler AlignedAlloc
+//#define USE_Platform_AlignedAlloc
+
+#define USE_Platform_RegisterFrame
 
 #define USE_Window_LastError
 

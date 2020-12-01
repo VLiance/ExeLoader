@@ -50,34 +50,37 @@ inline HMODULE WINAPI imp_LoadLibraryA(LPCSTR lpLibFileName){
 //!FARPROC GetProcAddress(HMODULE hModule,LPCSTR  lpProcName)
 FARPROC WINAPI  imp_GetProcAddress(  HMODULE hModule, LPCSTR  lpProcName){
 	showfunc("GetProcAddress( hModule: %p, lpProcName: %s)",hModule, lpProcName);
-	
-	char* _sDllName = (char*)"unknow";
-	bool bOurLib = is_in_aLibList((HMEMORYMODULE)hModule);
+	#ifdef USE_Windows_GetProcAddress
+		return GetProcAddress(hModule, lpProcName);
+	#else
+		char* _sDllName = (char*)"unknow";
+		bool bOurLib = is_in_aLibList((HMEMORYMODULE)hModule);
 
-	FARPROC func = 0;
-	if(bOurLib){
-		PIMAGE_DATA_DIRECTORY directory = GET_HEADER_DICTIONARY((PMEMORYMODULE)hModule, IMAGE_DIRECTORY_ENTRY_EXPORT);
-		if(directory != 0){
-			if ( directory->Size == 0) {
-				 _EXE_LOADER_DEBUG(0, "no export table found", "no export table found" );
+		FARPROC func = 0;
+		if(bOurLib){
+			PIMAGE_DATA_DIRECTORY directory = GET_HEADER_DICTIONARY((PMEMORYMODULE)hModule, IMAGE_DIRECTORY_ENTRY_EXPORT);
+			if(directory != 0){
+				if ( directory->Size == 0) {
+					 _EXE_LOADER_DEBUG(0, "no export table found", "no export table found" );
+				}
+				PIMAGE_EXPORT_DIRECTORY exports = (PIMAGE_EXPORT_DIRECTORY) ( ((MEMORYMODULE*)hModule)->codeBase + directory->VirtualAddress);
+				_sDllName =  (char*) ( ((MEMORYMODULE*)hModule)->codeBase + exports->Name);
 			}
-			PIMAGE_EXPORT_DIRECTORY exports = (PIMAGE_EXPORT_DIRECTORY) ( ((MEMORYMODULE*)hModule)->codeBase + directory->VirtualAddress);
-			_sDllName =  (char*) ( ((MEMORYMODULE*)hModule)->codeBase + exports->Name);
+			func =  memory_module->MemoryGetProcAddress((HMEMORYMODULE)hModule, lpProcName);
 		}
-		func =  memory_module->MemoryGetProcAddress((HMEMORYMODULE)hModule, lpProcName);
-	}
-	if(func != 0){
-		_EXE_LOADER_DEBUG(0, "GetLibAddress[%s] --> %s() ...", "GetLibAddress[%s] --> %s() ...", _sDllName, lpProcName);
-		return func;
-	}else{
-		_EXE_LOADER_DEBUG(0, "GetTableAddress[%s] --> %s() ...", "GetTableAddress[%s] --> %s() ...", _sDllName, lpProcName);
-		//// malloc name to keep track of it ///
-		int len = strlen(lpProcName)+1;
-		char* _sName = (char*)malloc(len);
-		memcpy(_sName, lpProcName, len);
-		//TODO free it at end of Exeloading
-		return MyMemoryDefaultGetProcAddress(0, _sName, 0); //Look in our function table
-	}
+		if(func != 0){
+			_EXE_LOADER_DEBUG(0, "GetLibAddress[%s] --> %s() ...", "GetLibAddress[%s] --> %s() ...", _sDllName, lpProcName);
+			return func;
+		}else{
+			_EXE_LOADER_DEBUG(0, "GetTableAddress[%s] --> %s() ...", "GetTableAddress[%s] --> %s() ...", _sDllName, lpProcName);
+			//// malloc name to keep track of it ///
+			int len = strlen(lpProcName)+1;
+			char* _sName = (char*)malloc(len);
+			memcpy(_sName, lpProcName, len);
+			//TODO free it at end of Exeloading
+			return MyMemoryDefaultGetProcAddress(0, _sName, 0); //Look in our function table
+		}
+	#endif
 }
 /*
 //!VOID imp_chkstk(DWORD size)
