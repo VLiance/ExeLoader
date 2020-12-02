@@ -20,6 +20,15 @@
 * 
 */
 
+
+//!WINBOOL WINAPI SleepConditionVariableCS (PCONDITION_VARIABLE ConditionVariable, PCRITICAL_SECTION CriticalSection, DWORD dwMilliseconds)
+WINBOOL WINAPI SleepConditionVariableCS (PCONDITION_VARIABLE ConditionVariable, PCRITICAL_SECTION CriticalSection, DWORD dwMilliseconds){
+	showfunc_opt("SleepConditionVariableCS( ConditionVariable: %p, CriticalSection: %p, dwMilliseconds: %d)",ConditionVariable, CriticalSection,dwMilliseconds);
+
+	return true;
+}
+ 
+
 //!HMODULE LoadLibraryW(LPCWSTR lpLibFileName)
 inline HMODULE WINAPI imp_LoadLibraryW(LPCWSTR lpLibFileName){
 	WStr _swFile(lpLibFileName);const char* _sFile = _swFile.ToCStr();

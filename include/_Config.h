@@ -45,10 +45,10 @@
 //#define Show_AllFuncTable
 
 //Use the standard Widows VirtualAlloc allocation or the more portable ExeLoader version
-#define USE_Windows_VirtualAlloc
+//#define USE_Windows_VirtualAlloc
 
 //Use standard TlsAlloc instead of the Exeloader one
-#define USE_Platform_ThreadStorage
+//#define USE_Platform_ThreadStorage
 
 //Use standard Windows LocalAlloc
 //#define USE_Platform_LocalAlloc
@@ -60,7 +60,7 @@
 
 //#define USE_Window_LastError
 
-//#define NO_Windows_Sleep
+#define NO_Windows_Sleep
 
 #define ShowPixView //Temp
 

@@ -133,6 +133,10 @@ extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 {"wcscpy"  				,(FUNC_) wcscpy },
 {"sscanf"  				,(FUNC_) sscanf },
 {"_open"  				,(FUNC_) imp_open },
+{"bsearch"  			,(FUNC_) bsearch },
+{"InitOnceExecuteOnce"  ,(FUNC_) InitOnceExecuteOnce },
+{"SleepConditionVariableCS"  ,(FUNC_) SleepConditionVariableCS },
+
 //{"_fdopen"  			,(FUNC_) _fdopen },
 
 //
