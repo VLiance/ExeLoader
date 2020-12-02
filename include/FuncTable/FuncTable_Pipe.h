@@ -218,7 +218,7 @@ HICON WINAPI pipe_LoadIconW(HINSTANCE hInstance, LPCWSTR lpIconName){
 
 //!BOOL WINAPI CloseHandle(HANDLE hObject)
  BOOL WINAPI pipe_CloseHandle(HANDLE hObject){
-	showfunc("CloseHandle( hObject: %p)", hObject); 
+	showfunc_opt("CloseHandle( hObject: %p)", hObject); 
 	#ifdef Func_Win
 		return CloseHandle(hObject);
 	#else
@@ -433,7 +433,7 @@ WINBOOL WINAPI pipe_FlushInstructionCache (HANDLE hProcess, LPCVOID lpBaseAddres
 
 //!BOOL ClientToScreen(HWND    hWnd,LPPOINT lpPoint)
 inline WINAPI BOOL pipe_ClientToScreen(HWND hWnd,LPPOINT lpPoint){
-	showfunc("ClientToScreen( hWnd:%p, lpPoint.x:%d, lpPoint.y:%d )",hWnd, lpPoint->x, lpPoint->y);
+	showfunc_opt("ClientToScreen( hWnd:%p, lpPoint.x:%d, lpPoint.y:%d )",hWnd, lpPoint->x, lpPoint->y);
 	#ifdef Func_Win
 	return ClientToScreen(hWnd, lpPoint);
 	#else

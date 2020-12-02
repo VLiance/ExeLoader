@@ -595,17 +595,6 @@ int imp_snprintf( char * str, size_t n, const char * format, va_list __local_arg
 	return snprintf(str, n, format, __local_argv);
 }
 
-//!uintptr_t _beginthreadex( void *security, unsigned stack_size, unsigned ( __stdcall *start_address )( void * ),void *arglist,unsigned initflag,unsigned *thrdaddr)
-uintptr_t imp_beginthreadex( void *security, unsigned stack_size, unsigned ( __stdcall *start_address )( void * ),void* arglist,unsigned initflag,unsigned *thrdaddr){
-	showfunc("beginthreadex( security: %p, stack_size: %p, start_address: %p, arglist: %p, initflag: %d, thrdaddr: %d )", security,stack_size,start_address,arglist, initflag, thrdaddr); 
-    uintptr_t thdl = 0;
-	int err = 0;
-	if ( (thdl = (uintptr_t)CreateThread( (LPSECURITY_ATTRIBUTES)security,stack_size,(LPTHREAD_START_ROUTINE)start_address,(LPVOID)arglist,initflag,(LPDWORD)thrdaddr)) == (uintptr_t)0 ){
-            err = GetLastError();
-    }
-	return thdl;
-}
-
 //!int* CDECL _errno(void )
 static int _errno_ = 0;
 int* imp_errno(void ){

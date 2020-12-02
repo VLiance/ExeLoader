@@ -162,7 +162,7 @@ int WINAPI pipe_StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int Dest
 //!WINBOOL WINAPI GetClientRect(HWND hWnd,LPRECT lpRect)
 //struct RECT {LONG left; LONG top;LONG right;LONG bottom;}
 WINBOOL WINAPI sys_GetClientRect(HWND hWnd,LPRECT lpRect){
- 	showfunc("GetClientRect( hWnd: %p, lpRect: %p )", hWnd, lpRect);
+ 	showfunc_opt("GetClientRect( hWnd: %p, lpRect: %p )", hWnd, lpRect);
 	#ifdef Func_Win
 		return GetClientRect(hWnd, lpRect);
 	#else
@@ -176,7 +176,7 @@ WINBOOL WINAPI sys_GetClientRect(HWND hWnd,LPRECT lpRect){
 
 //!WINBOOL WINAPI GetWindowRect(HWND hWnd,LPRECT lpRect)
 WINBOOL WINAPI sys_GetWindowRect(HWND hWnd,LPRECT lpRect){
-	showfunc("GetWindowRect( hWnd: %p, lpRect: %p )", hWnd, lpRect);
+	showfunc_opt("GetWindowRect( hWnd: %p, lpRect: %p )", hWnd, lpRect);
 	#ifdef Func_Win
 		return GetWindowRect(hWnd, lpRect);
 	#else
