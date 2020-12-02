@@ -134,8 +134,12 @@ extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 {"sscanf"  				,(FUNC_) sscanf },
 {"_open"  				,(FUNC_) imp_open },
 {"bsearch"  			,(FUNC_) bsearch },
-{"InitOnceExecuteOnce"  ,(FUNC_) InitOnceExecuteOnce },
-{"SleepConditionVariableCS"  ,(FUNC_) SleepConditionVariableCS },
+{"InitOnceExecuteOnce"  		,(FUNC_) InitOnceExecuteOnce },
+{"SleepConditionVariableCS"  	,(FUNC_) SleepConditionVariableCS },
+{"InitializeConditionVariable"  ,(FUNC_) InitializeConditionVariable },
+{"WakeAllConditionVariable"  	,(FUNC_) WakeAllConditionVariable },
+//{"WakeConditionVariable"  		,(FUNC_) WakeConditionVariable },
+
 
 //{"_fdopen"  			,(FUNC_) _fdopen },
 
