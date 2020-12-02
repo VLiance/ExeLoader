@@ -280,66 +280,6 @@ inline HANDLE WINAPI pipe_CreateToolhelp32Snapshot(DWORD  dwFlags,DWORD  th32Pro
 	return INVALID_HANDLE_VALUE;//INVALID_HANDLE_VALUE //TODO
 }
 
-//!BOOL Thread32First(HANDLE hSnapshot,LPTHREADENTRY32 lpte)
-BOOL WINAPI pipe_Thread32First(HANDLE hSnapshot,void* lpte){
-	showfunc("Thread32First( hSnapshot: %p, lpte: %p )", hSnapshot,lpte);
-	return 0;
-}
-
-//!BOOL Thread32Next(HANDLE hSnapshot,LPTHREADENTRY32 lpte)
-BOOL WINAPI pipe_Thread32Next(HANDLE hSnapshot,void* lpte){
-	showfunc("Thread32Next( hSnapshot: %p, lpte: %p )", hSnapshot,lpte);
-	return 0;
-}
-
-//!HANDLE CreateSemaphoreA(_In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,_In_ LONG lInitialCount, _In_ LONG lMaximumCount, _In_opt_ LPCTSTR lpName)
-//!HANDLE CreateSemaphoreW(_In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,_In_ LONG lInitialCount, _In_ LONG lMaximumCount, _In_opt_ LPCWSTR lpName)
-HANDLE WINAPI  pipe_CreateSemaphoreA( //Must have __stdcall
- _In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,
-  _In_     LONG                  lInitialCount,
-  _In_     LONG                  lMaximumCount,
-  _In_opt_ LPCTSTR               lpName
-){
-	showfunc_unimplt("CreateSemaphoreA(  )","");
-	#ifdef Func_Win
-	return CreateSemaphoreA(lpSemaphoreAttributes, lInitialCount, lMaximumCount, lpName);
-	#else
-	#endif
-	return 0;
-}
-HANDLE  WINAPI  pipe_CreateSemaphoreW( //Must have __stdcall
- _In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,
-  _In_     LONG                  lInitialCount,
-  _In_     LONG                  lMaximumCount,
-  _In_opt_ LPCWSTR                lpName
-){
-	showfunc_unimplt("CreateSemaphoreW(  )","");
-	#ifdef Func_Win
-	return CreateSemaphoreW(lpSemaphoreAttributes, lInitialCount, lMaximumCount, lpName);
-	#else
-	#endif
-	return 0;
-}
-
-//!BOOL ReleaseSemaphore(HANDLE hSemaphore,LONG   lReleaseCount,LPLONG lpPreviousCount)
-BOOL WINAPI pipe_ReleaseSemaphore(HANDLE hSemaphore,LONG   lReleaseCount,LPLONG lpPreviousCount){
-	showfunc_opt("ReleaseSemaphore( hSemaphore: %p,  lReleaseCount: %p, lpPreviousCount: %p )", hSemaphore, lReleaseCount, lpPreviousCount);
-	#ifdef Func_Win 
-	return ReleaseSemaphore(hSemaphore, lReleaseCount, lpPreviousCount);
-	#else
-	return true;
-	#endif	
-}
-
- //!DWORD WINAPI WaitForSingleObject (HANDLE hHandle, DWORD dwMilliseconds);
- DWORD WINAPI pipe_WaitForSingleObject(HANDLE hHandle, DWORD dwMilliseconds){
-	showfunc_opt("WaitForSingleObject( hHandle: %p,  dwMilliseconds: %d)", hHandle, dwMilliseconds);
-	#ifdef Func_Win 
-	return WaitForSingleObject(hHandle, dwMilliseconds);
-	#else
-	return 0;
-	#endif	
- }
 
 //!void GetSystemInfo( LPSYSTEM_INFO lpSystemInfo)
 void WINAPI pipe_GetSystemInfo( LPSYSTEM_INFO lpSystemInfo){

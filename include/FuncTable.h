@@ -54,6 +54,7 @@
 
 #include "FuncTable/DummyTable.h"
 
+#include "FuncTable/FuncTable_Thread.h"
 #include "FuncTable/FuncTable_Sys.h"
 #include "FuncTable/FuncTable_Pipe.h"
 #include "FuncTable/FuncTable_Imp.h"
@@ -134,11 +135,18 @@ extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 {"sscanf"  				,(FUNC_) sscanf },
 {"_open"  				,(FUNC_) imp_open },
 {"bsearch"  			,(FUNC_) bsearch },
+
 {"InitOnceExecuteOnce"  		,(FUNC_) InitOnceExecuteOnce },
-{"SleepConditionVariableCS"  	,(FUNC_) SleepConditionVariableCS },
+{"SleepConditionVariableCS"  	,(FUNC_) thread_SleepConditionVariableCS },
 {"InitializeConditionVariable"  ,(FUNC_) InitializeConditionVariable },
 {"WakeAllConditionVariable"  	,(FUNC_) WakeAllConditionVariable },
-//{"WakeConditionVariable"  		,(FUNC_) WakeConditionVariable },
+{"WakeConditionVariable"  		,(FUNC_) thread_WakeConditionVariable },
+
+
+{"CreateSemaphoreA"  		,(FUNC_) pipe_CreateSemaphoreA },
+{"CreateSemaphoreW"  		,(FUNC_) pipe_CreateSemaphoreW },
+{"WaitForSingleObject"  	,(FUNC_) pipe_WaitForSingleObject },
+{"ReleaseSemaphore"  		,(FUNC_) pipe_ReleaseSemaphore },
 
 
 //{"_fdopen"  			,(FUNC_) _fdopen },
@@ -338,11 +346,6 @@ extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 {"_isatty"  				,(FUNC_) imp_isatty},
 
 
-
-{"CreateSemaphoreA"  		,(FUNC_) pipe_CreateSemaphoreA },
-{"CreateSemaphoreW"  		,(FUNC_) pipe_CreateSemaphoreW },
-{"WaitForSingleObject"  	,(FUNC_) pipe_WaitForSingleObject },
-{"ReleaseSemaphore"  		,(FUNC_) pipe_ReleaseSemaphore },
 
 
 {"_vsnprintf"  	,(FUNC_) imp_vsnprintf },

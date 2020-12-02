@@ -236,75 +236,6 @@ WINBOOL WINAPI sys_PeekMessageW(LPMSG lpMsg,HWND hWnd,UINT wMsgFilterMin,UINT wM
 	#endif
 }
 
-/*
-typedef struct _RTL_CRITICAL_SECTION {
-  PRTL_CRITICAL_SECTION_DEBUG DebugInfo;
-  LONG LockCount;
-  LONG RecursionCount;
-  HANDLE OwningThread;
-  HANDLE LockSemaphore;
-  ULONG_PTR SpinCount;
-    } RTL_CRITICAL_SECTION,*PRTL_CRITICAL_SECTION;
-*/
-//RTL_CRITICAL_SECTION CriticalSection = {(PRTL_CRITICAL_SECTION_DEBUG)1,1,1,(HANDLE)1,(HANDLE)1,(ULONG_PTR)1};
-//!VOID WINAPI InitializeCriticalSection (LPCRITICAL_SECTION lpCriticalSection)
-int criticalSection_thread_ = 1;
-VOID WINAPI sys_InitializeCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
- 	showfunc_opt("InitializeCriticalSection( lpCriticalSection: %p )", lpCriticalSection);
-	#ifdef Func_Win
-		InitializeCriticalSection(lpCriticalSection);
-	#else
-	//*lpCriticalSection = (_RTL_CRITICAL_SECTION*)malloc(sizeof(_RTL_CRITICAL_SECTION));
-	lpCriticalSection->DebugInfo = 0;
-	lpCriticalSection->LockCount = 1;
-	lpCriticalSection->RecursionCount = 1;
-	lpCriticalSection->OwningThread = (HANDLE)criticalSection_thread_; //fake thread
-	lpCriticalSection->LockSemaphore = (HANDLE)1;
-	lpCriticalSection->SpinCount = 1;
-	//criticalSection_thread_ ++; //fake to bypass mesa assert
-	#endif
-}
-
-//!VOID WINAPI EnterCriticalSection (LPCRITICAL_SECTION lpCriticalSection)
-VOID WINAPI sys_EnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
- 	showfunc_opt("EnterCriticalSection( lpCriticalSection: %p )", lpCriticalSection);
-	#ifdef Func_Win
-		EnterCriticalSection(lpCriticalSection);
-	#else
-		lpCriticalSection->OwningThread = (HANDLE)criticalSection_thread_;
-	//		criticalSection_thread_ ++; //fake to bypass mesa assert
-		//*lpCriticalSection = CriticalSection;
-	#endif
-}
-
-//!VOID WINAPI TryEnterCriticalSection (LPCRITICAL_SECTION lpCriticalSection)
-VOID WINAPI sys_TryEnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
- 	showfunc_opt("TryEnterCriticalSection( lpCriticalSection: %p )", lpCriticalSection);
-	#ifdef Func_Win
-		TryEnterCriticalSection(lpCriticalSection);
-	#else
-		//*lpCriticalSection = CriticalSection;
-	#endif
-}
-
-//!VOID WINAPI LeaveCriticalSection (LPCRITICAL_SECTION lpCriticalSection)
- VOID WINAPI sys_LeaveCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
- 	showfunc_opt("LeaveCriticalSection( lpCriticalSection: %p )", lpCriticalSection);
-	#ifdef Func_Win
-		LeaveCriticalSection(lpCriticalSection);
-	#else
-		lpCriticalSection->OwningThread = (HANDLE)0;
-	#endif
-}
-
-//!VOID WINAPI DeleteCriticalSection (LPCRITICAL_SECTION lpCriticalSection)
- VOID WINAPI sys_DeleteCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
- 	showfunc_opt("DeleteCriticalSection( lpCriticalSection: %p )", lpCriticalSection);
-	#ifdef Func_Win
-		DeleteCriticalSection(lpCriticalSection);
-	#else
-	#endif
-}
 
 //!UINT WINAPI SetErrosrMode (UINT uMode)
 UINT WINAPI sys_SetErrorMode(UINT uMode){
@@ -341,14 +272,7 @@ LRESULT WINAPI sys_DefWindowProcW (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lP
 ///////////////////// HERE OK
 ///////////////////// HERE OK
   
-//!VOID WINAPI Sleep (DWORD dwMilliseconds)
-VOID WINAPI sys_Sleep (DWORD dwMilliseconds){
-	showfunc("Sleep( dwMilliseconds: %d )", dwMilliseconds);
-	#if defined(Func_Win) || !defined(NO_Windows_Sleep)
-		Sleep(dwMilliseconds);
-	#else
-	#endif
-}
+
 
 //!DWORD GetFileType(HANDLE hFile)
 DWORD sys_GetFileType(HANDLE hFile){
