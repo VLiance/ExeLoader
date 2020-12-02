@@ -188,22 +188,6 @@ WINBOOL WINAPI sys_GetWindowRect(HWND hWnd,LPRECT lpRect){
 	#endif
 }
 
-extern funcPtr_bool _dFunc_wglSwapBuffers;
-//!BOOL SwapBuffers(HDC Arg1)
-BOOL WINAPI pipe_SwapBuffers(HDC hdc){
-	showfunc("SwapBuffers( hdc: %p )", hdc);
-	if(_dFunc_wglSwapBuffers != 0){
-		return _dFunc_wglSwapBuffers(hdc);
-	}
-	#ifdef Func_Win
-		//_sapp.wgl.ChoosePixelFormat(_sapp.wgl.msg_dc, &pfd);
-		return SwapBuffers((HDC)hdc);
-	#else
-		return true;
-	#endif
-}
-
-
 //!WINBOOL WINAPI TranslateMessage(CONST MSG *lpMsg)
 WINBOOL WINAPI sys_TranslateMessage(CONST MSG *lpMsg){
  	showfunc_opt("TranslateMessage( lpMsg: %p )", lpMsg);
@@ -524,7 +508,3 @@ LPTOP_LEVEL_EXCEPTION_FILTER WINAPI sys_SetUnhandledExceptionFilter(LPTOP_LEVEL_
 		return 0;
 	#endif
 }
-
-
-//temp
-#define Func_Win

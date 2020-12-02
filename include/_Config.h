@@ -27,7 +27,7 @@
 #endif
 
 #define Func_Win //Temp
-//#undef Func_Win //Temp
+#undef Func_Win //Temp
 
 
 ////////////////////////////////////////////////////
@@ -35,8 +35,8 @@
 ////////////////////////////////////////////////////
 
 //Use the Windows Standard LoadLibraryA or undef to use the ExeLaoder AddLibrary similar to loading .exe from memory
-#define USE_Windows_LoadLibrary
-#define USE_Windows_GetProcAddress
+//#define USE_Windows_LoadLibrary
+//#define USE_Windows_GetProcAddress
 
 //Show when function are called from the fonction table, with is parameters
 #define Show_FuncTable
@@ -58,7 +58,7 @@
 
 //#define USE_Platform_RegisterFrame
 
-#define USE_Window_LastError
+//#define USE_Window_LastError
 
 //#define NO_Windows_Sleep
 

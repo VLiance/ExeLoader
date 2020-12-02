@@ -117,6 +117,22 @@ inline int WINAPI pipe_DescribePixelFormat(HDC hdc,int iPixelFormat,UINT nBytes,
 	
 }
 
+extern funcPtr_bool _dFunc_wglSwapBuffers;
+//!BOOL SwapBuffers(HDC Arg1)
+BOOL WINAPI pipe_SwapBuffers(HDC hdc){
+	showfunc("SwapBuffers( hdc: %p )", hdc);
+	if(_dFunc_wglSwapBuffers != 0){
+		return _dFunc_wglSwapBuffers(hdc);
+	}
+	#ifdef Func_Win
+		//_sapp.wgl.ChoosePixelFormat(_sapp.wgl.msg_dc, &pfd);
+		return SwapBuffers((HDC)hdc);
+	#else
+		return true;
+	#endif
+}
+
+
 //!BOOL AdjustWindowRectEx(LPRECT lpRect,DWORD  dwStyle,BOOL bMenu,DWORD  dwExStyle)
 inline BOOL WINAPI pipe_AdjustWindowRectEx(LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle){
 	showfunc("AdjustWindowRectEx( lpRect: %p, dwStyle: %d, bMenu: %d, dwExStyle: %p )", lpRect, dwStyle, bMenu, dwExStyle);
@@ -686,6 +702,7 @@ char* pipe_setlocale(int category, const char* locale){
 //!char* getenv (const char* name)
 const char* pipe_getenv(const char* name){
 	showfunc("getenv( name: %s )", name);
+	return 0;
 	
 	if(strcmp(name, "ST_DEBUG") == 0 ){
 		return "tgsi";

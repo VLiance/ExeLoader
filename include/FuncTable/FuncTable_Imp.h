@@ -705,6 +705,13 @@ void imp_deregister_frame(void* ptr){
 }
 
 
+//!int _open(const char *filename,int oflag [,int pmode])
+int imp_open(const char *filename,int oflag,int pmode){
+	showfunc("_open( filename: %s, oflag: d, pmode: %d)", filename,oflag,pmode);
+	return -1;//error
+}
+
+
 
 /*
 LPVOID WINAPI LocalLock (HLOCAL hMem);
