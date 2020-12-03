@@ -62,7 +62,11 @@
 
 #define NO_Windows_Sleep
 
+#define USE_WinThread
+
 #define ShowPixView //Temp
+
+//#define No_Main
 
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
@@ -92,6 +96,8 @@
 #define USE_sbrk
 #define USE_limit_on_vsnprintf  2147483647 /*INT_MAX*/
 #define NO_Windows_Sleep
+#undef USE_WinThread
+#define No_Main
 #endif
 
 #endif //EXELOADER_Config_H

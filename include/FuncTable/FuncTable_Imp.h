@@ -340,41 +340,6 @@ inline int imp_abs(int x){
 	if(x < 0){return x*-1;}return x;
 }
 
-
-//==== Local Alloc === //  ** ---- Not tested --- **
-
-//!HLOCAL WINAPI LocalAlloc (UINT uFlags, SIZE_T uBytes)
-inline HLOCAL WINAPI imp_LocalAlloc(UINT  uFlags, SIZE_T uBytes){
-	showfunc_opt("LocalAlloc( uFlags: %d, uBytes: %d )", uFlags, uBytes);
-	SIZE_T* _alloc = (SIZE_T*)instance_AllocManager.ManagedCalloc(uBytes + sizeof(SIZE_T), sizeof(char));
-	_alloc[0] = uBytes;
-	return (HLOCAL)&_alloc[1];
-}
-
-//!SIZE_T WINAPI LocalSize (HLOCAL hMem)
-SIZE_T WINAPI imp_LocalSize(HLOCAL hMem){
-	showfunc_opt("LocalSize( hMem: %p)", hMem);
-	SIZE_T* _alloc = (SIZE_T*)hMem;_alloc--;
-	return _alloc[0];
-}
-
-//!HLOCAL WINAPI LocalFree (HLOCAL hMem)
-inline SIZE_T WINAPI imp_LocalFree(HLOCAL hMem){
-	showfunc_opt("LocalFree( hMem: %p)", hMem);
-	if(hMem != 0){
-		SIZE_T* _alloc = (SIZE_T*)hMem;_alloc--;
-		instance_AllocManager.ManagedFree(_alloc);
-	}
-	return 0;
-}
-
-//!HLOCAL WINAPI LocalReAlloc (HLOCAL hMem, SIZE_T uBytes, UINT uFlags)
-HLOCAL WINAPI imp_LocalReAlloc(HLOCAL hMem, SIZE_T uBytes, UINT uFlags){
-	showfunc_opt("LocalReAlloc( hMem: %p, uFlags: %d, uBytes: %d )", hMem, uFlags, uBytes);
-	imp_LocalFree(hMem);
-	return imp_LocalAlloc(0, uBytes);
-}
-
 //===== CommandLine ==== //
 
 //!LPWSTR GetCommandLineW(){
@@ -472,9 +437,9 @@ int imp_vsnprintf (char* s, size_t n, const char *  format, va_list __local_argv
 	*/
 	
 	showfunc_opt("vsnprintf( s: %p, n: %u, format: %s, ... )  --  %u", s, n, format);
-	if(n > INT_MAX) 
-		n = INT_MAX;
-	
+	#ifdef USE_limit_on_vsnprintf
+	if(n > USE_limit_on_vsnprintf) n = USE_limit_on_vsnprintf;
+	#endif
 	/*
 	if(strcmp(format, "#version %I64i%s%s") == 0)
 	{
@@ -495,34 +460,6 @@ UINT imp_lc_codepage_func(void){
 int imp_stricmp(const char *string1,const char *string2){
 	showfunc_opt("_stricmp( string1: %p, string2: %p )", ""); 
 	return stricmp(string1, string2);
-}
-
-//!void* malloc( size_t size )
-void* imp_malloc( size_t size ){
-	showfunc_opt("malloc( size: %d )", size); 
-	void* ret =  malloc(size);
-	if(!ret){
-		showinf("Fail to malloc( size: %d )", size);
-	}	
-	return ret;
-}
-
-//!void *calloc(size_t nitems, size_t size)
-void* imp_calloc(size_t nitems, size_t size){
-	showfunc_opt("calloc( nitems : %d, size: %d )", nitems, size); 
-	return calloc(nitems, size);
-}
-
-//!void *realloc(void *ptr, size_t size)
-void* imp_realloc(void *ptr, size_t size){
-	showfunc_opt("calloc( ptr : %p, size: %d )", ptr, size); 
-	return realloc(ptr, size);
-}
-
-//!void free (void* ptr)
-void imp_free(void* ptr){
-	showfunc_opt("free( ptr : %p )", ptr); 
-	free(ptr);
 }
 
 
@@ -603,7 +540,9 @@ int* imp_errno(void ){
 	return &_errno_;
 }
 //!intptr_t _get_osfhandle(int fd)
+#ifndef EBADF
 #define EBADF            9      /* Bad file number */
+#endif
 intptr_t imp_get_osfhandle(int fd){
 	showfunc("_get_osfhandle( fd: %d )", fd); 
 	//File descriptor 0 stdint, 1 stdout, 2 strerr

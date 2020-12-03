@@ -120,7 +120,7 @@ inline int WINAPI pipe_DescribePixelFormat(HDC hdc,int iPixelFormat,UINT nBytes,
 extern funcPtr_bool _dFunc_wglSwapBuffers;
 //!BOOL SwapBuffers(HDC Arg1)
 BOOL WINAPI pipe_SwapBuffers(HDC hdc){
-	showfunc("SwapBuffers( hdc: %p )", hdc);
+	showfunc_opt("SwapBuffers( hdc: %p )", hdc);
 	if(_dFunc_wglSwapBuffers != 0){
 		return _dFunc_wglSwapBuffers(hdc);
 	}
@@ -422,15 +422,12 @@ WINBOOL WINAPI pipe_FlushInstructionCache (HANDLE hProcess, LPCVOID lpBaseAddres
 	#else
 	//Applications should call FlushInstructionCache if they generate or modify code in memory. 
 	//The CPU cannot detect the change, and may execute the old code it cached.
-	return FlushInstructionCache(hProcess, lpBaseAddress, dwSize); //TODO
+	//return FlushInstructionCache(hProcess, lpBaseAddress, dwSize); //TODO
 	return true;
 	#endif
 
 }
  
-
-
-
 //!BOOL ClientToScreen(HWND    hWnd,LPPOINT lpPoint)
 inline WINAPI BOOL pipe_ClientToScreen(HWND hWnd,LPPOINT lpPoint){
 	showfunc_opt("ClientToScreen( hWnd:%p, lpPoint.x:%d, lpPoint.y:%d )",hWnd, lpPoint->x, lpPoint->y);
@@ -438,46 +435,6 @@ inline WINAPI BOOL pipe_ClientToScreen(HWND hWnd,LPPOINT lpPoint){
 	return ClientToScreen(hWnd, lpPoint);
 	#else
 	return true;
-	#endif
-}
-
-//!LPVOID VirtualAlloc(LPVOID lpAddress,SIZE_T dwSize,DWORD flAllocationType,DWORD flProtect)
-inline LPVOID WINAPI pipe_VirtualAlloc(LPVOID lpAddress,SIZE_T dwSize,DWORD flAllocationType,DWORD flProtect){
-	showfunc_opt("VirtualAlloc( lpAddress %p, dwSize: %d, flAllocationType: %d, flProtect:%d )", lpAddress, dwSize, flAllocationType, flProtect);
-	#ifdef USE_Windows_VirtualAlloc
-	return VirtualAlloc(lpAddress, dwSize, flAllocationType, flProtect); 
-	#else
-	if((flAllocationType & 0x01000) == 0x01000){
-		return instance_AllocManager.ManagedCalloc(dwSize, sizeof(char));
-	}else{
-		showinf("Warning VirtualAlloc","");
-		return 0;//damn VirtualAlloc( lpAddress 00000000, dwSize: 65536, flAllocationType: 12288, flProtect:4 )
-	}
-	#endif
-	
-}
-  
-//!WINBOOL WINAPI VirtualProtect (LPVOID lpAddress, SIZE_T dwSize, DWORD flNewProtect, PDWORD lpflOldProtect)
-inline WINBOOL WINAPI pipe_VirtualProtect (LPVOID lpAddress, SIZE_T dwSize, DWORD flNewProtect, PDWORD lpflOldProtect){
-	showfunc_opt("VirtualProtect( lpAddress %p, dwSize: %d, flNewProtect: %d, lpflOldProtect:%p )", lpAddress, dwSize, flNewProtect, lpflOldProtect);
-	#ifdef USE_Windows_VirtualAlloc
-    return VirtualProtect(lpAddress, dwSize, flNewProtect, lpflOldProtect); 
-	#else
-	return true;
-	#endif
-}
-
-//!BOOL VirtualFree(LPVOID lpAddress,SIZE_T dwSize,DWORD  dwFreeType)
-inline BOOL WINAPI pipe_VirtualFree(LPVOID lpAddress,SIZE_T dwSize,DWORD  dwFreeType){
-	showfunc_opt("VirtualFree( lpAddress %p, dwSize: %d, dwFreeType:%d )", lpAddress, dwSize, dwFreeType);
-	#ifdef USE_Windows_VirtualAlloc
-    return VirtualFree(lpAddress, dwSize, dwFreeType); 
-	#else
-	if(dwFreeType == 0x08000){
-		return instance_AllocManager.ManagedFree(lpAddress);
-	}else{
-		return true;
-	}
 	#endif
 }
 
@@ -677,7 +634,7 @@ int WINAPI pipe_WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWCH lpWideC
 	#ifdef Func_Win 
 	return WideCharToMultiByte(CodePage, dwFlags, lpWideCharStr, cchWideChar, lpMultiByteStr, cbMultiByte, lpDefaultChar, lpUsedDefaultChar);
 	#else
-	return WideCharToMultiByte(CodePage, dwFlags, lpWideCharStr, cchWideChar, lpMultiByteStr, cbMultiByte, lpDefaultChar, lpUsedDefaultChar);
+	//return WideCharToMultiByte(CodePage, dwFlags, lpWideCharStr, cchWideChar, lpMultiByteStr, cbMultiByte, lpDefaultChar, lpUsedDefaultChar);
 	return 0;//TODO
 	#endif	
 }
@@ -688,7 +645,7 @@ int WINAPI pipe_MultiByteToWideChar (UINT CodePage, DWORD dwFlags, LPCCH lpMulti
 	#ifdef Func_Win 
 	return MultiByteToWideChar(CodePage, dwFlags, lpMultiByteStr, cbMultiByte, lpWideCharStr, cchWideChar);
 	#else
-	return MultiByteToWideChar(CodePage, dwFlags, lpMultiByteStr, cbMultiByte, lpWideCharStr, cchWideChar);
+	//return MultiByteToWideChar(CodePage, dwFlags, lpMultiByteStr, cbMultiByte, lpWideCharStr, cchWideChar);
 	return 0;//TODO
 	#endif	
 }

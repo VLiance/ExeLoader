@@ -22,7 +22,7 @@
 
 //!VOID WINAPI Sleep (DWORD dwMilliseconds)
 VOID WINAPI sys_Sleep (DWORD dwMilliseconds){
-	showfunc("Sleep( dwMilliseconds: %d )", dwMilliseconds);
+	showfunc_opt("Sleep( dwMilliseconds: %d )", dwMilliseconds);
 	#if defined(Func_Win) || !defined(NO_Windows_Sleep)
 		Sleep(dwMilliseconds);
 	#else
@@ -106,17 +106,18 @@ VOID WINAPI thread_WakeConditionVariable (PCONDITION_VARIABLE ConditionVariable)
 	showfunc("WakeConditionVariable( ConditionVariable: %p)",ConditionVariable);
 }
 
- #define Func_Win
- 
- 
+
  //!uintptr_t _beginthreadex( void *security, unsigned stack_size, unsigned ( __stdcall *start_address )( void * ),void *arglist,unsigned initflag,unsigned *thrdaddr)
-uintptr_t imp_beginthreadex( void *security, unsigned stack_size, unsigned ( __stdcall *start_address )( void * ),void* arglist,unsigned initflag,unsigned *thrdaddr){
+uintptr_t imp_beginthreadex( void *security, unsigned stack_size, unsigned ( WINAPI* start_address )( void * ),void* arglist,unsigned initflag,unsigned *thrdaddr){
 	showfunc("beginthreadex( security: %p, stack_size: %p, start_address: %p, arglist: %p, initflag: %d, thrdaddr: %d )", security,stack_size,start_address,arglist, initflag, thrdaddr); 
-    uintptr_t thdl = 0;
+    
+	uintptr_t thdl = 0;
 	int err = 0;
+	#if defined(Func_Win) || defined(USE_WinThread)
 	if ( (thdl = (uintptr_t)CreateThread( (LPSECURITY_ATTRIBUTES)security,stack_size,(LPTHREAD_START_ROUTINE)start_address,(LPVOID)arglist,initflag,(LPDWORD)thrdaddr)) == (uintptr_t)0 ){
             err = GetLastError();
     }
+	#endif
 	return thdl;
 }
 
@@ -136,7 +137,7 @@ typedef struct _RTL_CRITICAL_SECTION {
 int criticalSection_thread_ = 1;
 VOID WINAPI sys_InitializeCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
  	showfunc_opt("InitializeCriticalSection( lpCriticalSection: %p )", lpCriticalSection);
-	#ifdef Func_Win
+	#if defined(Func_Win) || defined(USE_WinThread)
 		InitializeCriticalSection(lpCriticalSection);
 	#else
 	//*lpCriticalSection = (_RTL_CRITICAL_SECTION*)malloc(sizeof(_RTL_CRITICAL_SECTION));
@@ -154,7 +155,7 @@ VOID WINAPI sys_InitializeCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
 //!VOID WINAPI EnterCriticalSection (LPCRITICAL_SECTION lpCriticalSection)
 VOID WINAPI sys_EnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
  	showfunc_opt("EnterCriticalSection( lpCriticalSection: %p )", lpCriticalSection);
-	#ifdef Func_Win
+	#if defined(Func_Win) || defined(USE_WinThread)
 		EnterCriticalSection(lpCriticalSection);
 	#else
 		lpCriticalSection->OwningThread = (HANDLE)criticalSection_thread_;
@@ -166,7 +167,7 @@ VOID WINAPI sys_EnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
 //!VOID WINAPI TryEnterCriticalSection (LPCRITICAL_SECTION lpCriticalSection)
 VOID WINAPI sys_TryEnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
  	showfunc_opt("TryEnterCriticalSection( lpCriticalSection: %p )", lpCriticalSection);
-	#ifdef Func_Win
+	#if defined(Func_Win) || defined(USE_WinThread)
 		TryEnterCriticalSection(lpCriticalSection);
 	#else
 		//*lpCriticalSection = CriticalSection;
@@ -176,7 +177,7 @@ VOID WINAPI sys_TryEnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
 //!VOID WINAPI LeaveCriticalSection (LPCRITICAL_SECTION lpCriticalSection)
  VOID WINAPI sys_LeaveCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
  	showfunc_opt("LeaveCriticalSection( lpCriticalSection: %p )", lpCriticalSection);
-	#ifdef Func_Win
+	#if defined(Func_Win) || defined(USE_WinThread)
 		LeaveCriticalSection(lpCriticalSection);
 	#else
 		lpCriticalSection->OwningThread = (HANDLE)0;
@@ -186,7 +187,7 @@ VOID WINAPI sys_TryEnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
 //!VOID WINAPI DeleteCriticalSection (LPCRITICAL_SECTION lpCriticalSection)
  VOID WINAPI sys_DeleteCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
  	showfunc_opt("DeleteCriticalSection( lpCriticalSection: %p )", lpCriticalSection);
-	#ifdef Func_Win
+	#if defined(Func_Win) || defined(USE_WinThread)
 		DeleteCriticalSection(lpCriticalSection);
 	#else
 	#endif
@@ -196,7 +197,7 @@ VOID WINAPI sys_TryEnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
 //!HANDLE CreateSemaphoreW(_In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,_In_ LONG lInitialCount, _In_ LONG lMaximumCount, _In_opt_ LPCWSTR lpName)
 HANDLE WINAPI  pipe_CreateSemaphoreA( _In_opt_ LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,_In_     LONG lInitialCount,_In_     LONG lMaximumCount,_In_opt_ LPCTSTR lpName){
 	showfunc_opt("CreateSemaphoreA(  )","");
-	#ifdef Func_Win
+	#if defined(Func_Win) || defined(USE_WinThread)
 	return CreateSemaphoreA(lpSemaphoreAttributes, lInitialCount, lMaximumCount, lpName);
 	#else
 	#endif
@@ -209,7 +210,7 @@ HANDLE  WINAPI  pipe_CreateSemaphoreW( //Must have __stdcall
   _In_opt_ LPCWSTR                lpName
 ){
 	showfunc_unimplt("CreateSemaphoreW(  )","");
-	#ifdef Func_Win
+	#if defined(Func_Win) || defined(USE_WinThread)
 	return CreateSemaphoreW(lpSemaphoreAttributes, lInitialCount, lMaximumCount, lpName);
 	#else
 	#endif
@@ -219,7 +220,7 @@ HANDLE  WINAPI  pipe_CreateSemaphoreW( //Must have __stdcall
 //!BOOL ReleaseSemaphore(HANDLE hSemaphore,LONG   lReleaseCount,LPLONG lpPreviousCount)
 BOOL WINAPI pipe_ReleaseSemaphore(HANDLE hSemaphore,LONG   lReleaseCount,LPLONG lpPreviousCount){
 	showfunc_opt("ReleaseSemaphore( hSemaphore: %p,  lReleaseCount: %p, lpPreviousCount: %p )", hSemaphore, lReleaseCount, lpPreviousCount);
-	#ifdef Func_Win 
+	#if defined(Func_Win) || defined(USE_WinThread)
 	return ReleaseSemaphore(hSemaphore, lReleaseCount, lpPreviousCount);
 	#else
 	return true;
@@ -229,11 +230,10 @@ BOOL WINAPI pipe_ReleaseSemaphore(HANDLE hSemaphore,LONG   lReleaseCount,LPLONG 
  //!DWORD WINAPI WaitForSingleObject (HANDLE hHandle, DWORD dwMilliseconds)
  DWORD WINAPI pipe_WaitForSingleObject(HANDLE hHandle, DWORD dwMilliseconds){
 	showfunc_opt("WaitForSingleObject( hHandle: %p,  dwMilliseconds: %d)", hHandle, dwMilliseconds);
-	#ifdef Func_Win 
+	#if defined(Func_Win) || defined(USE_WinThread)
 	return WaitForSingleObject(hHandle, dwMilliseconds);
 	#else
 	return 0;
 	#endif	
  }
  
- #undef Func_Win

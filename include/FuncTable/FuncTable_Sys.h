@@ -74,7 +74,7 @@ inline HDC WINAPI sys_GetDC(HWND hWnd){
 
 //!HWND WindowFromDC(HDC hDC)
 inline WINAPI HWND pipe_WindowFromDC(HDC hDC){
-	showfunc("WindowFromDC( hDC:%p )",hDC);
+	showfunc_opt("WindowFromDC( hDC:%p )",hDC);
 	#ifdef Func_Win
 	return WindowFromDC(hDC);
 	#else
@@ -115,7 +115,7 @@ struct pixel;
 extern pixel* pixels;
 extern pixel** container_pixels;
 int WINAPI pipe_StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int DestHeight,int xSrc,int ySrc, int SrcWidth, int SrcHeight, const VOID *lpBits, const BITMAPINFO *lpbmi, UINT iUsage, DWORD rop){
-	showfunc("StretchDIBits( hdc: %p )", hdc);
+	showfunc_opt("StretchDIBits( hdc: %p )", hdc);
 	#ifdef Func_Win
 		return StretchDIBits(hdc, xDest, yDest, DestWidth, DestHeight, xSrc, ySrc, SrcWidth, SrcHeight, lpBits, lpbmi, iUsage, rop);
 	#else
@@ -307,7 +307,7 @@ WINBOOL WINAPI sys_VerifyVersionInfoW (LPOSVERSIONINFOEXW lpVersionInformation, 
 }
 
 //!BOOL IMAGEAPI EnumerateLoadedModules64(__in HANDLE hProcess,__in PENUMLOADED_MODULES_CALLBACK64 EnumLoadedModulesCallback,__in PVOID UserContext)
-typedef BOOL (CALLBACK *PENUMLOADED_MODULES_CALLBACK64)( PCSTR ModuleName, ULONG ModuleBase, ULONG ModuleSize, PVOID UserContext);
+typedef BOOL (CALLBACK* PENUMLOADED_MODULES_CALLBACK64)( PCSTR ModuleName, ULONG ModuleBase, ULONG ModuleSize, PVOID UserContext);
 BOOL WINAPI sys_EnumerateLoadedModules64( HANDLE hProcess, PENUMLOADED_MODULES_CALLBACK64 EnumLoadedModulesCallback, PVOID UserContext){
 	showfunc_opt("EnumerateLoadedModules64( hProcess: %p, EnumLoadedModulesCallback: %p, UserContext: %p )", hProcess, EnumLoadedModulesCallback, UserContext);
 	// static BOOL CALLBACK ELM_Callback(WIN32_ELMCB_PCSTR ModuleName, DWORD64 ModuleBase,ULONG ModuleSize, PVOID UserContext);

@@ -54,6 +54,7 @@
 
 #include "FuncTable/DummyTable.h"
 
+#include "FuncTable/FuncTable_Memory.h"
 #include "FuncTable/FuncTable_Thread.h"
 #include "FuncTable/FuncTable_Sys.h"
 #include "FuncTable/FuncTable_Pipe.h"
@@ -67,7 +68,6 @@
 #endif
 
 
-extern "C" ULONG __chkstk();
 extern "C" ULONG __chkstk();
 
 extern "C" void __register_frame(void* ptr);
@@ -92,7 +92,9 @@ extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 {"CommandLineToArgvW"  		,(FUNC_) imp_CommandLineToArgvW },
 {"GetCommandLineW"  		,(FUNC_) imp_GetCommandLineW },
 //{"chkstk"  					,(FUNC_) imp_chkstk },
+#ifdef ImWin
 {"chkstk"  					,(FUNC_) __chkstk },
+#endif
 
 #ifdef USE_Platform_RegisterFrame
 {"__register_frame"  	,(FUNC_) __register_frame },
@@ -130,18 +132,21 @@ extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 /////////////////////////////
 
 //Temp
-{"GetModuleFileNameW"  	,(FUNC_) GetModuleFileNameW },
-{"wcscpy"  				,(FUNC_) wcscpy },
+
+//{"wcscpy"  				,(FUNC_) wcscpy },
 {"sscanf"  				,(FUNC_) sscanf },
-{"_open"  				,(FUNC_) imp_open },
 {"bsearch"  			,(FUNC_) bsearch },
 
+//{"GetModuleFileNameW"  	,(FUNC_) GetModuleFileNameW },
+//{"_open"  				,(FUNC_) imp_open },
+
+/*
 {"InitOnceExecuteOnce"  		,(FUNC_) InitOnceExecuteOnce },
 {"SleepConditionVariableCS"  	,(FUNC_) thread_SleepConditionVariableCS },
 {"InitializeConditionVariable"  ,(FUNC_) InitializeConditionVariable },
 {"WakeAllConditionVariable"  	,(FUNC_) WakeAllConditionVariable },
 {"WakeConditionVariable"  		,(FUNC_) thread_WakeConditionVariable },
-
+*/
 
 {"CreateSemaphoreA"  		,(FUNC_) pipe_CreateSemaphoreA },
 {"CreateSemaphoreW"  		,(FUNC_) pipe_CreateSemaphoreW },
@@ -481,9 +486,12 @@ extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 ////////////////////////////////////
 
 /////////// STRING ///////////////
-#ifdef ImWin
-{"wcslen"  	,(FUNC_) wcslen }, //Not in DJGPP
-#endif
+//#ifdef ImWin
+//{"wcslen"  	,(FUNC_) wcslen }, //Not in DJGPP
+//#endif
+{"wcslen"  	,(FUNC_) wcslen_ }, //Not in DJGPP
+
+
 
 {"isalnum"  ,(FUNC_) isalnum},
 
