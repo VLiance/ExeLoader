@@ -343,7 +343,7 @@ inline int imp_abs(int x){
 //===== CommandLine ==== //
 
 //!LPWSTR GetCommandLineW(){
-LPWSTR imp_GetCommandLineW(){
+LPWSTR WINAPI imp_GetCommandLineW(){
 	showfunc("GetCommandLineW( )", "");
 	#ifdef Func_Win
 	return GetCommandLineW();
@@ -358,7 +358,7 @@ LPWSTR imp_GetCommandLineW(){
 }
 
 //!LPWSTR* CommandLineToArgvW(LPCWSTR lpCmdLine,int* pNumArgs)
-inline LPWSTR* imp_CommandLineToArgvW(LPCWSTR lpCmdLine,int* pNumArgs){
+inline LPWSTR* WINAPI imp_CommandLineToArgvW(LPCWSTR lpCmdLine,int* pNumArgs){
 	showfunc("CommandLineToArgvW( lpCmdLine: %p, pNumArgs: %p )", lpCmdLine, pNumArgs);
 	#ifdef Func_Win
 	return CommandLineToArgvW(lpCmdLine, pNumArgs);
