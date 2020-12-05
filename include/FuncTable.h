@@ -462,7 +462,9 @@ extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 {"scanf"  ,(FUNC_) scanf },
 
 /////////// LOG ////////////////////
-{"printf"  	,(FUNC_) printf }, // maybe not safe
+{"printf"  	,(FUNC_) imp_printf }, // maybe not safe
+
+
 {"fflush"  	,(FUNC_) imp_fflush },
 {"fwrite"  	,(FUNC_) imp_fwrite },
 
