@@ -46,13 +46,13 @@ func_WndProc aWndProc[MAX_WND_CLASS] = {};
 short aWndProc_idx = 0;
 
 //!ATOM RegisterClassW(const WNDCLASSW *lpWndClass)
-inline ATOM WINAPI pipe_RegisterClassW(const WNDCLASSW *lpWndClass){
+inline ATOM WINAPI pipe_RegisterClassW(const void *lpWndClass){
 	showfunc("RegisterClassW( value: %p )", lpWndClass);
 	#ifdef Func_Win
 		return RegisterClassW((WNDCLASSW*)lpWndClass);
 	#else
 		if(aWndProc_idx < MAX_WND_CLASS){
-			aWndProc[aWndProc_idx] = (func_WndProc)lpWndClass->lpfnWndProc;//WNDPROC
+			// aWndProc[aWndProc_idx] = (func_WndProc)lpWndClass->lpfnWndProc;//WNDPROC
 			aWndProc_idx++;
 		}
 		return 0;
@@ -67,7 +67,7 @@ inline void impl_GetMessages(){
 		UINT uMsg = 1;
 		LPARAM lparam;
 		
-		uMsg = WM_MOUSEMOVE;
+		// uMsg = WM_MOUSEMOVE;
 		lparam = (LPARAM) 0xfffeffff;
 		
 		/*
@@ -116,7 +116,7 @@ WINBOOL WINAPI sys_PeekMessageA(LPMSG lpMsg,HWND hWnd,UINT wMsgFilterMin,UINT wM
 	#ifdef Func_Win
 		return PeekMessageA( lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg );
 	#else
-		 impl_GetMessages();
+		 // impl_GetMessages();
 		return 0;
 	#endif
 }
@@ -125,7 +125,7 @@ WINBOOL WINAPI sys_PeekMessageW(LPMSG lpMsg,HWND hWnd,UINT wMsgFilterMin,UINT wM
 	#ifdef Func_Win
 		return PeekMessageW(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg);
 	#else
-		impl_GetMessages();
+		// impl_GetMessages();
 		return 0;
 	#endif
 }
@@ -704,16 +704,19 @@ const char* pipe_getenv(const char* name){
 		return "0";
 	}
 	if(strcmp(name, "GALLIUM_DRIVER") == 0 ){
-		//return "softpipe";
-		return "llvmpipe";
+		return "softpipe";
+		// return "llvmpipe";
 		//return "swr";
 	}
-return 0;
-	
 	
 	if(strcmp(name, "ST_DEBUG") == 0 ){
 		return "tgsi";
 	}
+	
+	return 0;
+	
+	
+	
 	
 	
 	if(strcmp(name, "MESA_DEBUG") == 0 ){

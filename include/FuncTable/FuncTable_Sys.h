@@ -24,6 +24,8 @@
 *
 */
 
+#include "FuncPrototype\CPC_WPR.h"
+
 //!VOID WINAPI SetLastError (DWORD dwErrCode)
 DWORD last_error = 0;
 VOID WINAPI sys_SetLastError (DWORD dwErrCode){
@@ -83,6 +85,9 @@ inline WINAPI HWND pipe_WindowFromDC(HDC hDC){
 }
 
 
+extern CpcdosOSx_CPintiCore* oCpc; //TODO free
+int id_context = 0;
+
 //!HWND WINAPI CreateWindowExW(DWORD dwExStyle,LPCWSTR lpClassName,LPCWSTR lpWindowName,DWORD dwStyle,int X,int Y,int nWidth,int nHeight,HWND hWndParent,HMENU hMenu,HINSTANCE hInstance,LPVOID lpParam)
 HWND WINAPI pipe_CreateWindowExW(DWORD dwExStyle,LPCWSTR lpClassName,LPCWSTR lpWindowName,DWORD dwStyle,int X,int Y,int nWidth,int nHeight,HWND hWndParent,HMENU hMenu,HINSTANCE hInstance,LPVOID lpParam){
 	showfunc("CreateWindowExW( dwExStyle: %d, lpClassName: %p, lpWindowName :%d, dwStyle: %d, X: %d, Y: %d, nWidth: %d, nHeight: %d, hWndParent: %p, hMenu: %p, hInstance: %d, lpParam: %d )",
@@ -93,6 +98,8 @@ HWND WINAPI pipe_CreateWindowExW(DWORD dwExStyle,LPCWSTR lpClassName,LPCWSTR lpW
 		//Create a new Window Context
 		aContext_count++; //Important: Skip the zero index (NULL)
 		int idx = aContext_count;
+
+		
 		
 		aContext[idx].idx = idx;
 		aContext[idx].width = nWidth;
@@ -101,6 +108,14 @@ HWND WINAPI pipe_CreateWindowExW(DWORD dwExStyle,LPCWSTR lpClassName,LPCWSTR lpW
 		aContext[idx].hwnd_View = pixView_createWindow(hExeloader, &aContext[idx]);
 		#endif
 
+		if(nWidth > 10)
+		{
+			// Get ID context from cpcdos
+			aContext[idx].id_context = oCpc->Create_Context(nWidth, nHeight);
+			
+			showinf("Create_Context()= idx: %d, height: %d, width: %d", idx,  aContext[idx].height,  aContext[idx].width);
+		}
+		
 		showinf("PixView= idx: %d, height: %d, width: %d", idx,  aContext[idx].height,  aContext[idx].width);
 		
 		showinf("create hwnd_View( hwnd_View: %d, idx: %d, height: %d, width: %d )", aContext[idx].hwnd_View,  idx,  aContext[idx].height,  aContext[idx].width );
@@ -114,6 +129,11 @@ HWND WINAPI pipe_CreateWindowExW(DWORD dwExStyle,LPCWSTR lpClassName,LPCWSTR lpW
 struct pixel;
 extern pixel* pixels;
 extern pixel** container_pixels;
+
+
+
+
+
 int WINAPI pipe_StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int DestHeight,int xSrc,int ySrc, int SrcWidth, int SrcHeight, const VOID *lpBits, const BITMAPINFO *lpbmi, UINT iUsage, DWORD rop){
 	showfunc("StretchDIBits( hdc: %p )", hdc);
 	#ifdef Func_Win
@@ -153,7 +173,24 @@ int WINAPI pipe_StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int Dest
 			pixView_update(&aContext[idx]);
 			//showinf("PixView= idx: %d, height: %d, width: %d", idx,  aContext[idx].height,  aContext[idx].width);
 		#endif
-		//showinf("use hwnd_View( hwnd_View: %d )", aContext[idx].hwnd_View);
+		
+		if(aContext[idx].width > 10)
+		{
+		
+			aContext[idx].pixels = oCpc->Init_Get_Context_PTR(aContext[1].id_context);
+
+			uint32_t* pix_src = (uint32_t*)lpBits;
+			uint32_t* pix_dest = (uint32_t*)aContext[idx].pixels;
+			
+			for(int y = 0; y <  aContext[idx].height; y++){
+				memcpy(pix_dest + (y * aContext[idx].width), pix_src + (y * SrcWidth), aContext[idx].width *4);
+			}
+			
+			
+			oCpc->Blitting(aContext[1].id_context);
+		}
+		showinf("use hwnd_View( hwnd_View: %d )", aContext[idx].hwnd_View);
+		
 		return aContext[idx].height; //number of scan lines copied
 	#endif
 }
