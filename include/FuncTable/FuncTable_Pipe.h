@@ -24,15 +24,113 @@
 *
 */
 
+
+/*
+  typedef struct tagWNDCLASSW {
+    UINT style;
+    WNDPROC lpfnWndProc;
+    int cbClsExtra;
+    int cbWndExtra;
+    HINSTANCE hInstance;
+    HICON hIcon;
+    HCURSOR hCursor;
+    HBRUSH hbrBackground;
+    LPCWSTR lpszMenuName;
+    LPCWSTR lpszClassName;
+  } WNDCLASSW,*PWNDCLASSW,*NPWNDCLASSW,*LPWNDCLASSW;
+*/
+#define MAX_WND_CLASS 20
+
+typedef LRESULT (*func_WndProc)( HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam);
+func_WndProc aWndProc[MAX_WND_CLASS] = {};
+short aWndProc_idx = 0;
+
 //!ATOM RegisterClassW(const WNDCLASSW *lpWndClass)
-inline ATOM WINAPI pipe_RegisterClassW(void* value){
-	showfunc("RegisterClassW( value: %p )", value);
+inline ATOM WINAPI pipe_RegisterClassW(const WNDCLASSW *lpWndClass){
+	showfunc("RegisterClassW( value: %p )", lpWndClass);
 	#ifdef Func_Win
-		return RegisterClassW((WNDCLASSW*)value);
+		return RegisterClassW((WNDCLASSW*)lpWndClass);
 	#else
+		if(aWndProc_idx < MAX_WND_CLASS){
+			aWndProc[aWndProc_idx] = (func_WndProc)lpWndClass->lpfnWndProc;//WNDPROC
+			aWndProc_idx++;
+		}
 		return 0;
 	#endif
 }
+
+inline void impl_GetMessages(){
+	for(int i = 0; i < aWndProc_idx; i++){
+		//Call all WndProc messages
+		
+		HWND _hWnd = (HWND)1;
+		UINT uMsg = 1;
+		LPARAM lparam;
+		
+		uMsg = WM_MOUSEMOVE;
+		lparam = (LPARAM) 0xfffeffff;
+		
+		/*
+		
+		WM_MOUSEMOVE
+		GET_X_LPARAM(lParam)
+		
+		
+		WM_CLOSE
+		WM_SYSCOMMAND
+			SC_SCREENSAVE
+			SC_MONITORPOWER
+			SC_KEYMENU
+		WM_ERASEBKGND
+		WM_SIZE 
+			SIZE_MINIMIZED 
+			SAPP_EVENTTYPE_ICONIFIED
+			SAPP_EVENTTYPE_RESTORED
+		WM_SETCURSOR
+		WM_LBUTTONDOWN
+			SAPP_EVENTTYPE_MOUSE_DOWN
+			SAPP_MOUSEBUTTON_LEFT
+			SAPP_MOUSEBUTTON_RIGHT
+			SAPP_MOUSEBUTTON_MIDDLE
+		WM_MOUSEMOVE
+		WM_MBUTTONUP
+		WM_MBUTTONDOWN
+		WM_INPUT
+		WM_MOUSELEAVE
+		WM_MOUSEWHEEL
+		WM_KEYUP
+		WM_SYSKEYUP
+		WM_CHAR
+		*/
+		aWndProc[i](_hWnd,uMsg,0,0);
+	}
+}
+
+
+
+
+//!WINBOOL WINAPI PeekMessageA(LPMSG lpMsg,HWND hWnd,UINT wMsgFilterMin,UINT wMsgFilterMax,UINT wRemoveMsg)
+//!WINBOOL WINAPI PeekMessageW(LPMSG lpMsg,HWND hWnd,UINT wMsgFilterMin,UINT wMsgFilterMax,UINT wRemoveMsg)
+WINBOOL WINAPI sys_PeekMessageA(LPMSG lpMsg,HWND hWnd,UINT wMsgFilterMin,UINT wMsgFilterMax,UINT wRemoveMsg){
+ 	showfunc_opt("PeekMessageA( lpMsg: %p, hWnd: %p, wMsgFilterMin: %d, wMsgFilterMax: %d, wRemoveMsg: %d )", lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg );
+	#ifdef Func_Win
+		return PeekMessageA( lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg );
+	#else
+		 impl_GetMessages();
+		return 0;
+	#endif
+}
+WINBOOL WINAPI sys_PeekMessageW(LPMSG lpMsg,HWND hWnd,UINT wMsgFilterMin,UINT wMsgFilterMax,UINT wRemoveMsg){
+ 	showfunc_opt("PeekMessageW( lpMsg: %p, hWnd: %p, wMsgFilterMin: %d, wMsgFilterMax: %d, wRemoveMsg: %d )", lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg );
+	#ifdef Func_Win
+		return PeekMessageW(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg);
+	#else
+		impl_GetMessages();
+		return 0;
+	#endif
+}
+
+
 
 //!LRESULT DispatchMessageA(const MSG *lpMsg)
 inline LRESULT WINAPI pipe_DispatchMessageA(const MSG *lpMsg){
