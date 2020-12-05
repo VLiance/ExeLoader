@@ -19,7 +19,7 @@
 * Main goal is to be portable which does not relying on system functions
 * 
 */
-
+//#define USE_WinThread
 //!VOID WINAPI Sleep (DWORD dwMilliseconds)
 VOID WINAPI th_Sleep (DWORD dwMilliseconds){
 	showfunc_opt("Sleep( dwMilliseconds: %d )", dwMilliseconds);

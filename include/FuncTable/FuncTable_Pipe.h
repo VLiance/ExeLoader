@@ -599,7 +599,19 @@ char* pipe_setlocale(int category, const char* locale){
 //!char* getenv (const char* name)
 const char* pipe_getenv(const char* name){
 	showfunc("getenv( name: %s )", name);
-	return 0;
+	if(strcmp(name, "GALLIUM_PRINT_OPTIONS") == 0 ){
+		return "yes";
+	}
+	if(strcmp(name, "LP_NUM_THREADS") == 0 ){
+		return "0";
+	}
+	if(strcmp(name, "GALLIUM_DRIVER") == 0 ){
+		//return "softpipe";
+		return "llvmpipe";
+		//return "swr";
+	}
+return 0;
+	
 	
 	if(strcmp(name, "ST_DEBUG") == 0 ){
 		return "tgsi";
