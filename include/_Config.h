@@ -62,7 +62,7 @@
 
 #define NO_Windows_Sleep
 
-#define USE_WinThread
+//#define USE_WinThread
 
 #define ShowPixView //Temp
 

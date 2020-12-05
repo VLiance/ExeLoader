@@ -148,10 +148,10 @@ extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 {"WakeConditionVariable"  		,(FUNC_) thread_WakeConditionVariable },
 */
 
-{"CreateSemaphoreA"  		,(FUNC_) pipe_CreateSemaphoreA },
-{"CreateSemaphoreW"  		,(FUNC_) pipe_CreateSemaphoreW },
-{"WaitForSingleObject"  	,(FUNC_) pipe_WaitForSingleObject },
-{"ReleaseSemaphore"  		,(FUNC_) pipe_ReleaseSemaphore },
+{"CreateSemaphoreA"  		,(FUNC_) th_CreateSemaphoreA },
+{"CreateSemaphoreW"  		,(FUNC_) th_CreateSemaphoreW },
+{"WaitForSingleObject"  	,(FUNC_) th_WaitForSingleObject },
+{"ReleaseSemaphore"  		,(FUNC_) th_ReleaseSemaphore },
 
 
 //{"_fdopen"  			,(FUNC_) _fdopen },
@@ -218,8 +218,8 @@ extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 {"EnumDisplaySettingsA" ,(FUNC_) pipe_EnumDisplaySettingsA },
 
 {"CreateToolhelp32Snapshot"  ,(FUNC_) pipe_CreateToolhelp32Snapshot },
-{"Thread32First"  		,(FUNC_) pipe_Thread32First },
-{"Thread32Next"  		,(FUNC_) pipe_Thread32Next },
+{"Thread32First"  		,(FUNC_) th_Thread32First },
+{"Thread32Next"  		,(FUNC_) th_Thread32Next },
 
 {"ShowWindow"  			,(FUNC_) pipe_ShowWindow },
 
@@ -318,11 +318,11 @@ extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 
 
 
-{"InitializeCriticalSection" 	,(FUNC_) sys_InitializeCriticalSection },
-{"EnterCriticalSection" 		,(FUNC_) sys_EnterCriticalSection },
-{"TryEnterCriticalSection" 		,(FUNC_) sys_TryEnterCriticalSection },
-{"LeaveCriticalSection" 		,(FUNC_) sys_LeaveCriticalSection },
-{"DeleteCriticalSection" 		,(FUNC_) sys_DeleteCriticalSection },
+{"InitializeCriticalSection" 	,(FUNC_) th_InitializeCriticalSection },
+{"EnterCriticalSection" 		,(FUNC_) th_EnterCriticalSection },
+{"TryEnterCriticalSection" 		,(FUNC_) th_TryEnterCriticalSection },
+{"LeaveCriticalSection" 		,(FUNC_) th_LeaveCriticalSection },
+{"DeleteCriticalSection" 		,(FUNC_) th_DeleteCriticalSection },
 
 {"EnumerateLoadedModules64" 	,(FUNC_) sys_EnumerateLoadedModules64 },
 
@@ -333,7 +333,7 @@ extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 {"SetErrorMode"  			,(FUNC_) sys_SetErrorMode },
 
 {"DefWindowProcW"  			,(FUNC_) sys_DefWindowProcW },
-{"Sleep"					,(FUNC_) sys_Sleep },
+{"Sleep"					,(FUNC_) th_Sleep },
 
 {"GetLastError"  			,(FUNC_) sys_GetLastError },
 {"SetLastError"  			,(FUNC_) sys_SetLastError },
@@ -388,10 +388,10 @@ extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 	{"TlsSetValue"  ,(FUNC_) TlsSetValue },
 	{"TlsFree"  	,(FUNC_) TlsFree },
 #else
-	{"TlsAlloc"  ,	 (FUNC_) imp_TlsAlloc },
-	{"TlsGetValue"  ,(FUNC_) imp_TlsGetValue },
-	{"TlsSetValue"  ,(FUNC_) imp_TlsSetValue },
-	{"TlsFree"  	,(FUNC_) imp_TlsFree },
+	{"TlsAlloc"  ,	 (FUNC_) th_TlsAlloc },
+	{"TlsGetValue"  ,(FUNC_) th_TlsGetValue },
+	{"TlsSetValue"  ,(FUNC_) th_TlsSetValue },
+	{"TlsFree"  	,(FUNC_) th_TlsFree },
 #endif
 
 
@@ -441,7 +441,7 @@ extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 
 
 {"_snprintf"  		,(FUNC_) snprintf },
-{"_beginthreadex"  ,(FUNC_) imp_beginthreadex },
+{"_beginthreadex"  ,(FUNC_) th_beginthreadex },
 {"_errno"  			,(FUNC_) imp_errno },
 
 
