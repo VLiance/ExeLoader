@@ -70,7 +70,8 @@ inline SIZE_T WINAPI imp_LocalFree(HLOCAL hMem){
 	showfunc_opt("LocalFree( hMem: %p)", hMem);
 	if(hMem != 0){
 		SIZE_T* _alloc = (SIZE_T*)hMem;_alloc--;
-		instance_AllocManager.ManagedFree(_alloc);
+		//TODO !crash!?
+	//	instance_AllocManager.ManagedFree(_alloc); 
 	}
 	return 0;
 }
