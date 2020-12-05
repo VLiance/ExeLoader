@@ -115,7 +115,7 @@ struct pixel;
 extern pixel* pixels;
 extern pixel** container_pixels;
 int WINAPI pipe_StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int DestHeight,int xSrc,int ySrc, int SrcWidth, int SrcHeight, const VOID *lpBits, const BITMAPINFO *lpbmi, UINT iUsage, DWORD rop){
-	showfunc_opt("StretchDIBits( hdc: %p )", hdc);
+	showfunc("StretchDIBits( hdc: %p )", hdc);
 	#ifdef Func_Win
 		return StretchDIBits(hdc, xDest, yDest, DestWidth, DestHeight, xSrc, ySrc, SrcWidth, SrcHeight, lpBits, lpbmi, iUsage, rop);
 	#else
