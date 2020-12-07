@@ -20,6 +20,7 @@
 *
 */
 
+
 #ifdef ImWin
 #undef _WIN32_WINNT
 #define _WIN32_WINNT 0x0600
@@ -1441,6 +1442,16 @@
     LPCWSTR lpszClassName;
   } WNDCLASSW,*PWNDCLASSW,*NPWNDCLASSW,*LPWNDCLASSW;
   
-
-  
 #endif /*ImWin*/
+
+/* extra */
+#ifndef HIWORD
+#define HIWORD(l)           ((WORD)((((DWORD_PTR)(l)) >> 16) & 0xffff))
+#define LOWORD(l)           ((WORD)(((DWORD_PTR)(l)) & 0xffff))
+#endif
+#ifndef GET_X_LPARAM
+#define GET_X_LPARAM(lp)    ((int)(short)LOWORD(lp))
+#define GET_Y_LPARAM(lp)    ((int)(short)HIWORD(lp))
+#endif 
+#define SETLPARAM(lw, hw) LOWORD(lw) | (LOWORD(hw) << 16)
+/* extra */

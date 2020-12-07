@@ -97,8 +97,6 @@ HWND WINAPI pipe_CreateWindowExW(DWORD dwExStyle,LPCWSTR lpClassName,LPCWSTR lpW
 		//Create a new Window Context
 		aContext_count++; //Important: Skip the zero index (NULL)
 		int idx = aContext_count;
-
-		
 		
 		aContext[idx].idx = idx;
 		aContext[idx].width = nWidth;
@@ -181,7 +179,7 @@ int WINAPI pipe_StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int Dest
 		}
 		#endif
 		
-		showinf("use hwnd_View( hwnd_View: %d )", aContext[idx].hwnd_View);
+		//showinf("use hwnd_View( hwnd_View: %d )", aContext[idx].hwnd_View);
 		
 		return aContext[idx].height; //number of scan lines copied
 	#endif
@@ -463,3 +461,12 @@ HANDLE WINAPI sys_CreateEventW(LPSECURITY_ATTRIBUTES lpEventAttributes, WINBOOL 
 	#endif
 }
 
+//!SHORT WINAPI GetKeyState(int nVirtKey)
+SHORT WINAPI sys_GetKeyState(int nVirtKey){
+	showfunc_opt("GetKeyState( nVirtKey: %d )", nVirtKey);
+	#ifdef Func_Win
+		return GetKeyState(nVirtKey);
+	#else
+		return 0;
+	#endif
+}

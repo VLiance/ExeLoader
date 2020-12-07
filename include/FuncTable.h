@@ -367,6 +367,7 @@ extern "C" UINT ___lc_codepage_func(void);
 {"VerSetConditionMask"  	,(FUNC_) sys_VerSetConditionMask },
 {"VerifyVersionInfoW"  		,(FUNC_) sys_VerifyVersionInfoW },
 {"DuplicateHandle"  		,(FUNC_) pipe_DuplicateHandle },
+{"GetKeyState"  		,(FUNC_) sys_GetKeyState },
 
 
 
