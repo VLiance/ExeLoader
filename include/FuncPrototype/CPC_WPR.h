@@ -124,7 +124,7 @@ extern "C" void			cpc_SortirSectionCritique 		();
 	
 	//////////////////// For 3D Graphic engine ////////////////////
 	
-	int Mouse_state (int param)
+	inline int Mouse_state (int param)
 	{
 		/* 
 			0:Clic state (1:left 2:right 3:middle)
@@ -137,59 +137,59 @@ extern "C" void			cpc_SortirSectionCritique 		();
 		
 	}
 	
-	int Set_mouse (int px, int py, bool visible)
+	inline int Set_mouse (int px, int py, bool visible)
 	{
 		return cpc_set_mouse(px, py, visible);
 	}
-	int Get_key ()
+	inline int Get_key ()
 	{
 		return cpc_get_key();
 	}
 	
-	int CpcdosOSx_CPintiCore::Create_Context(int TAILLEX, int TAILLEYn)
+	inline int CpcdosOSx_CPintiCore::Create_Context(int TAILLEX, int TAILLEYn)
 	{
 		return cpc_Creer_Contexte(TAILLEX, TAILLEYn);
 		
 	}
 	
-	void* CpcdosOSx_CPintiCore::Init_Get_Context_PTR(int ID)
+	inline void* CpcdosOSx_CPintiCore::Init_Get_Context_PTR(int ID)
 	{
 		return cpc_Obtenir_Zone_Contexte(ID);
 	}
 	
-	void CpcdosOSx_CPintiCore::Blitting(int ID)
+	inline void CpcdosOSx_CPintiCore::Blitting(int ID)
 	{
 		cpc_Blitter(ID);
 	}
 	
 	////////////////////// For CpcdosC+ //////////////////////
-	void CpcdosOSx_CPintiCore::Shell_CCP(const char* COMMAND, int LEVEL)
+	inline void CpcdosOSx_CPintiCore::Shell_CCP(const char* COMMAND, int LEVEL)
 	{
 		cpc_CCP_Exec_Commande(COMMAND, LEVEL);
 	}
 	
-	char* CpcdosOSx_CPintiCore::Shell_ReadVariable(const char* VariableName, int LEVEL)
+	inline char* CpcdosOSx_CPintiCore::Shell_ReadVariable(const char* VariableName, int LEVEL)
 	{
 		return cpc_CCP_Lire_Variable(VariableName, LEVEL);
 	}
 	
 	
 	
-	int CpcdosOSx_CPintiCore::Shell_FILE(const char* FILE, int Thread_Priority)
+	inline int CpcdosOSx_CPintiCore::Shell_FILE(const char* FILE, int Thread_Priority)
 	{
 		return cpc_CCP_Exec_Thread_cpc(FILE, Thread_Priority);
 	}
 	
 	
 	//////////////////// For Cpcdos OSx ////////////////////
-	char* CpcdosOSx_CPintiCore::Get_Path(int ARG)
+	inline char* CpcdosOSx_CPintiCore::Get_Path(int ARG)
 	{
 		return (char*) cpc_Exec_en_cours(ARG);
 	}
 	
 	//////////////////// For CPinti Core ////////////////////	
 	
-	void CpcdosOSx_CPintiCore::fdebug_log(int alert, const char* format, ...)
+	inline void CpcdosOSx_CPintiCore::fdebug_log(int alert, const char* format, ...)
 	{
 		// Cette fonction permet d'utiliser le simuler un sprintf()
 		va_list arg;
@@ -207,87 +207,87 @@ extern "C" void			cpc_SortirSectionCritique 		();
 
 	}
 	
-	void CpcdosOSx_CPintiCore::debug_log(const char* text, int alert)
+	inline void CpcdosOSx_CPintiCore::debug_log(const char* text, int alert)
 	{
 		cpc_cpinti_debug_cpinticore(text, alert);
 	}
 
-	void CpcdosOSx_CPintiCore::debug_log_plus(const char* texte, int Ecran, int Log, int Alerte, int RetourPLGN, int CR_LF, int DisplDate, int Signature, const char* File)
+	inline void CpcdosOSx_CPintiCore::debug_log_plus(const char* texte, int Ecran, int Log, int Alerte, int RetourPLGN, int CR_LF, int DisplDate, int Signature, const char* File)
 	{
 		cpc_cpinti_debug_plus_cpinticore(texte, Ecran, Log, Alerte, RetourPLGN, CR_LF, DisplDate, Signature, File);
 	}
 	
 		// ---
-	int CpcdosOSx_CPintiCore::File_exist(char* path)
+	inline int CpcdosOSx_CPintiCore::File_exist(char* path)
 	{
 		return cpc_cpinti_Fichier_Existe((const char*) path);
 	}
-	int CpcdosOSx_CPintiCore::File_exist(const char* path)
+	inline int CpcdosOSx_CPintiCore::File_exist(const char* path)
 	{
 		return cpc_cpinti_Fichier_Existe(path);
 	}
 	// ---
-	unsigned int CpcdosOSx_CPintiCore::File_size(char* path)
+	inline unsigned int CpcdosOSx_CPintiCore::File_size(char* path)
 	{
 		return cpc_cpinti_Taille_Fichier((const char*) path);
 	}
 	
-	unsigned int CpcdosOSx_CPintiCore::File_size(const char* path)
+	inline unsigned int CpcdosOSx_CPintiCore::File_size(const char* path)
 	{
 		return cpc_cpinti_Taille_Fichier(path);
 	}
 	// ---
-	int CpcdosOSx_CPintiCore::File_read_all(const char* path, const char* mode, char* data)
+	inline int CpcdosOSx_CPintiCore::File_read_all(const char* path, const char* mode, char* data)
 	{
 		return (int) cpc_cpinti_Lire_Fichier_complet(path, mode, data);
 	}
-	int CpcdosOSx_CPintiCore::File_read_all(char* path, char* mode, char* data)
+	inline int CpcdosOSx_CPintiCore::File_read_all(char* path, char* mode, char* data)
 	{
 		return (int) cpc_cpinti_Lire_Fichier_complet((const char*) path, (const char*) mode, data);
 	}
 	// ---
 	
 	// Time
-	void CpcdosOSx_CPintiCore::usleep(unsigned int microseconds)
+	inline void CpcdosOSx_CPintiCore::usleep(unsigned int microseconds)
 	{
 		cpc_cpinti_sleep_us(microseconds);
 	}
-	void CpcdosOSx_CPintiCore::sleep(unsigned int milliseconds)
+	inline void CpcdosOSx_CPintiCore::sleep(unsigned int milliseconds)
 	{
 		cpc_cpinti_sleep_ms(milliseconds);
 	}
-	void CpcdosOSx_CPintiCore::ssleep(unsigned int seconds)
+	inline void CpcdosOSx_CPintiCore::ssleep(unsigned int seconds)
 	{
 		cpc_cpinti_sleep_sec(seconds);
 	}
 	
-	double CpcdosOSx_CPintiCore::get_time_ms(double Temps_av)
+	inline double CpcdosOSx_CPintiCore::get_time_ms(double Temps_av)
 	{
 		return cpc_cpinti_Obtenir_Temps_ms(Temps_av);
 	}
 	
 	//////////////////// Thread manager  ////////////////////
-	unsigned int CpcdosOSx_CPintiCore::get_CurrentThread()
+	inline unsigned int CpcdosOSx_CPintiCore::get_CurrentThread()
 	{
 		return cpc_Thread_En_Cours();
 	}
 	
-	bool CpcdosOSx_CPintiCore::stop_Thread(unsigned int TID, bool force)
+	inline bool CpcdosOSx_CPintiCore::stop_Thread(unsigned int TID, bool force)
 	{
 		return cpc_supprimer_Thread(TID, force);
 	}
 	
-	void CpcdosOSx_CPintiCore::doevents(int temps)
+	inline void CpcdosOSx_CPintiCore::doevents(int temps)
 	{
 		cpc_doevents(temps);
 	}
 	
-	void Enter_CriticalSection()
+	inline void Enter_CriticalSection()
 	{
 		cpc_EntrerSectionCritique();
 	}
 	
-	void Exit_CriticalSection()
+	inline void Exit_CriticalSection()
 	{
 		cpc_SortirSectionCritique();
 	}

@@ -63,6 +63,8 @@ inline ATOM WINAPI pipe_RegisterClassW(const WNDCLASSW *lpWndClass){
 extern float pixView_mouse_x;
 extern float pixView_mouse_y;
 extern bool bLButtonDown; 
+#else
+bool bLButtonDown  = false;
 #endif
 bool bLButtonDown_last  = false;
 
