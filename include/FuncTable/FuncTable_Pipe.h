@@ -82,7 +82,7 @@ inline void impl_GetMessages(){
 		#ifdef ShowPixView
 			static int j = 0;j++;
 			lparam = SETLPARAM(pixView_mouse_x,pixView_mouse_y);
-			showinf("mouse_X: %f, mouse_Y: %f, bLButtonDown:d", pixView_mouse_x, pixView_mouse_y, bLButtonDown);
+			showinf("mouse: %f, mouse_Y: %f, bLButtonDown:d", pixView_mouse_x, pixView_mouse_y, bLButtonDown);
 			//TODO Multi msg
 		
 		#endif
@@ -91,12 +91,12 @@ inline void impl_GetMessages(){
 			
 			lparam = SETLPARAM(oCpc->Mouse_state(1),oCpc->Mouse_state(2));
 			
-			if(oCpc->Mouse_state(1) == 1){
+			if((oCpc->Mouse_state(1) & 0x01) == 0x01){
 				bLButtonDown = true;
 			}else{
 				bLButtonDown = false;
 			}
-				
+			showinf("mouse: lparam: %p, bLButtonDown:d", lparam, bLButtonDown);
 		#endif
 			
 		
@@ -141,10 +141,29 @@ inline void impl_GetMessages(){
 		WM_SYSKEYUP
 		WM_CHAR
 		*/
-		aWndProc[i](_hWnd,uMsg,wParam,lparam);
+		aWndProc[i](_hWnd,uMsg,wParam,lparam); //Call DefWindowProc (When return)
 	}
 }
 
+
+//!LRESULT WINAPI DefWindowProcA (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+//!LRESULT WINAPI DefWindowProcW (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+LRESULT WINAPI sys_DefWindowProcA (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam){
+	showfunc("DefWindowProcA( hWnd: %p, Msg: %p, wParam: %p, lParam: %p )", hWnd, Msg, wParam, lParam);
+	#ifdef Func_Win
+		return DefWindowProcA(hWnd, Msg, wParam, lParam);
+	#else
+		return 0;
+	#endif
+}
+LRESULT WINAPI sys_DefWindowProcW (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam){
+	showfunc("DefWindowProcW( hWnd: %p, Msg: %p, wParam: %p, lParam: %p )", hWnd, Msg, wParam, lParam);
+	#ifdef Func_Win
+		return DefWindowProcW(hWnd, Msg, wParam, lParam);
+	#else
+		return 0;
+	#endif
+}
 
 
 
@@ -156,7 +175,7 @@ WINBOOL WINAPI sys_PeekMessageA(LPMSG lpMsg,HWND hWnd,UINT wMsgFilterMin,UINT wM
 		return PeekMessageA( lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg );
 	#else
 		impl_GetMessages();
-		return 0;
+		return false;
 	#endif
 }
 WINBOOL WINAPI sys_PeekMessageW(LPMSG lpMsg,HWND hWnd,UINT wMsgFilterMin,UINT wMsgFilterMax,UINT wRemoveMsg){
@@ -165,7 +184,7 @@ WINBOOL WINAPI sys_PeekMessageW(LPMSG lpMsg,HWND hWnd,UINT wMsgFilterMin,UINT wM
 		return PeekMessageW(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg);
 	#else
 		impl_GetMessages();
-		return 0;
+		return false;
 	#endif
 }
 

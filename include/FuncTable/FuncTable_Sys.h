@@ -268,25 +268,6 @@ UINT WINAPI sys_SetErrorMode(UINT uMode){
 }
 
 
-//!LRESULT WINAPI DefWindowProcA (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
-//!LRESULT WINAPI DefWindowProcW (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
-LRESULT WINAPI sys_DefWindowProcA (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam){
-	showfunc("DefWindowProcA( hWnd: %p, Msg: %p, wParam: %p, lParam: %p )", hWnd, Msg, wParam, lParam);
-	#ifdef Func_Win
-		return DefWindowProcA(hWnd, Msg, wParam, lParam);
-	#else
-		return 0;
-	#endif
-}
-LRESULT WINAPI sys_DefWindowProcW (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam){
-	showfunc("DefWindowProcW( hWnd: %p, Msg: %p, wParam: %p, lParam: %p )", hWnd, Msg, wParam, lParam);
-	#ifdef Func_Win
-		return DefWindowProcW(hWnd, Msg, wParam, lParam);
-	#else
-		return 0;
-	#endif
-}
-
 
 ///////////////////// HERE OK
 ///////////////////// HERE OK
