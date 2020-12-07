@@ -156,6 +156,16 @@ inline int imp_initterm_e(_PIFV* ppfn,_PIFV* end){
     return 0;
 }
 
+
+//!_CRTIMP char ***__cdecl __p__environ(void)
+static  char** _environ_ = 0;
+inline char*** imp_p__environ(void){
+	showfunc("__p__environ( )", "");
+	//return &_environ; //Standard one
+	return &_environ_; //Custom
+}
+
+
 //!void __cdecl _lock(int locknum)
 inline void  imp_lock(int locknum){
 	showfunc_opt("_lock( locknum: %d )", locknum);
@@ -490,7 +500,7 @@ int imp_fprintf( FILE* stream, const char* format, ...){
 	return ret;
 }
 
-//!int fprintf ( const char * format, ... )
+//!int printf ( const char * format, ... )
 //int imp_printf( const char* format, va_list __local_argv){
 int imp_printf( const char* format, ...){
 	showfunc_opt("printf( stream: %p, format: %s, ... )",format); 

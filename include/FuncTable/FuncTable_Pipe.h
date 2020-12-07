@@ -262,7 +262,7 @@ inline HMODULE  WINAPI pipe_GetModuleHandleA(LPCSTR lpModuleName){
 	#endif
 }
 inline HMODULE  WINAPI pipe_GetModuleHandleW(LPCWSTR lpModuleName){
-	showfunc("GetModuleHandleW( lpModuleName: %s)", lpModuleName); //TODO ewide str
+	showfunc("GetModuleHandleW( lpModuleName: %p)", lpModuleName); //TODO wide str
 	#ifdef Func_Win
 		return GetModuleHandleW(lpModuleName);
 	#else
@@ -658,9 +658,11 @@ BOOL WINAPI pipe_TerminateProcess(HANDLE hProcess,UINT uExitCode){
 	#endif	
 }
 
+
+//!VOID WINAPI GetStartupInfoA (LPSTARTUPINFOA lpStartupInfo)
 //!VOID WINAPI GetStartupInfoW (LPSTARTUPINFOW lpStartupInfo)
-VOID WINAPI pipe_GetStartupInfoW(LPSTARTUPINFOW lpStartupInfo){
-	showfunc("GetStartupInfoW( lpStartupInfo: %p)", lpStartupInfo);
+VOID WINAPI pipe_GetStartupInfoA(LPSTARTUPINFOA lpStartupInfo){
+	showfunc("GetStartupInfoA( lpStartupInfo: %p)", lpStartupInfo);
 	/*
 	lpStartupInfo->cb = sizeof(LPSTARTUPINFO);
 	lpStartupInfo->lpDesktop = (LPTSTR)L"";
@@ -682,6 +684,13 @@ VOID WINAPI pipe_GetStartupInfoW(LPSTARTUPINFOW lpStartupInfo){
 	lpStartupInfo->hStdError =0;
 */
 
+	#ifdef Func_Win 
+	GetStartupInfoA(lpStartupInfo);
+	#else
+	#endif	
+}
+VOID WINAPI pipe_GetStartupInfoW(LPSTARTUPINFOW lpStartupInfo){
+	showfunc("GetStartupInfoW( lpStartupInfo: %p)", lpStartupInfo);
 	#ifdef Func_Win 
 	GetStartupInfoW(lpStartupInfo);
 	#else
@@ -827,4 +836,14 @@ WINBOOL WINAPI pipe_GetConsoleScreenBufferInfo(HANDLE hConsoleOutput,PCONSOLE_SC
 	#endif	
 } 
 
+
+//!WINBOOL WINAPI DuplicateHandle (HANDLE hSourceProcessHandle, HANDLE hSourceHandle, HANDLE hTargetProcessHandle, LPHANDLE lpTargetHandle, DWORD dwDesiredAccess, WINBOOL bInheritHandle, DWORD dwOptions);
+WINBOOL WINAPI pipe_DuplicateHandle(HANDLE hSourceProcessHandle, HANDLE hSourceHandle, HANDLE hTargetProcessHandle, LPHANDLE lpTargetHandle, DWORD dwDesiredAccess, WINBOOL bInheritHandle, DWORD dwOptions){
+	showfunc("DuplicateHandle( hSourceProcessHandle: %d,  hSourceHandle: %p, hTargetProcessHandle: %p, lpTargetHandle: %d, dwDesiredAccess: %p, bInheritHandle: %d, dwOptions: %d)", hSourceProcessHandle, hSourceHandle, hTargetProcessHandle, lpTargetHandle, dwDesiredAccess, bInheritHandle, dwOptions);
+	#ifdef Func_Win 
+	return DuplicateHandle(hSourceProcessHandle, hSourceHandle, hTargetProcessHandle, lpTargetHandle, dwDesiredAccess, bInheritHandle, dwOptions);
+	#else
+	return true;
+	#endif	
+}
 

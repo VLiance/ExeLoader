@@ -237,3 +237,26 @@ BOOL WINAPI th_ReleaseSemaphore(HANDLE hSemaphore,LONG   lReleaseCount,LPLONG lp
 	#endif	
  }
  
+ 
+//!int WINAPI GetThreadPriority (HANDLE hThread)
+int WINAPI th_GetThreadPriority(HANDLE hThread){
+	showfunc("GetThreadPriority( hHandle: %p )", hThread);
+	//return GetThreadPriority(hThread);
+	#if defined(Func_Win) || defined(USE_WinThread)
+	return GetThreadPriority(hThread);
+	#else
+	return 0;
+	#endif	
+	//return THREAD_PRIORITY_ERROR_RETURN; //THREAD_PRIORITY_ERROR_RETURN.
+}
+
+
+//!HANDLE WINAPI GetCurrentThread (VOID)
+HANDLE WINAPI th_GetCurrentThread(VOID){
+	showfunc("GetCurrentThread( )", "");
+	#if defined(Func_Win) || defined(USE_WinThread)
+	return GetCurrentThread();
+	#else
+	return 0;
+	#endif
+}

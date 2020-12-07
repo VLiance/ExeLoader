@@ -442,3 +442,24 @@ LPTOP_LEVEL_EXCEPTION_FILTER WINAPI sys_SetUnhandledExceptionFilter(LPTOP_LEVEL_
 		return 0;
 	#endif
 }
+
+
+//!HANDLE WINAPI CreateEventA (LPSECURITY_ATTRIBUTES lpEventAttributes, WINBOOL bManualReset, WINBOOL bInitialState, LPCSTR lpName)
+//!HANDLE WINAPI CreateEventW (LPSECURITY_ATTRIBUTES lpEventAttributes, WINBOOL bManualReset, WINBOOL bInitialState, LPCWSTR lpName)
+HANDLE WINAPI sys_CreateEventA(LPSECURITY_ATTRIBUTES lpEventAttributes, WINBOOL bManualReset, WINBOOL bInitialState, LPCSTR lpName){
+	showfunc("CreateEventA( lpEventAttributes: %p,  bManualReset: %d, bInitialState: %d, lpName: %s )", lpEventAttributes, bManualReset, bInitialState, lpName);
+	#ifdef Func_Win
+		return CreateEventA(lpEventAttributes, bManualReset, bInitialState, lpName);
+	#else
+		return 0;
+	#endif
+}
+HANDLE WINAPI sys_CreateEventW(LPSECURITY_ATTRIBUTES lpEventAttributes, WINBOOL bManualReset, WINBOOL bInitialState, LPCWSTR lpName){
+	showfunc("CreateEventW( lpEventAttributes: %p,  bManualReset: %d, bInitialState: %d, lpName: %p )", lpEventAttributes, bManualReset, bInitialState, lpName);
+	#ifdef Func_Win
+		return CreateEventW(lpEventAttributes, bManualReset, bInitialState, lpName);
+	#else
+		return 0;
+	#endif
+}
+
