@@ -74,8 +74,8 @@ inline void impl_GetMessages(){
 		
 		HWND _hWnd = (HWND)1;
 		UINT uMsg = 1;
-		LPARAM lparam;
-		WPARAM wParam;
+		LPARAM lparam = 0;
+		WPARAM wParam = 0;
 
 	    uMsg = WM_MOUSEMOVE;
 		
@@ -108,9 +108,11 @@ inline void impl_GetMessages(){
 				uMsg = WM_LBUTTONUP;
 			}
 		}
-			
-		/*
 		
+		aWndProc[i](_hWnd,uMsg,wParam,lparam); //Call DefWindowProc (When return)
+	}
+}
+		/*
 		WM_MOUSEMOVE
 		GET_X_LPARAM(lParam)
 		
@@ -141,9 +143,6 @@ inline void impl_GetMessages(){
 		WM_SYSKEYUP
 		WM_CHAR
 		*/
-		aWndProc[i](_hWnd,uMsg,wParam,lparam); //Call DefWindowProc (When return)
-	}
-}
 
 
 //!LRESULT WINAPI DefWindowProcA (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
