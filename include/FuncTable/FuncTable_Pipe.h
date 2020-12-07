@@ -752,7 +752,7 @@ const char* pipe_getenv(const char* name){
 		return "0";
 	}
 	if(strcmp(name, "GALLIUM_DRIVER") == 0 ){
-		return "softpipe";
+		//return "softpipe";
 		return "llvmpipe";
 		//return "swr";
 	}

@@ -124,7 +124,7 @@ extern "C" void			cpc_SortirSectionCritique 		();
 	
 	//////////////////// For 3D Graphic engine ////////////////////
 	
-	inline int Mouse_state (int param)
+	inline int CpcdosOSx_CPintiCore::Mouse_state (int param)
 	{
 		/* 
 			0:Clic state (1:left 2:right 3:middle)
@@ -137,11 +137,11 @@ extern "C" void			cpc_SortirSectionCritique 		();
 		
 	}
 	
-	inline int Set_mouse (int px, int py, bool visible)
+	inline int CpcdosOSx_CPintiCore::Set_mouse (int px, int py, bool visible)
 	{
 		return cpc_set_mouse(px, py, visible);
 	}
-	inline int Get_key ()
+	inline int CpcdosOSx_CPintiCore::Get_key ()
 	{
 		return cpc_get_key();
 	}
@@ -282,12 +282,12 @@ extern "C" void			cpc_SortirSectionCritique 		();
 		cpc_doevents(temps);
 	}
 	
-	inline void Enter_CriticalSection()
+	inline void CpcdosOSx_CPintiCore::Enter_CriticalSection()
 	{
 		cpc_EntrerSectionCritique();
 	}
 	
-	inline void Exit_CriticalSection()
+	inline void CpcdosOSx_CPintiCore::Exit_CriticalSection()
 	{
 		cpc_SortirSectionCritique();
 	}
