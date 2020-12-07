@@ -62,8 +62,9 @@ inline ATOM WINAPI pipe_RegisterClassW(const WNDCLASSW *lpWndClass){
 #ifdef ShowPixView
 extern float pixView_mouse_x;
 extern float pixView_mouse_y;
-extern bool bLButtonDown; bool bLButtonDown_last  = false;
+extern bool bLButtonDown; 
 #endif
+bool bLButtonDown_last  = false;
 
 inline void impl_GetMessages(){
 	for(int i = 0; i < aWndProc_idx; i++){
@@ -81,16 +82,31 @@ inline void impl_GetMessages(){
 			lparam = SETLPARAM(pixView_mouse_x,pixView_mouse_y);
 			showinf("mouse_X: %f, mouse_Y: %f, bLButtonDown:d", pixView_mouse_x, pixView_mouse_y, bLButtonDown);
 			//TODO Multi msg
-			
-			if(bLButtonDown != bLButtonDown_last){
-				bLButtonDown_last = bLButtonDown;
-				if(bLButtonDown){
-					uMsg = WM_LBUTTONDOWN;
-				}else{
-					uMsg = WM_LBUTTONUP;
-				}
-			}
+		
 		#endif
+		
+		#ifdef CpcDos
+			
+			lparam = SETLPARAM(oCpc->Mouse_state(1),oCpc->Mouse_state(2));
+			
+			if(oCpc->Mouse_state(1) == 1){
+				bLButtonDown = true;
+			}else{
+				bLButtonDown = false;
+			}
+				
+		#endif
+			
+		
+		if(bLButtonDown != bLButtonDown_last){
+			bLButtonDown_last = bLButtonDown;
+			if(bLButtonDown){
+				uMsg = WM_LBUTTONDOWN;
+			}else{
+				uMsg = WM_LBUTTONUP;
+			}
+		}
+			
 		/*
 		
 		WM_MOUSEMOVE
@@ -734,7 +750,7 @@ const char* pipe_getenv(const char* name){
 		return "0";
 	}
 	if(strcmp(name, "GALLIUM_DRIVER") == 0 ){
-		//return "softpipe";
+		return "softpipe";
 		return "llvmpipe";
 		//return "swr";
 	}
