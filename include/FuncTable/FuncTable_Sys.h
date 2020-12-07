@@ -64,6 +64,18 @@ DWORD WINAPI sys_GetLastError(VOID){
 	#endif
 }
 
+
+//!WINBOOL WINAPI TrackMouseEvent(LPTRACKMOUSEEVENT lpEventTrack)
+WINBOOL WINAPI sys_TrackMouseEvent(LPTRACKMOUSEEVENT lpEventTrack){
+	showfunc("TrackMouseEvent( lpEventTrack: %p)", lpEventTrack); 
+	#ifdef Func_Win
+		return TrackMouseEvent(lpEventTrack);
+	#else
+		return true;
+	#endif
+}
+
+
 //!HDC GetDC(HWND hWnd)
 inline HDC WINAPI sys_GetDC(HWND hWnd){
 	showfunc("GetDC( lpModuleName: %p)", hWnd); 

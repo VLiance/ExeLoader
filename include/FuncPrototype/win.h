@@ -1471,6 +1471,14 @@
 #define WM_MOUSEHWHEEL 0x020e
 #define WM_MOUSELAST 0x020d
 
+
+  typedef struct tagTRACKMOUSEEVENT {
+    DWORD cbSize;
+    DWORD dwFlags;
+    HWND hwndTrack;
+    DWORD dwHoverTime;
+  } TRACKMOUSEEVENT,*LPTRACKMOUSEEVENT;
+
 #endif /*ImWin*/
 
 /* extra */
