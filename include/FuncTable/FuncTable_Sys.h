@@ -361,14 +361,16 @@ inline HRESULT sys_SetProcessDpiAwareness(int value){
 
 //!WINBOOL WINAPI QueryPerformanceCounter (LARGE_INTEGER *lpPerformanceCount)
 
-WINBOOL WINAPI sys_QueryPerformanceCounter (LARGE_INTEGER *lpPerformanceCount){
+WINBOOL WINAPI sys_QueryPerformanceCounter(LARGE_INTEGER* lpPerformanceCount){
    	showfunc_opt("QueryPerformanceCounter(lpPerformanceCount)", lpPerformanceCount);
 	#ifdef Func_Win
 		return QueryPerformanceCounter( lpPerformanceCount);
 	#else
 		static int i = 0; i++;
-		LARGE_INTEGER lpPerformanceCount_ = {(DWORD)521891041 + i};//Dummy value
-		*lpPerformanceCount = lpPerformanceCount_;
+		if(lpPerformanceCount != 0){
+			LARGE_INTEGER lpPerformanceCount_ = {(DWORD)521891041 + i};//Dummy value
+			*lpPerformanceCount = lpPerformanceCount_;
+		}
 		return true;
 	#endif
 }

@@ -19,6 +19,11 @@
 #include "ExeLoader.h"
 #include "Debug.h"
 
+#include <unistd.h>
+#include <stdio.h>
+#include <errno.h>
+
+
 ManagedAlloc instance_AllocManager = {1024};
 
 char* DLL_LOADED[512] = {0};
@@ -171,6 +176,7 @@ long nExeFileSize;
 			// Lib_GZ::Sys::pDebug::fConsole(gzStrL("---File Open!-- ") + _sFullPath);
 			return true;
 		}else{
+			printf("\nError: %d (%s)\n", errno, strerror(errno));
 			_EXE_LOADER_DEBUG(6, " * Impossible d'ouvrir le fichier: %s", "Error, can't open file: %s", _sFullPath );
 			// Lib_GZ::Sys::pDebug::fConsole(gzStrL("Error, can't open file : ") + _sFullPath);
 		}
@@ -258,6 +264,7 @@ bool fMainExeLoader(const char* _sPath){
 	#ifdef __DJGPP__
 	setbuf(stdout, NULL);//Required to see every printf
 	setbuf(stderr, NULL);//Required to see every printf
+	dup2(STDOUT_FILENO, STDERR_FILENO);; //Redirect stderr to stdout
 	#endif
 	
 	#ifdef ImWin
@@ -529,7 +536,10 @@ HMEMORYMODULE AddLibrary(const char* _sPath) {
 						 "///========= AddLibrary: %s", _sPath);
 	_EXE_LOADER_DEBUG_("///===============================================================================================================///","");
 	// Charger le fichier en memoire
-	if(!fExeCpcDosLoadFile(_sPath)) return 0;
+	if(!fExeCpcDosLoadFile(_sPath)){
+		printf("\n !fExeCpcDosLoadFile");
+		return 0;
+	}
 	long filesize = nExeFileSize;
 	void* data = aExeFileData;
 	

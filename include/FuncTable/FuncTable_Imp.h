@@ -47,6 +47,7 @@ inline HMODULE WINAPI imp_LoadLibraryA(LPCSTR lpLibFileName){
 		if(!_ret){sys_GetLastError();}return _ret;
 	#else
 		return (HMODULE)AddLibrary(lpLibFileName);
+		//return (HMODULE)AddLibrary("test");
 	#endif
 }
 

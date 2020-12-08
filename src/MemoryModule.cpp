@@ -614,7 +614,7 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 
 HMEMORYMODULE MemoryModule::MemoryLoadLibrary(const void *data, size_t size) {
 	
-	instance_AllocManager.ManagedAlloc_(1024, (const char*) __FILE__);
+	//instance_AllocManager.ManagedAlloc_(1024, (const char*) __FILE__);
 	
 	#ifdef CustomLoader
 		return MemoryLoadLibraryEx(data, size, MyMemoryDefaultAlloc, MyMemoryDefaultFree, MyMemoryDefaultLoadLibrary, MyMemoryDefaultGetProcAddress, MyMemoryDefaultFreeLibrary, NULL);
@@ -650,6 +650,7 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 	size_t alignedImageSize;
 
 	if (!CheckSize(size, sizeof(IMAGE_DOS_HEADER))) {
+		printf("\nWarning, no IMAGE_DOS_HEADER");
 		return NULL;
 	}
 	
@@ -658,6 +659,7 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 		#ifdef ImWin
 		SetLastError(ERROR_BAD_EXE_FORMAT);
 		#endif
+		printf("\nWarning, no IMAGE_DOS_SIGNATURE");
 		return NULL;
 	}
 
@@ -668,6 +670,7 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 	old_header = (PIMAGE_NT_HEADERS)&((const unsigned char *)(data))[dos_header->e_lfanew];
 	if (old_header->Signature != IMAGE_NT_SIGNATURE) {
 		SetLastError(ERROR_BAD_EXE_FORMAT);
+		printf("\nWarning, no IMAGE_NT_SIGNATURE");
 		return NULL;
 	}
 
@@ -677,12 +680,14 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 	if (old_header->FileHeader.Machine != IMAGE_FILE_MACHINE_I386) {
 #endif
 		SetLastError(ERROR_BAD_EXE_FORMAT);
+		printf("\nWarning, no IMAGE_FILE_MACHINE_I386");
 		return NULL;
 	}
 
 	if (old_header->OptionalHeader.SectionAlignment & 1) {
 		// Only support section alignments that are a multiple of 2
 		SetLastError(ERROR_BAD_EXE_FORMAT);
+		printf("\nWarning, Only support section alignments that are a multiple of 2");
 		return NULL;
 	}
 
@@ -714,6 +719,7 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 	alignedImageSize = ALIGN_VALUE_UP(old_header->OptionalHeader.SizeOfImage, dwPageSize);
 	if (alignedImageSize != ALIGN_VALUE_UP(lastSectionEnd, dwPageSize)) {
 		SetLastError(ERROR_BAD_EXE_FORMAT);
+		printf("\nWarning, alignedImageSize");
 		return NULL;
 	}
 	// alignedImageSize=0;
@@ -736,6 +742,7 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 			userdata, instance_AllocManager);
 		if (code == NULL) {
 			SetLastError(ERROR_OUTOFMEMORY);
+			printf("\nWarning, OUTOFMEMORY");
 			return NULL;
 		}
 	}
@@ -751,6 +758,7 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 	if (result == NULL) {
 		freeMemory(code, 0, MEM_RELEASE, userdata, instance_AllocManager);
 		SetLastError(ERROR_OUTOFMEMORY);
+		printf("\nWarning, OUTOFMEMORY!");
 		return NULL;
 	}
 
@@ -768,6 +776,7 @@ printf("\n-+-------------- New codeBase: %p ", (code ) );
 	result->pageSize = dwPageSize;
 
 	if (!CheckSize(size, old_header->OptionalHeader.SizeOfHeaders)) {
+		printf("\nWarning, !CheckSize");
 		goto error;
 	}
 
@@ -790,6 +799,7 @@ printf("\n-+-------------- New codeBase: %p ", (code ) );
 
 	// copy sections from DLL file block to new memory location
 	if (!CopySections((const unsigned char *) data, size, old_header, result, instance_AllocManager)) {
+		printf("\nWarning, !CopySections");
 		goto error;
 	}
 
@@ -803,12 +813,14 @@ printf("\n-+-------------- New codeBase: %p ", (code ) );
 
 	// load required dlls and adjust function table of imports
 	if (!BuildImportTable(result, instance_AllocManager)) {
+		printf("\nWarning, !BuildImportTable");
 		goto error;
 	}
 
 	// mark memory pages depending on section headers and release
 	// sections that are marked as "discardable"
 	if (!FinalizeSections(result, instance_AllocManager)) {
+		printf("\nWarning, !FinalizeSections");
 		goto error;
 	}
 
@@ -818,6 +830,7 @@ printf("\n-+-------------- New codeBase: %p ", (code ) );
 	// yet are "local to each individual thread that runs the code. Thus, each thread can maintain a different value for a variable declared by using TLS."
 	// TLS callbacks are executed BEFORE the main loading
 	if (!ExecuteTLS(result))
+		printf("\nWarning, !ExecuteTLS");
 		goto error;
 #endif
 
@@ -852,6 +865,7 @@ printf("\n-+-------------- New codeBase: %p ", (code ) );
 error:
 	// cleanup
 	MemoryFreeLibrary(result);
+	printf("\nError!");
 	return NULL;
 }
 
@@ -862,6 +876,7 @@ FARPROC MemoryModule::MemoryGetProcAddress(HMEMORYMODULE module, LPCSTR name) {
 	PIMAGE_DATA_DIRECTORY directory = GET_HEADER_DICTIONARY((PMEMORYMODULE)module, IMAGE_DIRECTORY_ENTRY_EXPORT);
 	if (directory->Size == 0) {
 		// no export table found
+		printf("\nWarning, Non export table found");
 		SetLastError(ERROR_PROC_NOT_FOUND);
 		return NULL;
 	}
@@ -870,26 +885,35 @@ FARPROC MemoryModule::MemoryGetProcAddress(HMEMORYMODULE module, LPCSTR name) {
 	if (exports->NumberOfNames == 0 || exports->NumberOfFunctions == 0) {
 		// DLL doesn't export anything
 		SetLastError(ERROR_PROC_NOT_FOUND);
+		printf("\nWarning, Nothing exported");
 		return NULL;
 	}
 
-	if (HIWORD(name) == 0) {
+		/*
+		printf("\nTotal export: %d", exports->NumberOfNames);
+	if (HIWORD(name) == 0) {//WTF
+	
+		printf("\nload function by ordinal value");
+			
 		// load function by ordinal value
 		if (LOWORD(name) < exports->Base) {
 			#ifdef ImWin
 			SetLastError(ERROR_PROC_NOT_FOUND);
 			#endif
+			printf("\nWarning, Nothing exported?");
 			return NULL;
 		}
 
 		idx = LOWORD(name) - exports->Base;
-	} else {
+	} else {*/
 		// search function name in list of exported names
 		DWORD i;
 		DWORD *nameRef = (DWORD *) (codeBase + exports->AddressOfNames);
 		WORD *ordinal = (WORD *) (codeBase + exports->AddressOfNameOrdinals);
 		BOOL found = FALSE;
 		for (i=0; i < exports->NumberOfNames; i++, nameRef++, ordinal++) {
+		
+			//printf("\nSearch[%s]: %s", name, (const char *) (codeBase + (*nameRef)));
 			if (strcmp(name, (const char *) (codeBase + (*nameRef))) == 0) {
 				idx = *ordinal;
 				found = TRUE;
@@ -899,14 +923,16 @@ FARPROC MemoryModule::MemoryGetProcAddress(HMEMORYMODULE module, LPCSTR name) {
 
 		if (!found) {
 			// exported symbol not found
+			printf("\nWarning, Not found");
 			SetLastError(ERROR_PROC_NOT_FOUND);
 			return NULL;
 		}
-	}
+	//}
 
 	if (idx > exports->NumberOfFunctions) {
 		// name <-> ordinal number don't match
 		SetLastError(ERROR_PROC_NOT_FOUND);
+		printf("\nWarning, Not found!");
 		return NULL;
 	}
 
