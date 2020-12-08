@@ -82,7 +82,7 @@ inline void impl_GetMessages(){
 		#ifdef ShowPixView
 			static int j = 0;j++;
 			lparam = SETLPARAM(pixView_mouse_x,pixView_mouse_y);
-			showinf("mouse: %f, mouse_Y: %f, bLButtonDown:d", pixView_mouse_x, pixView_mouse_y, bLButtonDown);
+			showinf("mouse[%d]: %f, mouse_Y: %f, bLButtonDown:d",i, pixView_mouse_x, pixView_mouse_y, bLButtonDown);
 			//TODO Multi msg
 		
 		#endif
@@ -96,7 +96,7 @@ inline void impl_GetMessages(){
 			}else{
 				bLButtonDown = false;
 			}
-			showinf("mouse: lparam: %p, bLButtonDown:d", lparam, bLButtonDown);
+			showinf("mouse[%d]: lparam: %p, bLButtonDown:d",i, lparam, bLButtonDown);
 		#endif
 			
 		
@@ -108,6 +108,12 @@ inline void impl_GetMessages(){
 				uMsg = WM_LBUTTONUP;
 			}
 		}
+		
+		
+		uMsg = 0x200;
+		wParam = 0x6ab390;
+		lparam = 0xc0028;
+		
 		
 		aWndProc[i](_hWnd,uMsg,wParam,lparam); //Call DefWindowProc (When return)
 	}

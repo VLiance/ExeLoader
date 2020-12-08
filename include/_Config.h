@@ -42,7 +42,7 @@
 #define Show_FuncTable
 
 //Some function are irrelevant and may be annoying, but sometime we need it for debugging purpose
-//#define Show_AllFuncTable
+#define Show_AllFuncTable
 
 //Use the standard Widows VirtualAlloc allocation or the more portable ExeLoader version
 //#define USE_Windows_VirtualAlloc
@@ -64,13 +64,27 @@
 
 //#define USE_WinThread
 
-#define ShowPixView //Temp
-
 //#define No_Main
 
 //#define USE_PRINTF
 
+//#define ShowPixView 
+#define No_FullWinHeader
+#define NoSetLastError
+/*
 
+#define No_vswprintf
+#define No_wprintf
+
+//#define CpcDos //TODO
+#define USE_sbrk
+#define USE_limit_on_vsnprintf  2147483647 
+#define NO_Windows_Sleep
+#undef USE_WinThread
+
+#define No_FullWinHeader
+
+*/
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
@@ -101,6 +115,18 @@
 #define NO_Windows_Sleep
 #undef USE_WinThread
 #define No_Main
+#define No_FullWinHeader
 #endif
+
+
+//TEST for dosbox -- Temp
+#ifdef __DJGPP__
+#undef No_Main
+#undef CpcDos
+#endif
+
+
+
+
 
 #endif //EXELOADER_Config_H

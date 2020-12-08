@@ -374,14 +374,14 @@ WINBOOL WINAPI sys_QueryPerformanceCounter (LARGE_INTEGER *lpPerformanceCount){
 }
 
 //!WINBOOL WINAPI QueryPerformanceFrequency (LARGE_INTEGER *lpFrequency)
-WINBOOL WINAPI sys_QueryPerformanceFrequency(LARGE_INTEGER *lpFrequency){
+WINBOOL WINAPI sys_QueryPerformanceFrequency(LARGE_INTEGER* lpFrequency){
    	showfunc("QueryPerformanceFrequency( lpFrequency: %p )", lpFrequency);
 	#ifdef Func_Win
 		return QueryPerformanceFrequency( lpFrequency);
 	#else
-		LARGE_INTEGER lpFrequency_ = {8221038}; //Dummy value
-		*lpFrequency = lpFrequency_;
-		return true;
+		static const LARGE_INTEGER lpFrequency_ = {8221038}; //Dummy value
+		if(lpFrequency != 0){*lpFrequency = lpFrequency_;}
+		return false;
 	#endif
 }
 
