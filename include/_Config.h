@@ -58,7 +58,7 @@
 
 //#define USE_Platform_RegisterFrame
 
-//#define USE_Window_LastError
+#define USE_Window_LastError
 
 #define NO_Windows_Sleep
 
@@ -69,8 +69,8 @@
 //#define USE_PRINTF
 
 //#define ShowPixView 
-#define No_FullWinHeader
-#define NoSetLastError
+//#define No_FullWinHeader
+//#define NoSetLastError //USE_Window_LastError?
 /*
 
 #define No_vswprintf
@@ -85,6 +85,11 @@
 #define No_FullWinHeader
 
 */
+
+#ifndef MAX_ORDINAL_FUNC
+#define MAX_ORDINAL_FUNC 512
+#endif
+
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////

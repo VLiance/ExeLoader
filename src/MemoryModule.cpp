@@ -69,6 +69,8 @@
 // #include "ManagedAlloc.h"
 
 
+char aOrdinalFunc[MAX_ORDINAL_FUNC][4] = {0}; //SpecialCharOrdinal"%" Ordinal"FFFF" "\n" := char
+int	  aOrdinalFunc_size = 0;
 
 
 
@@ -445,7 +447,20 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 		for (; *thunkRef; thunkRef++, funcRef++) {
 			if (IMAGE_SNAP_BY_ORDINAL(*thunkRef)) {
 				//exetern FARPROC MyMemoryDefaultGetProcAddress(HCUSTOMMODULE module, LPCSTR name, void *userdata);
-				*funcRef = module->getProcAddress(handle, (LPCSTR)IMAGE_ORDINAL(*thunkRef), module->userdata);
+				//IMAGE_ORDINAL is DWORD
+				
+				//https://stackoverflow.com/questions/41792848/possible-to-hook-iat-function-by-ordinal
+				//showinf("TODO Ordinal func %d ", (DWORD)IMAGE_ORDINAL(*thunkRef));
+				char* _sOrdinal = aOrdinalFunc[aOrdinalFunc_size];aOrdinalFunc_size++;
+				_sOrdinal[0] = '%';
+				short _ordinal = (short)IMAGE_ORDINAL(*thunkRef);
+				if(_ordinal > 9999){
+					showinf("Error, No support for Ordinal > 9999","");
+				}else{
+					sprintf(&_sOrdinal[1], "%d", _ordinal);
+					*funcRef = module->getProcAddress(handle, (LPCSTR)_sOrdinal, module->userdata);
+				}
+
 			} else {
 				PIMAGE_IMPORT_BY_NAME thunkData = (PIMAGE_IMPORT_BY_NAME) (codeBase + (*thunkRef));
 				//exetern FARPROC MyMemoryDefaultGetProcAddress(HCUSTOMMODULE module, LPCSTR name, void *userdata);
@@ -537,7 +552,7 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 		unsigned int _nSize = sizeof(aTableFunc) /  sizeof(sFunc);
 		for (unsigned int i=0; i < _nSize; i++) {
 			if (strcmp(name, aTableFunc[i].sFuncName) == 0) {
-							_EXE_LOADER_DEBUG(5, "Trouve %s: --> %s [CHARGE]", "Found %s: --> %s [LOADED]",  sDllName, name);
+				_EXE_LOADER_DEBUG(5, "Trouve %s: --> %s [CHARGE]", "Found %s: --> %s [LOADED]",  sDllName, name);
 
 				return (FARPROC)aTableFunc[i].dFunc;
 			}
@@ -551,9 +566,7 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 		aDummyFunc[current].Who = name;
 		aDummyFunc[current].DLL = sDllName;
 
-		if (current >=  sizeof(aDummyFunc) / sizeof( aDummyFunc[0] )) {
-			current = 0;
-		}
+		if (current >=  sizeof(aDummyFunc) / sizeof( aDummyFunc[0] )) {current = 0;}
 
 	  //  return 0;
 	   return (FARPROC)aDummyFunc[current].dFunc;
@@ -1055,7 +1068,7 @@ static PIMAGE_RESOURCE_DIRECTORY_ENTRY _MemorySearchResourceEntry(void *root, PI
 #else
 		// Resource names are always stored using 16bit characters, need to
 		// convert string we search for.
-#define MAX_LOCAL_KEY_LENGTH 2048
+#define _LOCAL_KEY_LENGTH 2048
 		// In most cases resource names are short, so optimize for that by
 		// using a pre-allocated array.
 		wchar_t _searchKeySpace[MAX_LOCAL_KEY_LENGTH+1];

@@ -662,7 +662,7 @@ BOOL WINAPI pipe_InitializeCriticalSectionEx(LPCRITICAL_SECTION lpCriticalSectio
 }
 
 //!BOOL IsProcessorFeaturePresent(DWORD ProcessorFeature)
-BOOL pipe_IsProcessorFeaturePresent(DWORD ProcessorFeature){
+BOOL WINAPI pipe_IsProcessorFeaturePresent(DWORD ProcessorFeature){
 	showfunc("IsProcessorFeaturePresent( ProcessorFeature: %p )", ProcessorFeature);
 	#ifdef Func_Win 
 	return IsProcessorFeaturePresent(ProcessorFeature);
@@ -672,7 +672,7 @@ BOOL pipe_IsProcessorFeaturePresent(DWORD ProcessorFeature){
 }
 
 //!BOOL InitializeCriticalSectionAndSpinCount(LPCRITICAL_SECTION lpCriticalSection,DWORD dwSpinCount)
-BOOL pipe_InitializeCriticalSectionAndSpinCount(LPCRITICAL_SECTION lpCriticalSection,DWORD dwSpinCount){
+BOOL WINAPI pipe_InitializeCriticalSectionAndSpinCount(LPCRITICAL_SECTION lpCriticalSection,DWORD dwSpinCount){
 	showfunc("InitializeCriticalSectionAndSpinCount( lpCriticalSection: %p,  dwSpinCount: %p )", lpCriticalSection, dwSpinCount);
 	#ifdef Func_Win 
 	return InitializeCriticalSectionAndSpinCount(lpCriticalSection, dwSpinCount);
