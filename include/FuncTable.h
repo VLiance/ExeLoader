@@ -87,6 +87,8 @@ extern "C" UINT ___lc_codepage_func(void);
 {"",			"GetProcAddress" 			,(FUNC_) imp_GetProcAddress }, 	//Special
 {"",			"LoadLibraryA"    			,(FUNC_) imp_LoadLibraryA },  	//Special
 {"",			"LoadLibraryW"    			,(FUNC_) imp_LoadLibraryW},  	//Special
+{"",			"LoadLibraryExA"    			,(FUNC_) imp_LoadLibraryExA},  	//Special
+{"",			"LoadLibraryExW"    			,(FUNC_) imp_LoadLibraryExW},  	//Special
 {"",			"FreeLibrary"    			,(FUNC_) imp_FreeLibrary},  	
 //{"LoadLibraryExW"  			,(FUNC_) LoadLibraryExW }, 			//TODO
 

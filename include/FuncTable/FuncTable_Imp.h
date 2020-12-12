@@ -51,6 +51,29 @@ inline HMODULE WINAPI imp_LoadLibraryA(LPCSTR lpLibFileName){
 	#endif
 }
 
+
+//!HMODULE WINAPI LoadLibraryExA (LPCSTR lpLibFileName, HANDLE hFile, DWORD dwFlags)
+//!HMODULE WINAPI LoadLibraryExW (LPCWSTR lpLibFileName, HANDLE hFile, DWORD dwFlags)
+HMODULE WINAPI imp_LoadLibraryExA (LPCSTR lpLibFileName, HANDLE hFile, DWORD dwFlags){
+	showfunc("LoadLibraryExA( lpLibFileName: %s, dwFlags: %d )", lpLibFileName, dwFlags);
+	#ifdef USE_Windows_LoadLibrary
+		HMODULE _ret = LoadLibraryExA(lpLibFileName, dwFlags);
+		if(!_ret){sys_GetLastError();}return _ret;
+	#else
+		return (HMODULE)AddLibrary(lpLibFileName);
+	#endif
+}
+HMODULE WINAPI imp_LoadLibraryExW (LPCWSTR lpLibFileName, HANDLE hFile, DWORD dwFlags){
+	WStr _swFile(lpLibFileName);const char* _sFile = _swFile.ToCStr();
+	showfunc("LoadLibraryExW( lpLibFileName: %s, dwFlags: %d )", _sFile, dwFlags);
+	#ifdef USE_Windows_LoadLibrary
+		HMODULE _ret = LoadLibraryExW(lpLibFileName, dwFlags);
+		if(!_ret){sys_GetLastError();}return _ret;
+	#else
+		return (HMODULE)AddLibrary(_sFile);
+	#endif
+}
+
 //!WINBOOL WINAPI FreeLibrary (HMODULE hLibModule)
 WINBOOL WINAPI imp_FreeLibrary(HMODULE hLibModule){
 	#ifdef USE_Windows_LoadLibrary
