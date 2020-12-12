@@ -456,6 +456,7 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 				short _ordinal = (short)IMAGE_ORDINAL(*thunkRef);
 				if(_ordinal > 9999){
 					showinf("Error, No support for Ordinal > 9999","");
+					*funcRef = (FARPROC)aDummyFunc[0].dFunc;
 				}else{
 					sprintf(&_sOrdinal[1], "%d", _ordinal);
 					*funcRef = module->getProcAddress(handle, (LPCSTR)_sOrdinal, module->userdata);
@@ -552,9 +553,19 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 		unsigned int _nSize = sizeof(aTableFunc) /  sizeof(sFunc);
 		for (unsigned int i=0; i < _nSize; i++) {
 			if (strcmp(name, aTableFunc[i].sFuncName) == 0) {
-				_EXE_LOADER_DEBUG(5, "Trouve %s: --> %s [CHARGE]", "Found %s: --> %s [LOADED]",  sDllName, name);
-
-				return (FARPROC)aTableFunc[i].dFunc;
+				if(aTableFunc[i].sLib[0] == 0){ 
+					//Any Lib
+					{
+						_EXE_LOADER_DEBUG(5, "Trouve %s: --> %s [CHARGE]", "Found %s: --> %s [LOADED]",  sDllName, name);
+						return (FARPROC)aTableFunc[i].dFunc;
+					}
+				}else{ 
+					//Lib is specified
+					if (strcmp(sDllName, aTableFunc[i].sLib) == 0) {
+						_EXE_LOADER_DEBUG(5, "Trouve %s: --> %s [CHARGE]", "Found %s: --> %s [LOADED]",  sDllName, name);
+						return (FARPROC)aTableFunc[i].dFunc;
+					}
+				}
 			}
 		}
 
