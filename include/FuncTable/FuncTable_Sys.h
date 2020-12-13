@@ -465,3 +465,33 @@ SHORT WINAPI sys_GetKeyState(int nVirtKey){
 		return 0;
 	#endif
 }
+
+
+//!VOID WINAPI InitializeSListHead (PSLIST_HEADER ListHead)
+VOID WINAPI sys_InitializeSListHead(PSLIST_HEADER ListHead){
+	showfunc("InitializeSListHead( ListHead: %d )", ListHead);
+	//#ifdef Func_Win
+		 InitializeSListHead(ListHead);
+	//#else
+	//	 0;
+	//TODO
+	//#endif
+}
+/*
+  WINBASEAPI VOID WINAPI InitializeSListHead (PSLIST_HEADER ListHead);
+  WINBASEAPI PSLIST_ENTRY WINAPI InterlockedPopEntrySList (PSLIST_HEADER ListHead);
+  WINBASEAPI PSLIST_ENTRY WINAPI InterlockedPushEntrySList (PSLIST_HEADER ListHead, PSLIST_ENTRY ListEntry);
+  WINBASEAPI PSLIST_ENTRY WINAPI InterlockedFlushSList (PSLIST_HEADER ListHead);
+  WINBASEAPI USHORT WINAPI QueryDepthSList (PSLIST_HEADER ListHead);
+*/
+
+
+//!LPWCH WINAPI GetEnvironmentStringsW (VOID)
+LPWCH WINAPI sys_GetEnvironmentStringsW (VOID){
+	showfunc("GetEnvironmentStringsW( )", "");
+	#ifdef Func_Win
+		return GetEnvironmentStringsW(nVirtKey);
+	#else
+		return 0;
+	#endif
+}

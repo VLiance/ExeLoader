@@ -87,13 +87,14 @@ extern "C" UINT ___lc_codepage_func(void);
 {"",			"GetProcAddress" 			,(FUNC_) imp_GetProcAddress }, 	//Special
 {"",			"LoadLibraryA"    			,(FUNC_) imp_LoadLibraryA },  	//Special
 {"",			"LoadLibraryW"    			,(FUNC_) imp_LoadLibraryW},  	//Special
-{"",			"LoadLibraryExA"    			,(FUNC_) imp_LoadLibraryExA},  	//Special
-{"",			"LoadLibraryExW"    			,(FUNC_) imp_LoadLibraryExW},  	//Special
+{"",			"LoadLibraryExA"    		,(FUNC_) imp_LoadLibraryExA},  	//Special
+{"",			"LoadLibraryExW"    		,(FUNC_) imp_LoadLibraryExW},  	//Special
 {"",			"FreeLibrary"    			,(FUNC_) imp_FreeLibrary},  	
 //{"LoadLibraryExW"  			,(FUNC_) LoadLibraryExW }, 			//TODO
 
 {"",			"CommandLineToArgvW"  		,(FUNC_) imp_CommandLineToArgvW },
-{"",			"GetCommandLineW"  		,(FUNC_) imp_GetCommandLineW },
+{"",			"GetCommandLineA"  			,(FUNC_) imp_GetCommandLineA },
+{"",			"GetCommandLineW"  			,(FUNC_) imp_GetCommandLineW },
 //{"chkstk"  					,(FUNC_) imp_chkstk },
 #ifdef ImWin
 {"",			"chkstk"  					,(FUNC_) __chkstk },
@@ -217,6 +218,9 @@ extern "C" UINT ___lc_codepage_func(void);
 {"",			"VirtualAlloc"  			,(FUNC_) pipe_VirtualAlloc },
 {"",			"VirtualFree"  				,(FUNC_) pipe_VirtualFree },
 {"",			"VirtualProtect"  			,(FUNC_) pipe_VirtualProtect },
+{"",			"HeapCreate"  				,(FUNC_) mem_HeapCreate },
+{"",			"HeapAlloc"  				,(FUNC_) mem_HeapAlloc },
+
 {"",			"FlushInstructionCache"		,(FUNC_) pipe_FlushInstructionCache },
 	
 {"",			"setvbuf"  					,(FUNC_) pipe_setvbuf },
@@ -279,6 +283,9 @@ extern "C" UINT ___lc_codepage_func(void);
 {"",			"InitializeCriticalSectionEx" 			,(FUNC_) pipe_InitializeCriticalSectionEx },
 {"",			"IsProcessorFeaturePresent" 			,(FUNC_) pipe_IsProcessorFeaturePresent },
 {"",			"InitializeCriticalSectionAndSpinCount"	,(FUNC_) pipe_InitializeCriticalSectionAndSpinCount },
+
+
+{"",			"InitializeSListHead"			,(FUNC_) sys_InitializeSListHead },
 
 /*
 //!WINBASEAPI LPVOID WINAPI HeapAlloc (HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes)
@@ -348,8 +355,7 @@ extern "C" UINT ___lc_codepage_func(void);
 
 {"",			"EnumerateLoadedModules64" 		,(FUNC_) sys_EnumerateLoadedModules64 },
 
-
-
+{"",			"GetEnvironmentStringsW" 		,(FUNC_) sys_GetEnvironmentStringsW },
 
 
 {"",			"SetErrorMode"  			,(FUNC_) sys_SetErrorMode },

@@ -452,7 +452,7 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 				//https://stackoverflow.com/questions/41792848/possible-to-hook-iat-function-by-ordinal
 				//showinf("TODO Ordinal func %d ", (DWORD)IMAGE_ORDINAL(*thunkRef));
 				char* _sOrdinal = aOrdinalFunc[aOrdinalFunc_size];aOrdinalFunc_size++;
-				_sOrdinal[0] = '%';
+				_sOrdinal[0] = '#';
 				short _ordinal = (short)IMAGE_ORDINAL(*thunkRef);
 				if(_ordinal > 9999){
 					showinf("Error, No support for Ordinal > 9999","");
@@ -572,7 +572,8 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 		static unsigned int current = 0;
 		current++;
 
-		_EXE_LOADER_DEBUG(3, "\nAvertissement, %s:  ---------   %s  [#%d]", "\nWarning, %s:  ---------   %s [#%d]",  sDllName, name, current);
+		//_EXE_LOADER_DEBUG(3, "\nAvertissement, %s:  ---------   %s  [%d]", "\nWarning, %s:  ---------   %s [%d]",  sDllName, name, current);
+		_EXE_LOADER_DEBUG(3, "\nAvertissement, %s:  ---------   %s  ", "\nWarning, %s:  ---------   %s ",  sDllName, name);
 		
 		aDummyFunc[current].Who = name;
 		aDummyFunc[current].DLL = sDllName;
