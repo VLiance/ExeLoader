@@ -78,12 +78,21 @@ extern "C" void  _aligned_free(void *memblock);
 extern "C" void* _aligned_realloc(void *memblock,size_t size,size_t alignment);
 extern "C" UINT ___lc_codepage_func(void);
 
+#define _IOB_ENTRIES_ 20
+FILE iob[_IOB_ENTRIES_] = {}; //TODO -> to test
+ char *__initenv = NULL;     /* pointer to initial environment block */
+ //__initenv = _environ = malloc(count * sizeof(char*));
+
  sFunc aTableFunc[] = {
  ////////// CPC DOS ///////////////////
 //#include "FuncTable/CpcDosFuncTable.h"
 //////////////////////////////////////
-
 {"",			"func_NotImplemented" 		,(FUNC_) func_NotImplemented }, //Must be first
+
+{"","__initenv" 	,(FUNC_) &__initenv }, //TODO -> to test //Special
+{"","_iob" 		,(FUNC_) iob }, 	  //TODO -> to test //Special
+
+
 {"",			"GetProcAddress" 			,(FUNC_) imp_GetProcAddress }, 	//Special
 {"",			"LoadLibraryA"    			,(FUNC_) imp_LoadLibraryA },  	//Special
 {"",			"LoadLibraryW"    			,(FUNC_) imp_LoadLibraryW},  	//Special
@@ -398,7 +407,7 @@ extern "C" UINT ___lc_codepage_func(void);
 
 
 
-{"",			"abort"  		,(FUNC_) abort },  //TODO custom abort
+{"",			"abort"  		,(FUNC_) imp_abort }, 
 
 {"",			"_stricmp"  ,(FUNC_) imp_stricmp },
 

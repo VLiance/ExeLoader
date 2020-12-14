@@ -655,6 +655,12 @@ int imp_open(const char *filename,int oflag,int pmode){
 	return -1;//error
 }
 
+//!void abort (void)
+void imp_abort (void){
+	showfunc("abort", "");
+	showfunc("Try Continuing...", "");
+	return;
+}
 
 
 /*

@@ -388,27 +388,27 @@ WINBOOL WINAPI sys_QueryPerformanceFrequency(LARGE_INTEGER* lpFrequency){
 }
 
 //!DWORD WINAPI GetTickCount (VOID)
-DWORD WINAPI sys_GetTickCount(){
+DWORD WINAPI sys_GetTickCount(VOID){
  	showfunc("GetTickCount( )", "");
 	#ifdef Func_Win
 		return GetTickCount();
 	#else
-		return 0;
+		return 1;//Fake
 	#endif
 }
 
 //!DWORD WINAPI GetCurrentThreadId (VOID)
-DWORD WINAPI sys_GetCurrentThreadId(){
+DWORD WINAPI sys_GetCurrentThreadId(VOID){
  	showfunc("GetCurrentThreadId( )", "");
 	#ifdef Func_Win
 		return GetCurrentThreadId();
 	#else
-		return 1;//TODO
+		return 1;//Fake
 	#endif
 }
 
 //!DWORD WINAPI GetCurrentThreadId (VOID)
-DWORD WINAPI sys_GetCurrentProcessId(){
+DWORD WINAPI sys_GetCurrentProcessId(VOID){
  	showfunc("GetCurrentProcessId( )", "");
 	#ifdef Func_Win
 		return GetCurrentProcessId();
@@ -423,6 +423,9 @@ DWORD WINAPI sys_GetCurrentProcessId(){
 	#ifdef Func_Win
 		GetSystemTimeAsFileTime(lpSystemTimeAsFileTime);
 	#else
+		//typedef struct _FILETIME {DWORD dwLowDateTime;DWORD dwHighDateTime;} FILETIME,*PFILETIME,*LPFILETIME;
+		lpSystemTimeAsFileTime->dwLowDateTime = 1; //Fake time
+		lpSystemTimeAsFileTime->dwHighDateTime = 1; //Fake time
 	#endif
  }
 
