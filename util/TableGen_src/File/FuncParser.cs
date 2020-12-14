@@ -11,11 +11,8 @@ namespace App
         FileText oFile;
         List<string> aProtoList = new List<string>();
 
-
 		 List<string> aCppLine = new List<string>();
 		 List<string> aCppLineOpt = new List<string>();
-
-
 
         public FuncParser(FileText _oFile){
             oFile = _oFile;
@@ -33,6 +30,10 @@ namespace App
         }
 
        
+        public static void saveLine(List<string> _aTo, string _sLine) {
+           _aTo.Add(_sLine.Trim()); 
+        }
+
 
         //First pass remove comment & remove line break, split with ;
         public void parse_normalize() {
@@ -52,16 +53,18 @@ namespace App
                 idx=Str.skipspace(_sLine, idx);
 			    
 				//Directive are on sigle line
-				if(idx < _sLine.Length && _sLine[idx] == '#') {idx++;
-					if(_sExtLine != "") {aCppLine.Add(_sExtLine);_sExtLine=""; //saveline
+				if(idx < _sLine.Length && _sLine[idx] == '#' && !_bInsideMultilineComment) {idx++;
+					if(_sExtLine != "" && _sExtLine != " ") {saveLine(aCppLine, _sExtLine);_sExtLine=""; //saveline
 					}_sExtLine+='#';
                     idx=Str.skipspace(_sLine, idx);
 					_bSingleLineMode = true;
 				}
 
 				//Find comments
+                char currChar = ' ';
 				for(; idx < _sLine.Length; idx++) {
-                    char currChar = _sLine[idx];
+                    lastChar=currChar;
+                    currChar = _sLine[idx];
                   
 					if(!_bInsideMultilineComment) {
                         if(currChar <= 32) {  //32 = ascii table space ' '
@@ -75,12 +78,12 @@ namespace App
 							break;
 						}
 						else if(lastChar == '/' && currChar == '*') {
-							_sExtLine = _sExtLine.Substring(0, _sExtLine.Length-1);//revert
+							_sExtLine = _sExtLine.Substring(0, _sExtLine.Length-1); //revert
 							_bInsideMultilineComment = true;
 						}
 						else if( currChar == ';' && !_bSingleLineMode) {
 							_sExtLine += currChar;//Keep ';' ?
-							aCppLine.Add(_sExtLine);_sExtLine="";lastChar=' '; //saveline
+							saveLine(aCppLine, _sExtLine);_sExtLine="";lastChar=' '; //saveline
 						}else { 
 							_sExtLine += currChar;
 						}
@@ -90,16 +93,20 @@ namespace App
 							lastChar = ' ';
 						}
 					}
-					lastChar=currChar;
 				}
-				if(_bSingleLineMode && _sExtLine != "") {
-					if(_sExtLine[_sExtLine.Length-1] == '\\') { //Special char to make multiline '\'
+
+				if(_bSingleLineMode) {
+					if(_sExtLine != "" && _sExtLine[_sExtLine.Length-1] == '\\') { //Special char to make multiline '\'
 						_sExtLine = _sExtLine.Substring(0, _sExtLine.Length-1); //revert
 					}else {
 						_bSingleLineMode = false;
-						aCppLine.Add(_sExtLine);_sExtLine=""; //saveline
+						saveLine(aCppLine, _sExtLine);_sExtLine="";lastChar=' '; //saveline
 					}
-				}
+				}else { 
+                    if(!_bSingleLineMode && lastChar > 32) { //32 = ascii table space ' '
+                        _sExtLine += ' ';
+                    }
+                }
             }
         }
 
