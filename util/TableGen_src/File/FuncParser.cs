@@ -29,7 +29,8 @@ namespace App
             FileWritter _oFileResult = new FileWritter("Out.txt");
 		//	_oFileResult.writeFile(aCppLine);
 			_oFileResult.writeFile(aCppLine_Opt);
-
+			//_oFileResult.writeFile(aCppLine_GlobalScope);
+            
             Log.debug("!!FINISH!!");
         }
 
@@ -129,7 +130,7 @@ namespace App
                     }
                 }
             }
-            aCppLine.Add("");//Normalise with a empty ending line (to easily get next line)
+            aCppLine.Add(" ");//Normalise with a empty ending line (to easily get next line)
         }
 
 
@@ -168,6 +169,28 @@ namespace App
 
   
         public void parse_gblscope() {
+             int _scope = 1;//1 = global scope
+            foreach(string __sLine in aCppLine_Opt) {Str _sLine = new Str(__sLine);
+                if(_sLine.str[0] == '{') {
+                    _scope++;
+                }
+
+
+                if(_scope == 1) {
+                    aCppLine_GlobalScope.Add(_sLine.str);
+                }else {
+                     aCppLine_GlobalScope.Add("//" + _sLine.str);
+                }
+
+
+
+                if(_sLine.str[0] == '}') {
+                    _scope--;
+                    if(_scope == 1) {  aCppLine_GlobalScope.Add(";"); }
+                }
+
+
+            }
 
 
         }
