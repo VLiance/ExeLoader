@@ -179,6 +179,18 @@ LPVOID WINAPI mem_HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes){
 	#endif
 	
 }
+//!WINBOOL WINAPI HeapFree (HANDLE hHeap, DWORD dwFlags, LPVOID lpMem)
+ WINBOOL WINAPI mem_HeapFree (HANDLE hHeap, DWORD dwFlags, LPVOID lpMem){
+	showfunc_opt("HeapFree( hHeap %p, dwFlags: %d, lpMem:%d )", hHeap, dwFlags, lpMem);
+	#ifdef USE_Windows_VirtualAlloc
+    return HeapFree(hHeap, dwFlags, lpMem); 
+	#else
+	return instance_AllocManager.ManagedFree(hHeap);
+	//return true;
+	#endif
+	
+}
+
 
 
  /*

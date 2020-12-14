@@ -220,6 +220,7 @@ extern "C" UINT ___lc_codepage_func(void);
 {"",			"VirtualProtect"  			,(FUNC_) pipe_VirtualProtect },
 {"",			"HeapCreate"  				,(FUNC_) mem_HeapCreate },
 {"",			"HeapAlloc"  				,(FUNC_) mem_HeapAlloc },
+{"",			"HeapFree"  				,(FUNC_) mem_HeapFree },
 
 {"",			"FlushInstructionCache"		,(FUNC_) pipe_FlushInstructionCache },
 	
@@ -355,7 +356,14 @@ extern "C" UINT ___lc_codepage_func(void);
 
 {"",			"EnumerateLoadedModules64" 		,(FUNC_) sys_EnumerateLoadedModules64 },
 
+
+{"",			"GetModuleFileNameA" 			,(FUNC_) sys_GetModuleFileNameA },
+{"",			"GetModuleFileNameW" 			,(FUNC_) sys_GetModuleFileNameW },
+
+{"",			"GetEnvironmentStrings" 		,(FUNC_) sys_GetEnvironmentStrings },
 {"",			"GetEnvironmentStringsW" 		,(FUNC_) sys_GetEnvironmentStringsW },
+{"",			"FreeEnvironmentStringsA" 		,(FUNC_) sys_FreeEnvironmentStringsA },
+{"",			"FreeEnvironmentStringsW" 		,(FUNC_) sys_FreeEnvironmentStringsW },
 
 
 {"",			"SetErrorMode"  			,(FUNC_) sys_SetErrorMode },
