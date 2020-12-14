@@ -31,13 +31,17 @@ namespace App
 
        
         public static void saveLine(List<string> _aTo, string _sLine) {
-           _aTo.Add(_sLine.Trim()); 
+            string _sCleaned = _sLine.Trim();
+            if(_sCleaned != "") {
+                 _aTo.Add(_sLine.Trim());
+            }
         }
 
 
         //First pass remove comment & remove line break, split with ;
         public void parse_normalize() {
 			bool _bInsideMultilineComment = false;
+			bool _bInsideStringLiterral = false;
 			bool _bSingleLineMode = false;
 			string _sExtLine = "";
 
@@ -65,8 +69,8 @@ namespace App
 				for(; idx < _sLine.Length; idx++) {
                     lastChar=currChar;
                     currChar = _sLine[idx];
-                  
-					if(!_bInsideMultilineComment) {
+
+					if(!_bInsideMultilineComment && !_bInsideStringLiterral) {
                         if(currChar <= 32) {  //32 = ascii table space ' '
                             //Normalise space
                             idx=Str.skipspace(_sLine, idx)-1;
@@ -81,18 +85,31 @@ namespace App
 							_sExtLine = _sExtLine.Substring(0, _sExtLine.Length-1); //revert
 							_bInsideMultilineComment = true;
 						}
-						else if( currChar == ';' && !_bSingleLineMode) {
+						else if((currChar == ';' || currChar == '{' || currChar == '}') && !_bSingleLineMode) {
+                            if(currChar != ';') {//; on same line
+                                saveLine(aCppLine, _sExtLine);_sExtLine="";lastChar=' '; //saveline
+                            }
 							_sExtLine += currChar;//Keep ';' ?
 							saveLine(aCppLine, _sExtLine);_sExtLine="";lastChar=' '; //saveline
+                        }
+                        else if(currChar == '"' && lastChar != '\\') {
+                              	_bInsideStringLiterral = true;
+                                _sExtLine += currChar;
 						}else { 
 							_sExtLine += currChar;
 						}
-					}else {
+					}else if(_bInsideMultilineComment) {
 						if(lastChar == '*' && currChar == '/') {
 							_bInsideMultilineComment = false;
 							lastChar = ' ';
 						}
-					}
+					}else if(_bInsideStringLiterral) {
+                        _sExtLine += currChar;
+                        if(currChar == '"' && lastChar != '\\' ) {
+							_bInsideStringLiterral = false;
+							lastChar = ' ';
+						}
+                    }
 				}
 
 				if(_bSingleLineMode) {
