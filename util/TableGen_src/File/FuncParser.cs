@@ -13,6 +13,7 @@ namespace App
 
 
 		 List<string> aCppLine = new List<string>();
+		 List<string> aCppLineOpt = new List<string>();
 
 
 
@@ -21,15 +22,20 @@ namespace App
         }
 
         public void parse() {
-            parse_clean();
+            parse_normalize();
+            parse_optimize();
+
             FileWritter _oFileResult = new FileWritter("Out.txt");
-			_oFileResult.writeFile(aCppLine);
+		//	_oFileResult.writeFile(aCppLine);
+			_oFileResult.writeFile(aCppLineOpt);
 
             Log.debug("!!FINISH!!");
         }
 
+       
+
         //First pass remove comment & remove line break, split with ;
-        public void parse_clean() {
+        public void parse_normalize() {
 			bool _bInsideMultilineComment = false;
 			bool _bSingleLineMode = false;
 			string _sExtLine = "";
@@ -43,21 +49,28 @@ namespace App
 
 				//Trim start
 				int idx = 0;
-				for(; idx < _sLine.Length; idx++) {
-					if(_sLine[idx] > 32) {break;} //32 = ascii table space ' '
-				}
+                idx=Str.skipspace(_sLine, idx);
+			    
 				//Directive are on sigle line
-				if(idx < _sLine.Length && _sLine[idx] == '#') {
+				if(idx < _sLine.Length && _sLine[idx] == '#') {idx++;
 					if(_sExtLine != "") {aCppLine.Add(_sExtLine);_sExtLine=""; //saveline
-					}
+					}_sExtLine+='#';
+                    idx=Str.skipspace(_sLine, idx);
 					_bSingleLineMode = true;
 				}
 
 				//Find comments
 				for(; idx < _sLine.Length; idx++) {
-					char currChar = _sLine[idx];
+                    char currChar = _sLine[idx];
+                  
 					if(!_bInsideMultilineComment) {
-						if(lastChar == '/' && currChar == '/') {
+                        if(currChar <= 32) {  //32 = ascii table space ' '
+                            //Normalise space
+                            idx=Str.skipspace(_sLine, idx)-1;
+                            currChar =  ' ';
+                           	_sExtLine += currChar;
+                        }
+						else if(lastChar == '/' && currChar == '/') {
 							_sExtLine = _sExtLine.Substring(0, _sExtLine.Length-1); //revert
 							break;
 						}
@@ -87,6 +100,29 @@ namespace App
 						aCppLine.Add(_sExtLine);_sExtLine=""; //saveline
 					}
 				}
+            }
+        }
+
+
+         //Second pass remove #if 0 / #endif
+        public void parse_optimize() {
+            int _scope_NotUsed = 0;
+            int _scope_preproc = 1;//1 = global scope
+            foreach(string __sLine in aCppLine) {Str _sLine = new Str(__sLine);
+                if(_sLine.Cmp("#if")) {
+                    _scope_preproc++;
+                }
+                else if(_sLine.Cmp("#endif")) {
+                    if(_scope_NotUsed == _scope_preproc) {_scope_NotUsed=0;}//back to normal
+                    _scope_preproc--;
+                }
+
+                if(_sLine.Cmp("#if 0")) {
+                   _scope_NotUsed = _scope_preproc;
+                }
+                if(_scope_NotUsed == 0) {
+                    aCppLineOpt.Add(_sLine.str);
+                }
             }
         }
 

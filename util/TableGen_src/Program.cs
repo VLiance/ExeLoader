@@ -39,7 +39,7 @@ namespace App
             FuncParser _oParser = new FuncParser(_oFile);
             _oParser.parse();
 
-            Thread.Sleep(10000);
+//            Thread.Sleep(10000);
 
         }
     }

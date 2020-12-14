@@ -31,9 +31,24 @@ namespace App
             size = _str.Length;
         }
 
+
+        public static int skipspace(string _sLine, int idx) {
+             for(; idx < _sLine.Length; idx++) {if(_sLine[idx] > 32) {break;}}  //32 = ascii table space ' '
+             return idx;
+        }
+
         public string SubStr(int _startIdx, int _endIdx) {
            return "";
         }
+
+        public bool Cmp(string _cmp, int _startIdx = 0) {
+            if(size-_startIdx < _cmp.Length) {return false;}
+            for(int i=0; i< _cmp.Length; i++) {
+                if( str[_startIdx+i] !=_cmp[i]) {return false;}
+            }
+           return true;
+        }
+
         
         public char this[int idx] {
             get {
@@ -45,7 +60,6 @@ namespace App
         }
 
         public bool IsEmpty() {
-
             return size < 1;
         }
 
