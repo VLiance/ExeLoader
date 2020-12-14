@@ -12,7 +12,10 @@ namespace App
         List<string> aProtoList = new List<string>();
 
 		 List<string> aCppLine = new List<string>();
-		 List<string> aCppLineOpt = new List<string>();
+		 List<string> aCppLine_Opt = new List<string>();
+
+		 List<string> aCppLine_GlobalScope = new List<string>();
+
 
         public FuncParser(FileText _oFile){
             oFile = _oFile;
@@ -21,10 +24,11 @@ namespace App
         public void parse() {
             parse_normalize();
             parse_optimize();
+            parse_gblscope();
 
             FileWritter _oFileResult = new FileWritter("Out.txt");
 		//	_oFileResult.writeFile(aCppLine);
-			_oFileResult.writeFile(aCppLineOpt);
+			_oFileResult.writeFile(aCppLine_Opt);
 
             Log.debug("!!FINISH!!");
         }
@@ -41,7 +45,7 @@ namespace App
         //First pass remove comment & remove line break, split with ;
         public void parse_normalize() {
 			bool _bInsideMultilineComment = false;
-			bool _bInsideStringLiterral = false;
+			bool _bInsideStringLiteral = false;
 			bool _bSingleLineMode = false;
 			string _sExtLine = "";
 
@@ -70,7 +74,7 @@ namespace App
                     lastChar=currChar;
                     currChar = _sLine[idx];
 
-					if(!_bInsideMultilineComment && !_bInsideStringLiterral) {
+					if(!_bInsideMultilineComment && !_bInsideStringLiteral) {
                         if(currChar <= 32) {  //32 = ascii table space ' '
                             //Normalise space
                             idx=Str.skipspace(_sLine, idx)-1;
@@ -90,10 +94,10 @@ namespace App
                                 saveLine(aCppLine, _sExtLine);_sExtLine="";lastChar=' '; //saveline
                             }
 							_sExtLine += currChar;//Keep ';' ?
-							saveLine(aCppLine, _sExtLine);_sExtLine="";lastChar=' '; //saveline
+                             saveLine(aCppLine, _sExtLine);_sExtLine="";lastChar=' '; //saveline
                         }
                         else if(currChar == '"' && lastChar != '\\') {
-                              	_bInsideStringLiterral = true;
+                              	_bInsideStringLiteral = true;
                                 _sExtLine += currChar;
 						}else { 
 							_sExtLine += currChar;
@@ -103,10 +107,10 @@ namespace App
 							_bInsideMultilineComment = false;
 							lastChar = ' ';
 						}
-					}else if(_bInsideStringLiterral) {
+					}else if(_bInsideStringLiteral) {
                         _sExtLine += currChar;
                         if(currChar == '"' && lastChar != '\\' ) {
-							_bInsideStringLiterral = false;
+							_bInsideStringLiteral = false;
 							lastChar = ' ';
 						}
                     }
@@ -125,6 +129,7 @@ namespace App
                     }
                 }
             }
+            aCppLine.Add("");//Normalise with a empty ending line (to easily get next line)
         }
 
 
@@ -133,23 +138,40 @@ namespace App
             int _scope_NotUsed = 0;
             int _scope_preproc = 1;//1 = global scope
             foreach(string __sLine in aCppLine) {Str _sLine = new Str(__sLine);
+                bool _bKeepLine = false;
+
                 if(_sLine.Cmp("#if")) {
                     _scope_preproc++;
                 }
-                else if(_sLine.Cmp("#endif")) {
-                    if(_scope_NotUsed == _scope_preproc) {_scope_NotUsed=0;}//back to normal
+
+                if(_sLine.Cmp("#if 0")) {
+                  if(_scope_NotUsed == 0) { _scope_NotUsed = _scope_preproc; _bKeepLine = true;}
+                }
+
+                if(_sLine.Cmp("#else")) {
+                    if(_scope_NotUsed == _scope_preproc) {_scope_NotUsed=0;_bKeepLine = true;}//back to normal
+                }
+
+               if(_sLine.Cmp("#endif")) {
+                    if(_scope_NotUsed == _scope_preproc) {_scope_NotUsed=0;_bKeepLine = true;}//back to normal
                     _scope_preproc--;
                 }
 
-                if(_sLine.Cmp("#if 0")) {
-                   _scope_NotUsed = _scope_preproc;
+                if(_bKeepLine || _scope_NotUsed == 0) {
+                    aCppLine_Opt.Add(_sLine.str);
+                }else {
+                    //aCppLine_Opt.Add("//" + _sLine.str);
                 }
-                if(_scope_NotUsed == 0) {
-                    aCppLineOpt.Add(_sLine.str);
-                }
+
             }
         }
 
+  
+        public void parse_gblscope() {
+
+
+        }
+        
 
 		public bool is_funcProto(string _sLine) { //Line must be trimmed & not empty (min 4 char)
 			//not directive
