@@ -14,12 +14,15 @@ namespace App {
         }
 
 		public void writeFile(List<string> _aList) {
+            /*
 			string _sData = "";
 			foreach(string _sLine in _aList ) {
 				_sData += _sLine + '\n';
 			}
 			//Create directory structure?
 			File.WriteAllText(sFile, _sData);
+            */
+            File.WriteAllLines(sFile, _aList.ToArray());
         }
 
 

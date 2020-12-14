@@ -21,6 +21,15 @@ namespace App
         }
 
         public void parse() {
+            parse_clean();
+            FileWritter _oFileResult = new FileWritter("Out.txt");
+			_oFileResult.writeFile(aCppLine);
+
+            Log.debug("!!FINISH!!");
+        }
+
+        //First pass remove comment & remove line break, split with ;
+        public void parse_clean() {
 			bool _bInsideMultilineComment = false;
 			bool _bSingleLineMode = false;
 			string _sExtLine = "";
@@ -79,29 +88,6 @@ namespace App
 					}
 				}
             }
-
-			FileWritter _oFileResult = new FileWritter("Out.txt");
-			_oFileResult.writeFile(aCppLine);
-			/*
-			//Print result
-			foreach(string _sCppLine in aCppLine) {
-				
-			}*/
-
-			/*
-			string _sLineT = _sLine.Trim();
-			if(_sLineT.Length >= 4) { //Minimal func length: 4 => a();
-					if(is_funcProto(_sLineT)) {
-						aProtoList.Add(extract_FuncProto(_sLineT));
-
-					}
-				}
-				*/
-
-
-
-            Log.debug("!!FINISH!!");
-			
         }
 
 
