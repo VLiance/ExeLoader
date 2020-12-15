@@ -9,27 +9,43 @@ namespace App
     public class FuncParser
     {
         FileText oFile;
-        List<string> aProtoList = new List<string>();
 
-		 List<string> aCppLine = new List<string>();
-		 List<string> aCppLine_Opt = new List<string>();
+        public Dictionary<string, string> aDefine = new Dictionary<string, string>();
 
-		 List<string> aCppLine_GlobalScope = new List<string>();
+        public List<string> aProtoList = new List<string>();
+
+		public  List<string> aCppLine = new List<string>();
+		public  List<string> aCppLine_Opt = new List<string>();
+		public  List<string> aCppLine_GlobalScope = new List<string>();
+
+
+        public void add2define(Dictionary<string, string> _aAdd) {
+            _aAdd.ToList().ForEach(x => aDefine.Add(x.Key, x.Value));
+        }
+
+        public void define_add(string _key, string _val = "") {
+            if(!aDefine.ContainsKey(_key)) {
+                aDefine.Add(_key, _val);
+            }else{
+                aDefine[_key] = _val;
+            }
+        }
 
 
         public FuncParser(FileText _oFile){
             oFile = _oFile;
         }
 
-        public void parse() {
-            parse_normalize();
-            parse_optimize();
-            parse_gblscope();
-
-            FileWritter _oFileResult = new FileWritter("Out.txt");
-		//	_oFileResult.writeFile(aCppLine);
-			//_oFileResult.writeFile(aCppLine_Opt);
-			_oFileResult.writeFile(aCppLine_GlobalScope);
+        public void parse(string _sOut = "") {
+            parse_normalize(aCppLine);
+            parse_optimize(aCppLine, aCppLine_Opt);
+           // parse_gblscope();
+           if(_sOut != "") {
+                FileWritter _oFileResult = new FileWritter(_sOut);
+		    //	_oFileResult.writeFile(aCppLine);
+			    _oFileResult.writeFile(aCppLine_Opt);
+                    //_oFileResult.writeFile(aCppLine_GlobalScope);
+            }
             
             Log.debug("!!FINISH!!");
         }
@@ -44,7 +60,7 @@ namespace App
 
 
         //First pass remove comment & remove line break, split with ;
-        public void parse_normalize() {
+        public void parse_normalize(List<string> _aDest) {
 			bool _bInsideMultilineComment = false;
 			bool _bInsideStringLiteral = false;
 			bool _bSingleLineMode = false;
@@ -92,10 +108,10 @@ namespace App
 						}
 						else if((currChar == ';' || currChar == '{' || currChar == '}') && !_bSingleLineMode) {
                             if(currChar != ';') {//; on same line
-                                saveLine(aCppLine, _sExtLine);_sExtLine="";lastChar=' '; //saveline
+                                saveLine(_aDest, _sExtLine);_sExtLine="";lastChar=' '; //saveline
                             }
 							_sExtLine += currChar;//Keep ';' ?
-                             saveLine(aCppLine, _sExtLine);_sExtLine="";lastChar=' '; //saveline
+                             saveLine(_aDest, _sExtLine);_sExtLine="";lastChar=' '; //saveline
                         }
                         else if(currChar == '"' && lastChar != '\\') {
                               	_bInsideStringLiteral = true;
@@ -122,7 +138,7 @@ namespace App
 						_sExtLine = _sExtLine.Substring(0, _sExtLine.Length-1); //revert
 					}else {
 						_bSingleLineMode = false;
-						saveLine(aCppLine, _sExtLine);_sExtLine="";lastChar=' '; //saveline
+						saveLine(_aDest, _sExtLine);_sExtLine="";lastChar=' '; //saveline
 					}
 				}else { 
                     if(!_bSingleLineMode && lastChar > 32) { //32 = ascii table space ' '
@@ -135,10 +151,55 @@ namespace App
 
 
          //Second pass remove #if 0 / #endif
-        public void parse_optimize() {
+        public void parse_optimize(List<string> _aSrc, List<string> _aDest) {
             int _scope_NotUsed = 0;
             int _scope_preproc = 1;//1 = global scope
-            foreach(string __sLine in aCppLine) {Str _sLine = new Str(__sLine);
+            foreach(string __sLine in _aSrc) {Str _sLine = new Str(__sLine);
+                bool _bKeepLine = false;
+                bool _bRemLine = false;
+
+                if(_sLine.Cmp("#if")) {
+                    _scope_preproc++;
+                }
+                if(_sLine.Cmp("#elif")) {
+                    if(_scope_NotUsed == _scope_preproc) {_scope_NotUsed=0;_bKeepLine = true;}//back to normal
+                }
+                if(_sLine.Cmp("#else")) {
+                    if(_scope_NotUsed == _scope_preproc) {_scope_NotUsed=0;_bKeepLine = true;}//back to normal
+                }
+               if(_sLine.Cmp("#endif")) {
+                    if(_scope_NotUsed == _scope_preproc) {_scope_NotUsed=0;_bKeepLine = true;}//back to normal
+                    _scope_preproc--;
+                }
+
+                if(_sLine.Cmp("#if 0")) {
+                  if(_scope_NotUsed == 0) { _scope_NotUsed = _scope_preproc; _bKeepLine = true;}
+                }
+
+                if(_sLine.Cmp("#define")) {
+                    const int _end_def = 8;
+                    int _sEndKey    = _sLine.next_end_word(_end_def);
+                    string _key     = _sLine.substr(_end_def, _sEndKey);
+                    int _startVal   = _sLine.next_start_word(_end_def+_key.Length);
+                    string _value   = _sLine.substr( _startVal,  _sLine.next_end_word(_startVal));
+                    
+                    define_add(_key, _value);
+                }
+
+                if((_bKeepLine || _scope_NotUsed == 0) && !_bRemLine) {
+                    _aDest.Add(_sLine.str);
+                }else {
+                    //aCppLine_Opt.Add("//" + _sLine.str);
+                }
+
+            }
+        }
+
+           //Second pass remove #if 0 / #endif
+        public void parse_simple_optimize(List<string> _aSrc, List<string> _aDest) {
+            int _scope_NotUsed = 0;
+            int _scope_preproc = 1;//1 = global scope
+            foreach(string __sLine in _aSrc) {Str _sLine = new Str(__sLine);
                 bool _bKeepLine = false;
 
                 if(_sLine.Cmp("#if")) {
@@ -158,8 +219,9 @@ namespace App
                     _scope_preproc--;
                 }
 
+
                 if(_bKeepLine || _scope_NotUsed == 0) {
-                    aCppLine_Opt.Add(_sLine.str);
+                    _aDest.Add(_sLine.str);
                 }else {
                     //aCppLine_Opt.Add("//" + _sLine.str);
                 }
@@ -259,3 +321,4 @@ namespace App
 
     }
 }
+

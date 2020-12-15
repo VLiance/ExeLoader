@@ -37,8 +37,37 @@ namespace App
              return idx;
         }
 
-        public string SubStr(int _startIdx, int _endIdx) {
-           return "";
+        public string substr(int _startIdx, int _endIdx) {
+           return str.Substring(_startIdx, _endIdx-_startIdx);
+        }
+
+        public int next_start_word(int _startIdx) {
+            bool _bFoundDelemiter =  false;
+            while(_startIdx < str.Length) {
+                if(str[_startIdx] <= 32) {
+                    _bFoundDelemiter = true;
+                }
+                if(_bFoundDelemiter && str[_startIdx] > 32) {
+                    break;
+                }
+                _startIdx++;
+            }
+            return _startIdx; //str.Length if not found
+        }
+
+        public int next_end_word(int _startIdx) {
+            bool _bFoundWord =  false;
+            while(_startIdx < str.Length) {
+                char _char = str[_startIdx] ;
+                if( _char > 32) {
+                    _bFoundWord = true;
+                }
+                if(_bFoundWord && _char <= 32) {
+                    break;
+                }
+                _startIdx++;
+            }
+            return _startIdx; //str.Length if not found
         }
 
         public bool Cmp(string _cmp, int _startIdx = 0) {

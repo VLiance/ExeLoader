@@ -35,9 +35,15 @@ namespace App
             
             string _sFile =  aArg[0];
 
+
+            FuncParser _oFlagsParser = new FuncParser(new FileText("Flags/flags_clang++.h"));
+            _oFlagsParser.parse("Flag.txt");
+
             FileText _oFile = new FileText(_sFile);
             FuncParser _oParser = new FuncParser(_oFile);
-            _oParser.parse();
+
+            _oParser.add2define(_oFlagsParser.aDefine);
+            _oParser.parse("Out.txt");
 
 //            Thread.Sleep(10000);
 
