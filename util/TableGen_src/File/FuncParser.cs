@@ -28,8 +28,8 @@ namespace App
 
             FileWritter _oFileResult = new FileWritter("Out.txt");
 		//	_oFileResult.writeFile(aCppLine);
-			_oFileResult.writeFile(aCppLine_Opt);
-			//_oFileResult.writeFile(aCppLine_GlobalScope);
+			//_oFileResult.writeFile(aCppLine_Opt);
+			_oFileResult.writeFile(aCppLine_GlobalScope);
             
             Log.debug("!!FINISH!!");
         }
@@ -167,33 +167,77 @@ namespace App
             }
         }
 
-  
+
+		int _scope;
+		int _scope_preproc;
+		int _inElseBloc;
+
+		//Calculate '{' / '}' scope, but some #if / #else define both '{', so we ignore scope in #else bloc 
         public void parse_gblscope() {
-             int _scope = 1;//1 = global scope
-            foreach(string __sLine in aCppLine_Opt) {Str _sLine = new Str(__sLine);
-                if(_sLine.str[0] == '{') {
-                    _scope++;
+			_scope = 1;			//1 = global scope
+			_scope_preproc = 1;	//1 = global scope
+			
+
+			int count = 0;
+			string[] _aScope =  aCppLine_Opt.ToArray();
+			int idx = 0;
+			parse_scope(_aScope, idx, _scope_preproc, _scope);
+        }
+
+		public int parse_scope(string[] _aScope, int idx, int _base_scope_preproc, int ini_scope) {
+			bool _bInsideExternC = false;
+			int _scope_base = _scope;
+
+
+			for(;idx < _aScope.Length-1;idx++) {Str _sLine = new Str(_aScope[idx]);
+
+				///////// PREPROC SCOPE /////////////
+				if(_sLine.Cmp("#if")) {
+                    _scope_preproc++;
                 }
+                if(_sLine.Cmp("#else") || _sLine.Cmp("#elif") ) {
+					//  aCppLine_GlobalScope.Add(_sLine.str);
+					if(_scope_preproc == _base_scope_preproc) {_scope=ini_scope+1;return idx; }
+					//if(_scope_preproc == _base_scope_preproc) {	_scope =ini_scope;}
+                }
+               if(_sLine.Cmp("#endif")) {
+					if(_scope_preproc == _base_scope_preproc) {_base_scope_preproc= 0; }
+                    _scope_preproc--;
+                }
+			   //	if(_inElseBloc != 0) {  aCppLine_GlobalScope.Add("//E|" +(_scope ) + "//" + _sLine.str) ; continue;}
+			   /////////////////////////////////////
+		
 
 
-                if(_scope == 1) {
+				if(_sLine.Cmp("extern \"C\"")) {
+					_bInsideExternC = true;
+				}
+
+				 if((_scope ) == 1) { //Global scope
                     aCppLine_GlobalScope.Add(_sLine.str);
                 }else {
-                     aCppLine_GlobalScope.Add("//" + _sLine.str);
+					 //aCppLine_GlobalScope.Add("//" + _scope  + "|" + _scope_preproc +  "|" +  _inElseBloc+ "//" + _sLine.str);
+                     aCppLine_GlobalScope.Add("//" +(_scope ) + "//" + _sLine.str);
                 }
 
+				if(_sLine.str[0] == '{') {
+						if(!_bInsideExternC) {}_scope++;
+						 idx++;
+						idx = parse_scope(_aScope, idx, _scope_preproc, _scope-1);
+						if(!_bInsideExternC) {}_scope--;
+						continue;
+                }
 
 
                 if(_sLine.str[0] == '}') {
-                    _scope--;
-                    if(_scope == 1) {  aCppLine_GlobalScope.Add(";"); }
-                }
+					//idx++;
+					return idx;
+				}
+			}
+			return idx;
+		}
 
 
-            }
-
-
-        }
         
 
 		public bool is_funcProto(string _sLine) { //Line must be trimmed & not empty (min 4 char)
