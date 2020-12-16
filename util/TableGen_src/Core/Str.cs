@@ -25,6 +25,7 @@ namespace App
 
         public readonly string str;
         public readonly int size;
+        public int lastidx = 0;
 
         public Str(string _str) {
             str = _str;
@@ -43,6 +44,7 @@ namespace App
 
         public int next_start_word(int _startIdx) {
             bool _bFoundDelemiter =  false;
+			if(_startIdx == 0) {_bFoundDelemiter = true;}
             while(_startIdx < str.Length) {
                 if(str[_startIdx] <= 32) {
                     _bFoundDelemiter = true;
@@ -69,6 +71,13 @@ namespace App
             }
             return _startIdx; //str.Length if not found
         }
+
+		public string next_word(int _startIdx = 0) {
+			int _start = next_start_word(_startIdx);
+			lastidx = next_end_word(_start);
+			return substr(next_start_word(_startIdx), lastidx);
+		}
+
 
         public bool Cmp(string _cmp, int _startIdx = 0) {
             if(size-_startIdx < _cmp.Length) {return false;}

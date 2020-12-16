@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+
 namespace App
 {
     public class FuncParser
@@ -150,41 +151,179 @@ namespace App
         }
 
 
-         //Second pass remove #if 0 / #endif
-        public void parse_optimize(List<string> _aSrc, List<string> _aDest) {
+		public bool validate_Ifdef( Str _sLine ) {
+			if(_sLine.Cmp("#ifdef")) {
+				string _key	= _sLine.next_word("#ifdef".Length);
+				if(aDefine.ContainsKey(_key)) {
+					return true;
+				}
+            }
+			if(_sLine.Cmp("#ifndef")) {
+				string _key	= _sLine.next_word("#ifdef".Length);
+				if(!aDefine.ContainsKey(_key)) {
+					return true;
+				}
+            }
+
+			//#if 0
+			//#if 1
+			//#if __GNUC__
+			//#if __MINGW_USE_UNDERSCORE_PREFIX == 0
+			//#if (_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_MEMORY == 1)
+			//#if defined(_X86_) && !defined(_M_IX86) && !defined(_M_IA64) && !defined(_M_AMD64) && !defined(__x86_64)
+			//#if !defined (_CRT_SECURE_NO_WARNINGS) || (_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES == 0)
+			//#if defined(__cplusplus) && (MINGW_HAS_SECURE_API == 1)
+			//#if defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L
+			//#define __MINGW_GNUC_PREREQ(major, minor) (__GNUC__ > (major) || (__GNUC__ == (major) && __GNUC_MINOR__ >= (minor)))
+			//#if !defined (_DLL) && defined (__GNUC__)
+			//#if __MINGW_GNUC_PREREQ (3, 0)
+			//#if _WIN32_WINNT >= 0x0600
+
+			//Just use simple case for now
+			if(_sLine.Cmp("#if") || _sLine.Cmp("#elif")) {
+				
+				string _key		= _sLine.next_word("#if".Length);
+				string _value	= _sLine.next_word(_sLine.lastidx);
+				/*
+				if(_value != "") {
+					Log.debug("aa: " + _value);
+				}
+				if(aDefine.ContainsKey(_key)) {
+					return true;
+				}*/
+            }
+
+
+
+			return false;
+		}
+
+
+
+
+		public int parse_preproc_scope( List<string> _aDest, string[] _aScope,  int idx, bool _bParentBlocEnabled = true) {
+
+			string _indent = "";
+			for(int i = 0; i < _scope_preproc; i++) {
+				_indent += "	";
+			}
+
+			string _sScopeHeader = "";
+
+			bool _bBlocEnabled = true;
+			bool _bBlocActivated = false;
+			bool _bReturn = false;
+
+
+			if(idx >= 0) {
+				Str _sLine = new Str(_aScope[idx]);
+				_sScopeHeader = _sLine.str + "[" + (idx+1) + "]";
+				_bBlocActivated = _bBlocEnabled = validate_Ifdef(_sLine);
+			}
+			idx++;
+
+			for(;idx < _aScope.Length-1;idx++) {Str _sLine = new Str(_aScope[idx]);
+				//////////////////////////////////
+				
+				if(_sLine.Cmp("#elif") && !_bBlocActivated) {
+					//TODO
+				}
+				if(_sLine.Cmp("#else") && !_bBlocActivated) {
+					_bBlocEnabled = true;
+				}
+
+			
+
+				//End scope
+				if(_sLine.Cmp("#endif")) {_bBlocEnabled=true;_bReturn=true;}
+
+				///////////// SHOW  ///////////////
+				if(_bBlocEnabled && _bParentBlocEnabled) {
+					string _sExtra = "";
+					if(_sLine.Cmp("#else") || _sLine.Cmp("#endif")) {
+						_sExtra = "/*" +  _sScopeHeader + "*/";
+					}
+                    _aDest.Add(_indent +  _sLine.str + _sExtra);
+                }else {
+					_aDest.Add(_indent + "//!" + _sLine.str);
+				}
+				//////////////////////////////////
+
+				if(_bReturn) {
+					 _scope_preproc--;
+					return idx;
+				}
+
+				//New scope
+				if(_sLine.Cmp("#if")) { 
+					_scope_preproc++;
+					 idx = parse_preproc_scope(_aDest, _aScope, idx, _bBlocEnabled & _bParentBlocEnabled);
+					continue;
+				}
+
+			}
+			return idx;
+		}
+
+
+
+		//Second pass remove #if 0 / #endif
+		public void parse_optimize(List<string> _aSrc, List<string> _aDest) {
+			_scope_preproc = 0;
+			string[] _aScope =  _aSrc.ToArray();
+			int idx = -1;
+			parse_preproc_scope(_aDest, _aScope, idx);
+			
+
+			/*
             int _scope_NotUsed = 0;
             int _scope_preproc = 1;//1 = global scope
             foreach(string __sLine in _aSrc) {Str _sLine = new Str(__sLine);
                 bool _bKeepLine = false;
                 bool _bRemLine = false;
 
+				//////////////////////////////////
                 if(_sLine.Cmp("#if")) {
                     _scope_preproc++;
                 }
                 if(_sLine.Cmp("#elif")) {
-                    if(_scope_NotUsed == _scope_preproc) {_scope_NotUsed=0;_bKeepLine = true;}//back to normal
+                    if(_scope_NotUsed==_scope_preproc){_scope_NotUsed=0;_bKeepLine=true;}//Back2normal
                 }
                 if(_sLine.Cmp("#else")) {
-                    if(_scope_NotUsed == _scope_preproc) {_scope_NotUsed=0;_bKeepLine = true;}//back to normal
+                    if(_scope_NotUsed==_scope_preproc){_scope_NotUsed=0;_bKeepLine=true;}//Back2normal
                 }
                if(_sLine.Cmp("#endif")) {
-                    if(_scope_NotUsed == _scope_preproc) {_scope_NotUsed=0;_bKeepLine = true;}//back to normal
+                    if(_scope_NotUsed==_scope_preproc){_scope_NotUsed=0;_bKeepLine=true;}//Back2normal
                     _scope_preproc--;
                 }
+			    //////////////////////////////////
+
+
 
                 if(_sLine.Cmp("#if 0")) {
-                  if(_scope_NotUsed == 0) { _scope_NotUsed = _scope_preproc; _bKeepLine = true;}
+                  if(_scope_NotUsed==0){_scope_NotUsed=_scope_preproc;_bKeepLine=true;}//DisableScope
                 }
 
+				if(_sLine.Cmp("#ifdef")) {
+					string _key		= _sLine.next_word("#ifdef".Length);
+					
+					//string _value	= _sLine.next_word(_sLine.lastidx);
+					//if(_value != "") {
+					//	Log.debug("aa: " + _value);
+					//}
+					if(!aDefine.ContainsKey(_key)) {
+						Log.debug("present: " + _key + " " + aDefine[_key]);
+
+					}else {
+						if(_scope_NotUsed==0){_scope_NotUsed=_scope_preproc;_bKeepLine=true;}//DisableScope
+					}
+                }
                 if(_sLine.Cmp("#define")) {
-                    const int _end_def = 8;
-                    int _sEndKey    = _sLine.next_end_word(_end_def);
-                    string _key     = _sLine.substr(_end_def, _sEndKey);
-                    int _startVal   = _sLine.next_start_word(_end_def+_key.Length);
-                    string _value   = _sLine.substr( _startVal,  _sLine.next_end_word(_startVal));
-                    
+					string _key		= _sLine.next_word("#define".Length);
+					string _value	= _sLine.next_word(_sLine.lastidx);
                     define_add(_key, _value);
                 }
+
 
                 if((_bKeepLine || _scope_NotUsed == 0) && !_bRemLine) {
                     _aDest.Add(_sLine.str);
@@ -192,7 +331,7 @@ namespace App
                     //aCppLine_Opt.Add("//" + _sLine.str);
                 }
 
-            }
+            }*/
         }
 
            //Second pass remove #if 0 / #endif
