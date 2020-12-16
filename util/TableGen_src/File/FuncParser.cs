@@ -19,6 +19,9 @@ namespace App
 		public  List<string> aCppLine_Opt = new List<string>();
 		public  List<string> aCppLine_GlobalScope = new List<string>();
 
+      	public  Queue<int>      aScopeLine_stack_line = new Queue<int>();
+      	public  Queue<string>   aScopeLine_stack_type = new Queue<string>();
+
 
         public void add2define(Dictionary<string, string> _aAdd) {
             _aAdd.ToList().ForEach(x => aDefine.Add(x.Key, x.Value));
@@ -31,6 +34,8 @@ namespace App
                 aDefine[_key] = _val;
             }
         }
+        //parsing
+        Str sLine_Prec;
 
 
         public FuncParser(FileText _oFile){
@@ -178,6 +183,8 @@ namespace App
 			//#if !defined (_DLL) && defined (__GNUC__)
 			//#if __MINGW_GNUC_PREREQ (3, 0)
 			//#if _WIN32_WINNT >= 0x0600
+            //#if defined(__GNUC__)
+            //#if (_WIN32_WINNT >= 0x0400 ) || defined(_WIN32_DCOM)
 
 			//Just use simple case for now
 			if(_sLine.Cmp("#if") || _sLine.Cmp("#elif")) {
@@ -193,13 +200,48 @@ namespace App
 				}*/
             }
 
-
-
 			return false;
 		}
 
 
+        public string valid_line(int idx, Str _sLine) {
+            string _sType =  "";
+           if( sLine_Prec.Cmp("extern \"C\"")) {
+                _sType = "extern_C";
+            }
+            if( _sLine.Cmp("{")) {
+                aScopeLine_stack_line.Enqueue(idx);
+                aScopeLine_stack_type.Enqueue(_sType);
+                if(_sType != "extern_C") {
+                    _scope++;
+                }
+                return "/* " + _sType + " */" ;
+            }
+            if( _sLine.Cmp("}")) {
+                int    _nResLine  = aScopeLine_stack_line.Dequeue();
+                string _sResType  = aScopeLine_stack_type.Dequeue();
+                if(_sResType != "extern_C") {
+                     _scope--;
+                }
+                return "/* " +_sResType + " [" + (_nResLine+1)  + "] */" ;
+            }
+            return "";
+        }
 
+        //Second pass
+		public void parse_optimize(List<string> _aSrc, List<string> _aDest) {
+            /// Initialize ///
+			_scope_preproc = 0;
+			_scope = 0;
+            sLine_Prec = new Str("");
+            aScopeLine_stack_line = new Queue<int>();
+            aScopeLine_stack_type = new Queue<string>();
+            /////////////////
+
+			string[] _aScope =  _aSrc.ToArray();
+			int idx = -1;
+			parse_preproc_scope(_aDest, _aScope, idx);
+        }
 
 		public int parse_preproc_scope( List<string> _aDest, string[] _aScope,  int idx, bool _bParentBlocEnabled = true) {
 
@@ -232,14 +274,15 @@ namespace App
 					_bBlocEnabled = true;
 				}
 
-			
 
-				//End scope
+				///////////// End scope ///////////////////
 				if(_sLine.Cmp("#endif")) {_bBlocEnabled=true;_bReturn=true;}
 
 				///////////// SHOW  ///////////////
 				if(_bBlocEnabled && _bParentBlocEnabled) {
-					string _sExtra = "";
+                    string _sExtra = "";
+                    _sExtra = valid_line(idx, _sLine);
+					
 					if(_sLine.Cmp("#else") || _sLine.Cmp("#endif")) {
 						_sExtra = "/*" +  _sScopeHeader + "*/";
 					}
@@ -247,92 +290,37 @@ namespace App
                 }else {
 					_aDest.Add(_indent + "//!" + _sLine.str);
 				}
-				//////////////////////////////////
+				////////////////////////////////////////////
+            
+                if(_sLine.Cmp("#define")) {
+                    string _key		= _sLine.next_word("#define".Length);
+				    string _value	= _sLine.next_word(_sLine.lastidx);
+                    define_add(_key, _value);
+                }
 
+
+
+                //////////////////////////////////////////
+                sLine_Prec = _sLine;
 				if(_bReturn) {
 					 _scope_preproc--;
 					return idx;
 				}
 
-				//New scope
+				//////////// New scope ///////////////////
 				if(_sLine.Cmp("#if")) { 
 					_scope_preproc++;
 					 idx = parse_preproc_scope(_aDest, _aScope, idx, _bBlocEnabled & _bParentBlocEnabled);
 					continue;
 				}
-
+                //////////////////////////////////////////
 			}
 			return idx;
 		}
 
 
+		
 
-		//Second pass remove #if 0 / #endif
-		public void parse_optimize(List<string> _aSrc, List<string> _aDest) {
-			_scope_preproc = 0;
-			string[] _aScope =  _aSrc.ToArray();
-			int idx = -1;
-			parse_preproc_scope(_aDest, _aScope, idx);
-			
-
-			/*
-            int _scope_NotUsed = 0;
-            int _scope_preproc = 1;//1 = global scope
-            foreach(string __sLine in _aSrc) {Str _sLine = new Str(__sLine);
-                bool _bKeepLine = false;
-                bool _bRemLine = false;
-
-				//////////////////////////////////
-                if(_sLine.Cmp("#if")) {
-                    _scope_preproc++;
-                }
-                if(_sLine.Cmp("#elif")) {
-                    if(_scope_NotUsed==_scope_preproc){_scope_NotUsed=0;_bKeepLine=true;}//Back2normal
-                }
-                if(_sLine.Cmp("#else")) {
-                    if(_scope_NotUsed==_scope_preproc){_scope_NotUsed=0;_bKeepLine=true;}//Back2normal
-                }
-               if(_sLine.Cmp("#endif")) {
-                    if(_scope_NotUsed==_scope_preproc){_scope_NotUsed=0;_bKeepLine=true;}//Back2normal
-                    _scope_preproc--;
-                }
-			    //////////////////////////////////
-
-
-
-                if(_sLine.Cmp("#if 0")) {
-                  if(_scope_NotUsed==0){_scope_NotUsed=_scope_preproc;_bKeepLine=true;}//DisableScope
-                }
-
-				if(_sLine.Cmp("#ifdef")) {
-					string _key		= _sLine.next_word("#ifdef".Length);
-					
-					//string _value	= _sLine.next_word(_sLine.lastidx);
-					//if(_value != "") {
-					//	Log.debug("aa: " + _value);
-					//}
-					if(!aDefine.ContainsKey(_key)) {
-						Log.debug("present: " + _key + " " + aDefine[_key]);
-
-					}else {
-						if(_scope_NotUsed==0){_scope_NotUsed=_scope_preproc;_bKeepLine=true;}//DisableScope
-					}
-                }
-                if(_sLine.Cmp("#define")) {
-					string _key		= _sLine.next_word("#define".Length);
-					string _value	= _sLine.next_word(_sLine.lastidx);
-                    define_add(_key, _value);
-                }
-
-
-                if((_bKeepLine || _scope_NotUsed == 0) && !_bRemLine) {
-                    _aDest.Add(_sLine.str);
-                }else {
-                    //aCppLine_Opt.Add("//" + _sLine.str);
-                }
-
-            }*/
-        }
 
            //Second pass remove #if 0 / #endif
         public void parse_simple_optimize(List<string> _aSrc, List<string> _aDest) {
@@ -372,6 +360,7 @@ namespace App
 		int _scope;
 		int _scope_preproc;
 		int _inElseBloc;
+
 
 		//Calculate '{' / '}' scope, but some #if / #else define both '{', so we ignore scope in #else bloc 
         public void parse_gblscope() {

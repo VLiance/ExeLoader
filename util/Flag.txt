@@ -368,4 +368,3 @@
 #define __pentium4 1
 #define __pentium4__ 1
 #define __tune_pentium4__ 1
- 
