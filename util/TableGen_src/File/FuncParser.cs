@@ -10,6 +10,8 @@ namespace App
     public class FuncParser
     {
         FileText oFile;
+        Macro_eval oEval;
+
 
         public Dictionary<string, string> aDefine = new Dictionary<string, string>();
 
@@ -43,6 +45,8 @@ namespace App
         }
 
         public void parse(string _sOut = "") {
+            oEval = new Macro_eval(aDefine);
+
             parse_normalize(aCppLine);
             parse_optimize(aCppLine, aCppLine_Opt);
            // parse_gblscope();
@@ -170,27 +174,15 @@ namespace App
 				}
             }
 
-			//#if 0
-			//#if 1
-			//#if __GNUC__
-			//#if __MINGW_USE_UNDERSCORE_PREFIX == 0
-			//#if (_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_MEMORY == 1)
-			//#if defined(_X86_) && !defined(_M_IX86) && !defined(_M_IA64) && !defined(_M_AMD64) && !defined(__x86_64)
-			//#if !defined (_CRT_SECURE_NO_WARNINGS) || (_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES == 0)
-			//#if defined(__cplusplus) && (MINGW_HAS_SECURE_API == 1)
-			//#if defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L
-			//#define __MINGW_GNUC_PREREQ(major, minor) (__GNUC__ > (major) || (__GNUC__ == (major) && __GNUC_MINOR__ >= (minor)))
-			//#if !defined (_DLL) && defined (__GNUC__)
-			//#if __MINGW_GNUC_PREREQ (3, 0)
-			//#if _WIN32_WINNT >= 0x0600
-            //#if defined(__GNUC__)
-            //#if (_WIN32_WINNT >= 0x0400 ) || defined(_WIN32_DCOM)
-
+			
 			//Just use simple case for now
 			if(_sLine.Cmp("#if") || _sLine.Cmp("#elif")) {
-				
-				string _key		= _sLine.next_word("#if".Length);
-				string _value	= _sLine.next_word(_sLine.lastidx);
+                return oEval.eval(_sLine);
+
+				//string _key		= _sLine.next_word("#if".Length);
+				//string _value	= _sLine.next_word(_sLine.lastidx);
+
+
 				/*
 				if(_value != "") {
 					Log.debug("aa: " + _value);
