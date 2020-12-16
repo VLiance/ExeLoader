@@ -19,8 +19,8 @@ namespace App
 		public  List<string> aCppLine_Opt = new List<string>();
 		public  List<string> aCppLine_GlobalScope = new List<string>();
 
-      	public  Queue<int>      aScopeLine_stack_line = new Queue<int>();
-      	public  Queue<string>   aScopeLine_stack_type = new Queue<string>();
+      	public  QList<int>      aScopeLine_stack_line = new QList<int>();
+      	public  QList<string>   aScopeLine_stack_type = new QList<string>();
 
 
         public void add2define(Dictionary<string, string> _aAdd) {
@@ -234,8 +234,8 @@ namespace App
 			_scope_preproc = 0;
 			_scope = 0;
             sLine_Prec = new Str("");
-            aScopeLine_stack_line = new Queue<int>();
-            aScopeLine_stack_type = new Queue<string>();
+            aScopeLine_stack_line = new QList<int>();
+            aScopeLine_stack_type = new QList<string>();
             /////////////////
 
 			string[] _aScope =  _aSrc.ToArray();
