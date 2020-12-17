@@ -46,6 +46,7 @@
     <Compile Include="File\FileWritter.cs" />
     <Compile Include="File\FuncParser.cs" />
     <Compile Include="Output\Log.cs" />
+    <Compile Include="Parser\Expression.cs" />
     <Compile Include="Parser\macro_eval.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

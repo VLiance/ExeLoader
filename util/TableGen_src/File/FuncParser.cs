@@ -13,7 +13,7 @@ namespace App
         Macro_eval oEval;
 
 
-        public Dictionary<string, string> aDefine = new Dictionary<string, string>();
+        public Dictionary<string, Expression> aDefine = new Dictionary<string, Expression>();
 
         public List<string> aProtoList = new List<string>();
 
@@ -25,11 +25,11 @@ namespace App
       	public  QList<string>   aScopeLine_stack_type = new QList<string>();
 
 
-        public void add2define(Dictionary<string, string> _aAdd) {
+        public void add2define(Dictionary<string, Expression> _aAdd) {
             _aAdd.ToList().ForEach(x => aDefine.Add(x.Key, x.Value));
         }
 
-        public void define_add(string _key, string _val = "") {
+        public void define_add(string _key, Expression _val = null) {
             if(!aDefine.ContainsKey(_key)) {
                 aDefine.Add(_key, _val);
             }else{
@@ -286,8 +286,9 @@ namespace App
             
                 if(_sLine.Cmp("#define")) {
                     string _key		= _sLine.next_word("#define".Length);
-				    string _value	= _sLine.next_word(_sLine.lastidx);
-                    define_add(_key, _value);
+				 //   string _value	= _sLine.next_word(_sLine.lastidx);
+				    string _value	= _sLine.substr(_sLine.next_start_word(_sLine.lastidx));
+                    define_add(_key, new Expression(_key,  new Str(_value) ));
                 }
 
 

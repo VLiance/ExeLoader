@@ -5,11 +5,13 @@ using System.Text;
 
 namespace App {
     class Macro_eval {
-        Dictionary<string, string> aDefine;
+        Dictionary<string, Expression> aDefine;
 
-        public Macro_eval(Dictionary<string, string> _aDefine ) {
+
+        public Macro_eval(Dictionary<string, Expression> _aDefine ) {
             aDefine = _aDefine;
         }
+
 
         //#if 0
 			//#if 1
@@ -38,8 +40,21 @@ namespace App {
              //#if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_APP)
             */
 
+		
+		
+        public bool Brackets(Str _sLine ) {
+			
+
+            return false;
+        }
+		
+		
+		
 
         public bool eval(Str _sLine ) {
+			Expression _oExp = new Expression(_sLine.str, _sLine);
+
+
           
             return false;
         }

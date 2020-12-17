@@ -23,8 +23,8 @@ namespace App
 {
     public class Str {
 
-        public readonly string str;
-        public readonly int size;
+        public string str;
+        public int size;
         public int lastidx = 0;
 
         public Str(string _str) {
@@ -41,15 +41,47 @@ namespace App
         public string substr(int _startIdx, int _endIdx) {
            return str.Substring(_startIdx, _endIdx-_startIdx);
         }
+		 public string substr(int _startIdx) {
+           return str.Substring(_startIdx);
+        }
 
-        public int next_start_word(int _startIdx) {
+		
+
+		public bool is_alphanum(char _char) {
+			if((_char >= '0' && _char <= '9') 
+			|| (_char >= 'a' && _char <= 'z') 	
+			|| (_char >= 'A' && _char <= 'Z') 
+			|| (_char == '_')) {
+				return true;
+			}else {
+				return false;
+			}
+		}
+		public bool is_op(char _char) {
+			if((_char > ' ' && !is_alphanum(_char) && _char < 127)) {
+				return true;
+			}else {
+				return false;
+			}
+		}
+
+		public bool is_delimiter(char _char) {
+			if(!is_alphanum(_char) &&  !is_op(_char) ) {
+				return true;
+			}else {
+				return false;
+			}
+		}
+
+		/*
+		 public int next_start_word(int _startIdx) {
             bool _bFoundDelemiter =  false;
 			if(_startIdx == 0) {_bFoundDelemiter = true;}
             while(_startIdx < str.Length) {
-                if(str[_startIdx] <= 32) {
+                if(!is_alphanum( str[_startIdx] )) {
                     _bFoundDelemiter = true;
                 }
-                if(_bFoundDelemiter && str[_startIdx] > 32) {
+                if(_bFoundDelemiter && is_alphanum( str[_startIdx])) {
                     break;
                 }
                 _startIdx++;
@@ -61,12 +93,53 @@ namespace App
             bool _bFoundWord =  false;
             while(_startIdx < str.Length) {
                 char _char = str[_startIdx] ;
-                if( _char > 32) {
+                if( is_alphanum( _char) ) {
                     _bFoundWord = true;
                 }
-                if(_bFoundWord && _char <= 32) {
+                if(_bFoundWord && !is_alphanum( _char) ) {
                     break;
                 }
+                _startIdx++;
+            }
+            return _startIdx; //str.Length if not found
+        }
+		*/
+
+
+
+        public int next_start_word(int _startIdx) {
+            bool _bFoundDelemiter =  false;
+			if(_startIdx == 0) {_bFoundDelemiter = true;}
+            while(_startIdx < str.Length) {
+                if(is_delimiter( str[_startIdx] )) {
+                    _bFoundDelemiter = true;
+                }
+                if(_bFoundDelemiter && (is_alphanum( str[_startIdx])  || is_op( str[_startIdx]))) {
+                    break;
+                }
+                _startIdx++;
+            }
+            return _startIdx; //str.Length if not found
+        }
+
+        public int next_end_word(int _startIdx) {
+            bool _bFoundWord =  false;
+            bool _bFoundOp =  false;
+            while(_startIdx < str.Length) {
+                char _char = str[_startIdx] ;
+                if( is_alphanum( _char) ) {
+                    _bFoundWord = true;
+                }
+				if( is_op( _char) ) {
+                    _bFoundOp = true;
+                }
+                if(_bFoundWord && !is_alphanum( _char) ) {
+                    break;
+                }
+				if(_bFoundOp && !is_op( _char) ) {
+                    break;
+                }
+
                 _startIdx++;
             }
             return _startIdx; //str.Length if not found
@@ -75,7 +148,7 @@ namespace App
 		public string next_word(int _startIdx = 0) {
 			int _start = next_start_word(_startIdx);
 			lastidx = next_end_word(_start);
-			return substr(next_start_word(_startIdx), lastidx);
+			return substr(_start, lastidx);
 		}
 
 
