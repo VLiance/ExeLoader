@@ -121,6 +121,7 @@
 #undef USE_WinThread
 #define No_Main
 #define No_FullWinHeader
+#undef USE_Window_LastError
 #endif
 
 

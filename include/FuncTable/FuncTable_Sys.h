@@ -473,12 +473,12 @@ SHORT WINAPI sys_GetKeyState(int nVirtKey){
 //!VOID WINAPI InitializeSListHead (PSLIST_HEADER ListHead)
 VOID WINAPI sys_InitializeSListHead(PSLIST_HEADER ListHead){
 	showfunc("InitializeSListHead( ListHead: %d )", ListHead);
-	//#ifdef Func_Win
+	#ifdef Func_Win
 		 InitializeSListHead(ListHead);
-	//#else
+	#else
 	//	 0;
 	//TODO
-	//#endif
+	#endif
 }
 /*
   WINBASEAPI VOID WINAPI InitializeSListHead (PSLIST_HEADER ListHead);
@@ -492,7 +492,7 @@ VOID WINAPI sys_InitializeSListHead(PSLIST_HEADER ListHead){
 //!LPWCH WINAPI GetEnvironmentStringsW (VOID)
 LPCH WINAPI sys_GetEnvironmentStrings (VOID){
 	showfunc("GetEnvironmentStrings( )", "");
-	#ifndef Func_Win
+	#ifdef Func_Win
 		return GetEnvironmentStrings();
 	#else
 		return 0;	//TODO (Not work!?)
@@ -501,7 +501,7 @@ LPCH WINAPI sys_GetEnvironmentStrings (VOID){
 LPWCH WINAPI sys_GetEnvironmentStringsW (VOID){
 	showfunc("GetEnvironmentStringsW( )", "");
 
-	#ifndef Func_Win
+	#ifdef Func_Win
 		return GetEnvironmentStringsW();
 	#else
 		return 0;	//TODO (Not work!?)
@@ -511,7 +511,7 @@ LPWCH WINAPI sys_GetEnvironmentStringsW (VOID){
  //!WINBOOL WINAPI FreeEnvironmentStringsW (LPWCH penv)
  WINBOOL WINAPI sys_FreeEnvironmentStringsA (LPCH penv){
  	showfunc("FreeEnvironmentStringsA( penv: %p )", penv);
-	#ifndef Func_Win
+	#ifdef Func_Win
 		return FreeEnvironmentStringsA(penv);
 	#else
 		return 0;	//TODO (Not work!?)
@@ -519,7 +519,7 @@ LPWCH WINAPI sys_GetEnvironmentStringsW (VOID){
  }
  WINBOOL WINAPI sys_FreeEnvironmentStringsW (LPWCH penv){
   	showfunc("FreeEnvironmentStringsW( penv: %p )", penv);
-	#ifndef Func_Win
+	#ifdef Func_Win
 		return FreeEnvironmentStringsW(penv);
 	#else
 		return 0;	//TODO (Not work!?)
@@ -530,7 +530,7 @@ LPWCH WINAPI sys_GetEnvironmentStringsW (VOID){
 //!DWORD WINAPI GetModuleFileNameW (HMODULE hModule, LPWSTR lpFilename, DWORD nSize)
 DWORD WINAPI sys_GetModuleFileNameA (HMODULE hModule, LPSTR lpFilename, DWORD nSize){
 	showfunc("GetModuleFileNameA( hModule: %p, lpFilename: %s, nSize: %d )", hModule, lpFilename, nSize);
-	#ifndef Func_Win
+	#ifdef Func_Win
 		return sys_GetModuleFileNameA(hModule, lpFilename, nSize);
 	#else
 		return 0;
@@ -538,7 +538,7 @@ DWORD WINAPI sys_GetModuleFileNameA (HMODULE hModule, LPSTR lpFilename, DWORD nS
 }
 DWORD WINAPI sys_GetModuleFileNameW (HMODULE hModule, LPWSTR lpFilename, DWORD nSize){
 	showfunc("GetModuleFileNameW( hModule: %p, lpFilename: %s, nSize: %d )", hModule, lpFilename, nSize);
-	#ifndef Func_Win
+	#ifdef Func_Win
 		return GetModuleFileNameW(hModule, lpFilename, nSize);
 	#else
 		return 0;
