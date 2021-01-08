@@ -10,9 +10,10 @@ make.exe
 
 rem [FR] Inclure le fichier objet dans le projet
 rem [EN] Include object file in project
-copy obj\ExeLoader.obj ..\..\obj\ExeLoader.obj
-copy obj\MemoryModule.obj ..\..\obj\MemoryModule.obj
-copy obj\ManagedAlloc.obj ..\..\obj\ManagedAlloc.obj
+copy ExeLoader.obj ..\obj\ExeLoader.obj
+copy MemoryModule.obj ..\obj\MemoryModule.obj
+copy ManagedAlloc.obj ..\obj\ManagedAlloc.obj
+copy ConvertUTF.obj ..\obj\ConvertUTF.obj
 
 echo.
 echo [FR] Operation termine! / [EN] Operations ended!

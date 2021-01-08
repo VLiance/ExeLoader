@@ -64,7 +64,7 @@
 
 //#define USE_WinThread
 
-//#define No_Main
+#define No_Main
 
 //#define USE_PRINTF
 
@@ -126,10 +126,10 @@
 
 
 //TEST for dosbox -- Temp
-#ifdef __DJGPP__
-#undef No_Main
-#undef CpcDos
-#endif
+// #ifdef __DJGPP__
+// #undef No_Main
+// #undef CpcDos
+// #endif
 
 
 
