@@ -64,7 +64,7 @@
 
 //#define USE_WinThread
 
-#define No_Main
+//#define No_Main
 
 //#define USE_PRINTF
 
