@@ -25,7 +25,8 @@ namespace App
 
         public string str;
         public int size;
-        public int lastidx = 0;
+        public int endidx = 0;
+        public int startidx = 0;
 
         public Str(string _str) {
             str = _str;
@@ -146,9 +147,9 @@ namespace App
         }
 
 		public string next_word(int _startIdx = 0) {
-			int _start = next_start_word(_startIdx);
-			lastidx = next_end_word(_start);
-			return substr(_start, lastidx);
+			startidx = next_start_word(_startIdx);
+			endidx = next_end_word(startidx);
+			return substr(startidx, endidx);
 		}
 
 

@@ -13,7 +13,18 @@ namespace App {
         }
 
 
-        //#if 0
+        
+
+		
+		
+        public bool Brackets(Str _sLine ) {
+			
+
+            return false;
+        }
+		
+		
+		//#if 0
 			//#if 1
 			//#if __GNUC__
 			//#if __MINGW_USE_UNDERSCORE_PREFIX == 0
@@ -40,23 +51,24 @@ namespace App {
              //#if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_APP)
             */
 
-		
-		
-        public bool Brackets(Str _sLine ) {
-			
-
-            return false;
-        }
-		
-		
-		
-
         public bool eval(Str _sLine ) {
 			Expression _oExp = new Expression(_sLine.str, _sLine);
+            //Find start expression
+            string _val	= _sLine.next_word("#".Length);
+            string _exp = _sLine.substr(_sLine.startidx);
+            //Extract subexp
+             sub_eval(new Str(_exp));
 
-
-          
             return false;
         }
+
+        public bool sub_eval(Str _exp ) {
+
+
+
+            return false;
+        }
+
+
     }
 }

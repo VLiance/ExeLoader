@@ -287,7 +287,7 @@ namespace App
                 if(_sLine.Cmp("#define")) {
                     string _key		= _sLine.next_word("#define".Length);
 				 //   string _value	= _sLine.next_word(_sLine.lastidx);
-				    string _value	= _sLine.substr(_sLine.next_start_word(_sLine.lastidx));
+				    string _value	= _sLine.substr(_sLine.next_start_word(_sLine.endidx));
                     define_add(_key, new Expression(_key,  new Str(_value) ));
                 }
 

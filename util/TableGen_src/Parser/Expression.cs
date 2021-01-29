@@ -18,7 +18,7 @@ namespace App {
 		public void Tokenise() {
 			Str _str;
 			do {
-				_str = new Str(str.next_word(str.lastidx));
+				_str = new Str(str.next_word(str.endidx));
 				_str.str += "";
 
 			}while ( _str.str != "" );
