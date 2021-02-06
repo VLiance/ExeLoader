@@ -829,11 +829,13 @@ printf("\n-+-------------- New codeBase: %p ", (code ) );
 	}
 
 	// adjust base address of imported data
+	result->isRelocated = FALSE;
 	locationDelta = (ptrdiff_t)(result->headers->OptionalHeader.ImageBase - old_header->OptionalHeader.ImageBase);
 	if (locationDelta != 0) {
 		result->isRelocated = PerformBaseRelocation(result, locationDelta);
-	} else {
-		result->isRelocated = TRUE;
+	} 
+	if(!result->isRelocated) {
+		printf("\nWarning, ! Not relocated (Probably no .reloc section)");
 	}
 
 	// load required dlls and adjust function table of imports
