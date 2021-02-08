@@ -341,10 +341,9 @@ static BOOL PerformBaseRelocation(PMEMORYMODULE module, ptrdiff_t delta)
 		return (delta == 0);
 	}
 
-
 	relocation = (PIMAGE_BASE_RELOCATION) (codeBase + directory->VirtualAddress);
-	printf("Perform Relocation of %d VirtualAddress", relocation->VirtualAddress );
-return false; //Temp
+	printf("\nPerform Relocation of %d VirtualAddress", relocation->VirtualAddress );
+//return false; //Temp
 
 	for (; relocation->VirtualAddress > 0; ) {
 		DWORD i;

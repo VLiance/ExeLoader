@@ -82,8 +82,10 @@ extern "C" UINT ___lc_codepage_func(void);
 FILE iob[_IOB_ENTRIES_] = {}; //TODO -> to test
  char *__initenv = NULL;     /* pointer to initial environment block */
  
- #define _IOCOMMIT   0x4000
-int _commode = _IOCOMMIT;
+
+//#define _O_TEXT   0x4000
+//int __fmode = _O_TEXT;
+
  //__initenv = _environ = malloc(count * sizeof(char*));
 
  sFunc aTableFunc[] = {
@@ -93,8 +95,12 @@ int _commode = _IOCOMMIT;
 {"",			"func_NotImplemented" 		,(FUNC_) func_NotImplemented }, //Must be first
 
 {"","__initenv" 	,(FUNC_) &__initenv }, //TODO -> to test //Special
-{"","_iob" 		,(FUNC_) iob }, 	  //TODO -> to test //Special
-{"","_commode" 		,(FUNC_) &_commode },  //Good
+{"","_iob" 			,(FUNC_) iob }, 	  //TODO -> to test //Special
+
+{"","_fmode" 		,(FUNC_) &_fmode }, 
+
+{"","_commode" 		,(FUNC_) &_commode },
+{"","__p__commode" 	,(FUNC_) &imp_p__commode }, 
 
 
 {"",			"GetProcAddress" 			,(FUNC_) imp_GetProcAddress }, 	//Special

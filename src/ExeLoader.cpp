@@ -613,7 +613,7 @@ void memVirtualQueryInfo(LPCVOID* _adr, int _size);
 	#ifdef ImWin
 	int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nShowCmd){
 	
-		//memVirtualQueryInfo((LPCVOID*)0x00400000, 2 *1024*1024);//2M
+		memVirtualQueryInfo((LPCVOID*)0x00400000, 2 *1024*1024);//2M
 	
 		hExeloader = hInstance;
 		printf("#\nWinMainCalled!! %d, %s",lpCmdLine);

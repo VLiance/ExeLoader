@@ -263,6 +263,11 @@ int* imp_p__fmode(){
 	_fmode_ = _O_TEXT_;
 	return &_fmode_;
 }
+#define _IOCOMMIT   0x4000
+int _commode = _IOCOMMIT;
+int * imp_p__commode(){
+	return &_commode;
+}
 
 #ifndef _STARTUP_INFO_DEFINED
  #define _STARTUP_INFO_DEFINED
