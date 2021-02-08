@@ -50,6 +50,8 @@
 #endif
 // Temp
 #define CustomLoader
+ #define OnWin //temp
+  #define  DEBUG_OUTPUT
  
 #include <iostream>
 
@@ -96,9 +98,9 @@ OutputLastError(const char *msg) {
 	char *tmpmsg;
 	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 		NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&tmp, 0, NULL);
-	tmpmsg = (char *)LocalAlloc(LPTR, strlen(msg) + strlen(tmp) + 3);
+	tmpmsg = (char *)LocalAlloc(LPTR, strlen(msg) + strlen((char*)tmp) + 3);
 	sprintf(tmpmsg, "%s: %s", msg, tmp);
-	OutputDebugString(tmpmsg);
+	printf("\n%s: ", tmpmsg);
 	LocalFree(tmpmsg);
 	LocalFree(tmp);
 }
@@ -152,7 +154,11 @@ static BOOL CopySections(const unsigned char *data, size_t size, PIMAGE_NT_HEADE
 			return FALSE;
 		}
 
+
+printf("\n codeBase: %p VirtualAddress: %p, both: %p ",codeBase, section->VirtualAddress, codeBase + section->VirtualAddress);
 		// commit memory block and copy data from dll
+		
+		unsigned char *test = 0;
 		dest = (unsigned char *)module->alloc(codeBase + section->VirtualAddress,
 							section->SizeOfRawData,
 							MEM_COMMIT,
@@ -239,7 +245,7 @@ FinalizeSection(PMEMORYMODULE module, PSECTIONFINALIZEDATA sectionData, ManagedA
 			// change memory access flags
 			if (VirtualProtect(sectionData->address, sectionData->size, protect, &oldProtect) == 0) {
 		#ifdef DEBUG_OUTPUT
-				OutputLastError("Error protecting memory page")
+				OutputLastError("Error protecting memory page");
 		#endif
 				return FALSE;
 			}
@@ -326,6 +332,7 @@ static BOOL ExecuteTLS(PMEMORYMODULE module)
   
 static BOOL PerformBaseRelocation(PMEMORYMODULE module, ptrdiff_t delta) 
 {
+
 	unsigned char *codeBase = module->codeBase;
 	PIMAGE_BASE_RELOCATION relocation;
 
@@ -334,7 +341,11 @@ static BOOL PerformBaseRelocation(PMEMORYMODULE module, ptrdiff_t delta)
 		return (delta == 0);
 	}
 
+
 	relocation = (PIMAGE_BASE_RELOCATION) (codeBase + directory->VirtualAddress);
+	printf("Perform Relocation of %d VirtualAddress", relocation->VirtualAddress );
+return false; //Temp
+
 	for (; relocation->VirtualAddress > 0; ) {
 		DWORD i;
 		unsigned char *dest = codeBase + relocation->VirtualAddress;
@@ -504,18 +515,41 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 	LPVOID MyMemoryDefaultAlloc(LPVOID address, SIZE_T size, DWORD allocationType, DWORD protect, void* userdata, ManagedAlloc &AllocManager) 
 	{
 		UNREFERENCED_PARAMETER(userdata);
+		
+		#ifdef VirtualLoadPE
+			//https://github.com/biesigrr/pe-loader/blob/master/pe-loader/pe-loader.cpp
+			printf("\nVirtual Allocation!: 0x%p  size: %d, allocationType: 0x%p, protect: 0x%p", address, size, allocationType, protect);
+			
+			if(allocationType == MEM_RESERVE | MEM_COMMIT){
+				//(Process in 2 Step) => if it's already reserved we can commit without error
+				LPVOID _ret =  VirtualAlloc(address, size, MEM_RESERVE, protect);
+				allocationType = MEM_COMMIT;
+			}
+			
+			LPVOID _ret =  VirtualAlloc(address, size, allocationType, protect);
+			if(_ret == 0){
+				OutputLastError("\nVirtual Allocation ERROR");
+			}
+			return _ret;
+		#else
 		// return VirtualAlloc(address, size, allocationType, protect);
 		// return calloc(1, size);
 		return AllocManager.ManagedCalloc(1, size); //Must initialised to zero
+		#endif
 	}
 
 	BOOL MyMemoryDefaultFree(LPVOID lpAddress, SIZE_T dwSize, DWORD dwFreeType, void* userdata, ManagedAlloc& AllocManager)  
 	{
 		UNREFERENCED_PARAMETER(userdata);
-	 //   return VirtualFree(lpAddress, dwSize, dwFreeType);
-		// free(lpAddress);
-		AllocManager.ManagedFree(lpAddress);
-		return true;
+		
+		#ifdef VirtualLoadPE
+			return VirtualFree(lpAddress, dwSize, dwFreeType);
+		#else
+		 //   return VirtualFree(lpAddress, dwSize, dwFreeType);
+			// free(lpAddress);
+			AllocManager.ManagedFree(lpAddress);
+			return true;
+		#endif
 	}
 
 	bool fMainExeLoader(const char* _sPath);
@@ -596,17 +630,17 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 
 #else  // Im on windows
 
-	LPVOID MemoryDefaultAlloc(LPVOID address, SIZE_T size, DWORD allocationType, DWORD protect, void* userdata) {
+	LPVOID MemoryDefaultAlloc(LPVOID address, SIZE_T size, DWORD allocationType, DWORD protect, void* userdata, ManagedAlloc &AllocManager) {
 		UNREFERENCED_PARAMETER(userdata);
 		return VirtualAlloc(address, size, allocationType, protect);
 	}
 
-	BOOL MemoryDefaultFree(LPVOID lpAddress, SIZE_T dwSize, DWORD dwFreeType, void* userdata) {
+	BOOL MemoryDefaultFree(LPVOID lpAddress, SIZE_T dwSize, DWORD dwFreeType, void* userdata, ManagedAlloc &AllocManager) {
 		UNREFERENCED_PARAMETER(userdata);
 		return VirtualFree(lpAddress, dwSize, dwFreeType);
 	}
 
-	HCUSTOMMODULE MemoryDefaultLoadLibrary(LPCSTR filename, void *userdata) {
+	HCUSTOMMODULE MemoryDefaultLoadLibrary(LPCSTR filename, void *userdata, ManagedAlloc &AllocManager) {
 		HMODULE result;
 		UNREFERENCED_PARAMETER(userdata);
 
@@ -620,14 +654,14 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 		return (HCUSTOMMODULE) result;
 	}
 	
-	FARPROC MemoryDefaultGetProcAddress(HCUSTOMMODULE module, LPCSTR name, void *userdata) {
+	FARPROC MemoryDefaultGetProcAddress(HCUSTOMMODULE module, LPCSTR name, void *userdata, ManagedAlloc &AllocManager) {
 		UNREFERENCED_PARAMETER(userdata);
 			_EXE_LOADER_DEBUG(1, "Fonction: %s \n", "Function: %s \n",   name);
 
 		return (FARPROC) GetProcAddress((HMODULE) module, name);
 	}
  
-	void MemoryDefaultFreeLibrary(HCUSTOMMODULE module, void *userdata) {
+	void MemoryDefaultFreeLibrary(HCUSTOMMODULE module, void *userdata, ManagedAlloc &AllocManager) {
 		UNREFERENCED_PARAMETER(userdata);
 
 		FreeLibrary((HMODULE) module);
@@ -644,7 +678,8 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibrary(const void *data, size_t size) {
 	#ifdef CustomLoader
 		return MemoryLoadLibraryEx(data, size, MyMemoryDefaultAlloc, MyMemoryDefaultFree, MyMemoryDefaultLoadLibrary, MyMemoryDefaultGetProcAddress, MyMemoryDefaultFreeLibrary, NULL);
 	#else  // Windows standard
-		return MemoryLoadLibraryEx(data, size, MemoryDefaultAlloc, MemoryDefaultFree, MemoryDefaultLoadLibrary, MemoryDefaultGetProcAddress, MemoryDefaultFreeLibrary, NULL);
+	//typedef LPVOID (*CustomAllocFunc)(LPVOID, SIZE_T, DWORD, DWORD, void*, ManagedAlloc&);
+		return MemoryLoadLibraryEx(data, size, MemoryDefaultAlloc, 	MemoryDefaultFree,	 MemoryDefaultLoadLibrary,	 MemoryDefaultGetProcAddress,	 MemoryDefaultFreeLibrary, NULL);
 	#endif
 }
  
@@ -654,6 +689,105 @@ void MemoryModule::Fin_instance()
 	instance_AllocManager.ManagedAlloc_clean();
 	fprintf(stdout, "Fin_instance() END \n");
 }
+
+
+void memVirtualQueryInfo(LPCVOID* _adr, int _size){
+
+	MEMORY_BASIC_INFORMATION meminf;
+	LPCVOID* _end =	_adr + (_size>>2);
+	
+	printf("\n--========= VirtualQuery(adr: %p, size: [%.2fM, 0x%p], end: 0x%p):", _adr, (_size/1024./1024.), _size,  _end);
+	
+	while (VirtualQuery(_adr, &meminf,  sizeof(MEMORY_BASIC_INFORMATION)) != 0){
+		
+		//static const char* eState = {"MEM_COMMIT", "MEM_RESERVE", , "MEM_FREE"};>>3
+		
+		printf("\n----------");
+		printf("\nmemeinf->BaseAddress: %p",	 		meminf.BaseAddress);	
+		printf("\nmemeinf->AllocationBase: %p",	 		meminf.AllocationBase);
+		
+		//// PAGE PROTECT ////
+		char* eProt = (char*)"UNKNOW";
+		switch(meminf.AllocationProtect){
+			case PAGE_EXECUTE:
+				eProt = (char*)"PAGE_EXECUTE";break;
+			case PAGE_EXECUTE_READ:
+				eProt = (char*)"PAGE_EXECUTE_READ";break;
+			case PAGE_EXECUTE_READWRITE:
+				eProt = (char*)"PAGE_EXECUTE_READWRITE";break;
+			case PAGE_EXECUTE_WRITECOPY:
+				eProt = (char*)"PAGE_EXECUTE_WRITECOPY";break;
+			case PAGE_NOACCESS:
+				eProt = (char*)"PAGE_NOACCESS";break;
+			case PAGE_READONLY:
+				eProt = (char*)"PAGE_READONLY";break;
+			case PAGE_READWRITE:
+				eProt = (char*)"PAGE_READWRITE";break;
+			case PAGE_WRITECOPY:
+				eProt = (char*)"PAGE_WRITECOPY";break;	
+		}
+		printf("\nmemeinf->AllocationProtect: %s [%p]",	 		eProt,	meminf.AllocationProtect);
+		printf("\nmemeinf->RegionSize: [%.2fM, 0x%p]",	 			meminf.RegionSize/1024./1024., meminf.RegionSize);
+		
+		//// State ////
+		char* eState = (char*)"UNKNOW";
+		switch(meminf.State){
+			case MEM_COMMIT:
+				eState = (char*)"MEM_COMMIT";break;
+			case MEM_RESERVE:
+				eState = (char*)"MEM_RESERVE";break;
+			case MEM_COMMIT | MEM_RESERVE:
+				eState = (char*)"MEM_COMMIT | MEM_RESERVE";break;
+			case MEM_FREE:
+				eState = (char*)"MEM_FREE";break;
+		}
+		printf("\nmemeinf->State: %s [%p]",	 			eState,	meminf.State);
+		
+		//// PAGE PROTECT ////
+		char* ePProt = (char*)"UNKNOW";
+		switch(meminf.Protect){
+			case PAGE_NOACCESS:
+				ePProt = (char*)"PAGE_NOACCESS";break;
+			case PAGE_READONLY:
+				ePProt = (char*)"PAGE_READONLY";break;
+			case PAGE_READWRITE:
+				ePProt = (char*)"PAGE_READWRITE";break;
+			case PAGE_WRITECOPY:
+				ePProt = (char*)"PAGE_WRITECOPY";break;
+		}
+		printf("\nmemeinf->Protect: %s [%p]",	 		ePProt,	meminf.Protect);
+		
+		//// TYPE ////
+		char* eType = (char*)"UNKNOW";
+		switch(meminf.Type){
+			case MEM_IMAGE:
+				eType = (char*)"MEM_IMAGE";break;
+			case MEM_MAPPED:
+				eType = (char*)"MEM_MAPPED";break;
+			case MEM_PRIVATE:
+				eType = (char*)"MEM_PRIVATE";break;
+		}
+		printf("\nmemeinf->Type: %s [%p]",	 			eType,	meminf.Type);
+		//////////////
+		printf("\n----------");
+		
+		/*
+		//if(VirtualFree(meminf.BaseAddress,0 , MEM_DECOMMIT)){
+		if(VirtualFree(meminf.BaseAddress,0 , MEM_RELEASE)){
+			printf("\nFreed Successfully");
+		}else{
+			OutputLastError("VirtualFree Errror: ");
+		}*/
+		
+		_adr += (meminf.RegionSize>>2);
+		if(_adr >= _end){
+			break;
+		}
+	}
+}
+
+
+
 
 HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 	CustomAllocFunc allocMemory,
@@ -754,21 +888,27 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 	//      calling DllEntry raises an exception if we don't...
 	code = (unsigned char *)allocMemory((LPVOID)(old_header->OptionalHeader.ImageBase),
 		alignedImageSize,
-		MEM_RESERVE | MEM_COMMIT,
+		MEM_RESERVE | MEM_COMMIT, 
 		PAGE_READWRITE,
 		userdata, instance_AllocManager);
 
 	if (code == NULL) {
+
+		memVirtualQueryInfo((LPCVOID*)old_header->OptionalHeader.ImageBase, alignedImageSize);
+			
 		// try to allocate memory at arbitrary position
 		code = (unsigned char *)allocMemory(NULL,
 			alignedImageSize,
 			MEM_RESERVE | MEM_COMMIT,
 			PAGE_READWRITE,
 			userdata, instance_AllocManager);
+			
 		if (code == NULL) {
 			SetLastError(ERROR_OUTOFMEMORY);
 			printf("\nWarning, OUTOFMEMORY");
 			return NULL;
+		}else{
+			printf("\nWarning, try to allocate memory at arbitrary position: %p", code);
 		}
 	}
 

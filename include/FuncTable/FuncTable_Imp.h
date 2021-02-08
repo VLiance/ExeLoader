@@ -119,6 +119,15 @@ FARPROC WINAPI  imp_GetProcAddress(  HMODULE hModule, LPCSTR  lpProcName){
 		}
 	#endif
 }
+
+void * imp_memset ( void * ptr, int value, size_t num ){
+	printf("\n Memest!\n ");
+	printf("\n -Memest!\n ");
+	printf("\n -Memest!\n ");
+	return 0;
+}
+
+
 /*
 //!VOID imp_chkstk(DWORD size)
 static void* ntdll = 0;

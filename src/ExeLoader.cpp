@@ -387,8 +387,8 @@ bool fMainExeLoader(const char* _sPath){
 			
 			 
 			// Le point d'entre a ete trouve, maintenant on l'execute
-			if(dMain != NULL || dWinMain != NULL)
-			//if(0)
+			//if(dMain != NULL || dWinMain != NULL)
+			if(0)
 			{
 				_EXE_LOADER_DEBUG(5, " Execution du point d'entre...\n", "Point entry execution...");
 				exe_arg_nb = 1;
@@ -605,9 +605,16 @@ bool fStartExeLoader(const char* _sPath) {
 	// MemoryFreeLibrary(handle);
 }
 
+
+
+void memVirtualQueryInfo(LPCVOID* _adr, int _size);
+
 #ifndef No_Main
 	#ifdef ImWin
 	int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nShowCmd){
+	
+		//memVirtualQueryInfo((LPCVOID*)0x00400000, 2 *1024*1024);//2M
+	
 		hExeloader = hInstance;
 		printf("#\nWinMainCalled!! %d, %s",lpCmdLine);
 		fMainExeLoader(lpCmdLine);  // argv[0] is path
@@ -618,6 +625,7 @@ bool fStartExeLoader(const char* _sPath) {
 	}
 	#else
 			int main(int argc, char* argv[]) {
+			
 				printf("#\nMainCalled!! %d, %s", argc, argv[0]);
 				fMainExeLoader(argv[1]);  // argv[0] is path
 				printf("\n -- END -- \n");

@@ -185,7 +185,7 @@ class MemoryModule
 	*
 	* This is the default as used by MemoryLoadLibrary.
 	*/
-	LPVOID MemoryDefaultAlloc(LPVOID, SIZE_T, DWORD, DWORD, void *);
+	LPVOID MemoryDefaultAlloc(LPVOID, SIZE_T, DWORD, DWORD, void *, void *);
 
 	/**
 	* Default implementation of CustomFreeFunc that calls VirtualFree
@@ -193,7 +193,7 @@ class MemoryModule
 	*
 	* This is the default as used by MemoryLoadLibrary.
 	*/
-	BOOL MemoryDefaultFree(LPVOID, SIZE_T, DWORD, void *);
+	BOOL MemoryDefaultFree(LPVOID, SIZE_T, DWORD, void *, void *);
 
 	/**
 	 * Default implementation of CustomLoadLibraryFunc that calls LoadLibraryA
