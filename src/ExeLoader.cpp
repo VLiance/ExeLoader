@@ -612,6 +612,9 @@ void memVirtualQueryInfo(LPCVOID* _adr, int _size);
 #ifndef No_Main
 	#ifdef ImWin
 	int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nShowCmd){
+	//unsigned char buf[128]@0x2000;
+	
+		
 	
 		memVirtualQueryInfo((LPCVOID*)0x00400000, 2 *1024*1024);//2M
 	

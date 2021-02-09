@@ -68,7 +68,7 @@
 #endif
 
 
-extern "C" ULONG __chkstk();
+//extern "C" ULONG __chkstk();
 
 extern "C" void __register_frame(void* ptr);
 extern "C" void __deregister_frame(void* ptr);
@@ -116,7 +116,7 @@ FILE iob[_IOB_ENTRIES_] = {}; //TODO -> to test
 {"",			"GetCommandLineW"  			,(FUNC_) imp_GetCommandLineW },
 //{"chkstk"  					,(FUNC_) imp_chkstk },
 #ifdef ImWin
-{"",			"chkstk"  					,(FUNC_) __chkstk },
+//{"",			"chkstk"  					,(FUNC_) __chkstk }, //not in build x64
 #endif
 
 #ifdef USE_Platform_RegisterFrame

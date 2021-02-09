@@ -158,7 +158,7 @@ int WINAPI pipe_StretchDIBits(HDC hdc,int xDest,int yDest,int DestWidth,int Dest
 		showinf("lpbmi.bmiColors[0].rgbReserved: %d", lpbmi->bmiColors[0].rgbReserved );
 		*/
 	
-		int idx = (int)hdc; //HDC is same as HWND (not necessary to dissociate them)
+		int idx = (int)(long long)hdc; //HDC is same as HWND (not necessary to dissociate them)
 		#ifdef ShowPixView
 			// aContext[idx].width & SrcWidth may differ (+32pix for depth buffer?)
 			pixView_MakeSurface(&aContext[idx]);
@@ -207,8 +207,8 @@ WINBOOL WINAPI sys_GetClientRect(HWND hWnd,LPRECT lpRect){
 	#else
 		lpRect->left = 0;
 		lpRect->top  = 0;
-		lpRect->right  = aContext[(int)hWnd].width;
-		lpRect->bottom = aContext[(int)hWnd].height;
+		lpRect->right  = aContext[(int)(long long)hWnd].width;
+		lpRect->bottom = aContext[(int)(long long)hWnd].height;
 		return true;
 	#endif
 }
@@ -221,8 +221,8 @@ WINBOOL WINAPI sys_GetWindowRect(HWND hWnd,LPRECT lpRect){
 	#else
 		lpRect->left = 0;
 		lpRect->top  = 0;
-		lpRect->right  = aContext[(int)hWnd].width;
-		lpRect->bottom = aContext[(int)hWnd].height;
+		lpRect->right  = aContext[(int)(long long)hWnd].width;
+		lpRect->bottom = aContext[(int)(long long)hWnd].height;
 		return true;
 	#endif
 }
