@@ -875,10 +875,15 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 	#endif
 
 	alignedImageSize = ALIGN_VALUE_UP(old_header->OptionalHeader.SizeOfImage, dwPageSize);
+	printf("\nold_header->OptionalHeader.SizeOfImage: %d", old_header->OptionalHeader.SizeOfImage);
+	printf("\nalignedImageSize: %d", alignedImageSize);
+	printf("\nlastSectionEnd: %d", lastSectionEnd);
+	printf("\ndwPageSize: %d", dwPageSize);
+	printf("\nALIGN_VALUE_UP_bef: %d", ALIGN_VALUE_UP(old_header->OptionalHeader.SizeOfImage, dwPageSize));
+	printf("\nALIGN_VALUE_UP: %d", ALIGN_VALUE_UP(lastSectionEnd, dwPageSize));
 	if (alignedImageSize != ALIGN_VALUE_UP(lastSectionEnd, dwPageSize)) {
 		SetLastError(ERROR_BAD_EXE_FORMAT);
 		printf("\nWarning, alignedImageSize");
-		return NULL;
 	}
 	// alignedImageSize=0;
 

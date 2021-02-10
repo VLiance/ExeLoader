@@ -80,8 +80,7 @@ extern "C" UINT ___lc_codepage_func(void);
 
 #define _IOB_ENTRIES_ 20
 FILE iob[_IOB_ENTRIES_] = {}; //TODO -> to test
- char *__initenv = NULL;     /* pointer to initial environment block */
- 
+
 
 //#define _O_TEXT   0x4000
 //int __fmode = _O_TEXT;
@@ -95,6 +94,7 @@ FILE iob[_IOB_ENTRIES_] = {}; //TODO -> to test
 {"",			"func_NotImplemented" 		,(FUNC_) func_NotImplemented }, //Must be first
 
 {"","__initenv" 	,(FUNC_) &__initenv }, //TODO -> to test //Special
+{"","__p___initenv" 	,(FUNC_) &imp_p__initenv }, //TODO -> to test //Special
 {"","_iob" 			,(FUNC_) iob }, 	  //TODO -> to test //Special
 
 {"","_fmode" 		,(FUNC_) &_fmode }, 
@@ -341,6 +341,7 @@ FILE iob[_IOB_ENTRIES_] = {}; //TODO -> to test
 
 //Windows
 
+{"",			"GetVersionExW"  				,(FUNC_) sys_GetVersionExW },
 {"",			"CreateWindowExW"  				,(FUNC_) pipe_CreateWindowExW },
 {"",			"GetClientRect"  				,(FUNC_) sys_GetClientRect },
 {"",			"GetWindowRect"  				,(FUNC_) sys_GetWindowRect },

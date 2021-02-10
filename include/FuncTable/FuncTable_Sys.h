@@ -65,6 +65,32 @@ DWORD WINAPI sys_GetLastError(VOID){
 }
 
 
+//!WINBOOL WINAPI GetVersionExA (LPOSVERSIONINFOA lpVersionInformation)
+//!WINBOOL WINAPI GetVersionExW (LPOSVERSIONINFOW lpVersionInformation)
+WINBOOL WINAPI sys_GetVersionExW (LPOSVERSIONINFOW lpVersionInformation){
+	showfunc("GetVersionExW( lpVersionInformation: %p)", lpVersionInformation); 
+	
+	//DWORD dwOSVersionInfoSize;
+	//DWORD dwMajorVersion;
+	//DWORD dwMinorVersion;
+	//DWORD dwBuildNumber;
+	//DWORD dwPlatformId;
+	//WCHAR szCSDVersion[128];	
+	#ifdef Func_Win
+		return GetVersionExW(lpVersionInformation);
+	#else
+		lpVersionInformation->dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+		lpVersionInformation->dwMajorVersion = 10;
+		lpVersionInformation->dwMinorVersion = 0;
+		lpVersionInformation->dwBuildNumber = 0;
+		lpVersionInformation->dwPlatformId = 2;
+		lpVersionInformation->szCSDVersion[128] = 0;
+
+	return 1;
+	#endif
+}
+
+
 //!WINBOOL WINAPI TrackMouseEvent(LPTRACKMOUSEEVENT lpEventTrack)
 WINBOOL WINAPI sys_TrackMouseEvent(LPTRACKMOUSEEVENT lpEventTrack){
 	showfunc("TrackMouseEvent( lpEventTrack: %p)", lpEventTrack); 

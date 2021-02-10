@@ -268,6 +268,11 @@ int _commode = _IOCOMMIT;
 int * imp_p__commode(){
 	return &_commode;
 }
+char *__initenv = NULL;     /* pointer to initial environment block */
+int * imp_p__initenv(){
+	return &_commode;
+}
+
 
 #ifndef _STARTUP_INFO_DEFINED
  #define _STARTUP_INFO_DEFINED
@@ -299,10 +304,12 @@ int imp_getmainargs(int* _Argc, char*** _Argv, char*** _Env, int _DoWildCard, vo
 	lpStartupInfo->hStdOutput =0;
 	lpStartupInfo->hStdError =0;
 */
-	
+	/*
 	for(int i = 0; i < *_Argc; i++){
-		showinf("arg[%d]: %s", i, _Argv[i]);
-	}
+		showinf("arg[%d]: %s", i, (*_Argv)[i]);
+	}*/
+	*_Argc =0;
+	
 	return 0;//successful
 }
 
