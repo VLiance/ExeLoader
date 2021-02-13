@@ -69,10 +69,8 @@ long nExeFileSize;
 		BUFFER[0] = '\0';
 	}
 	
-		// TODO: Faire une condition si l'instance est en Francais ou non
-
-	bool fExeCpcDosLoadFile(const char* _sFullPath)
-	{
+	
+	bool fExeCpcDosLoadFile(const char* _sFullPath){
 
 		nExeFileSize = 0;
 		aExeFileData = 0;
@@ -81,15 +79,11 @@ long nExeFileSize;
 		unsigned int _nExist = oCpc->File_exist((char*) _sFullPath);
 		if(_nExist > 0)
 		{
-			// Recuperer la taille du fichier
 			nExeFileSize =  oCpc->File_size((char*) _sFullPath);
 			
-			// Afficher sur la console Cpcdos
 			_EXE_LOADER_DEBUG(0, "ExeLoader: Lecture de %s (%d octets)...", "ExeLoader: Reading %s (%d bytes)...", _sFullPath, nExeFileSize);
-			
-			// Recuperer TOUT le contenu
+
 			aExeFileData = (char*) instance_AllocManager.ManagedCalloc(nExeFileSize + 1, sizeof(char));
-			// aExeFileData = (char*) calloc(nExeFileSize + 1, sizeof(char));
 			
 			FILE *fptr;
 
@@ -98,11 +92,9 @@ long nExeFileSize;
 				return false;
 			}
 			
-			
 			fread(aExeFileData, nExeFileSize, 1, fptr);
 			//fclose(fptr);
-			
-			// oCpc->File_read_all((char*)_sFullPath, (char*)"RB", (char*)aExeFileData);
+			//oCpc->File_read_all((char*)_sFullPath, (char*)"RB", (char*)aExeFileData);
 			
 			// Caractere de terminaison
 			aExeFileData[nExeFileSize] = '\0';
@@ -130,7 +122,6 @@ long nExeFileSize;
 		va_end (arg);
 		
 		printf("%s\n" , BUFFER); 
-
 	}
 
 	
@@ -144,8 +135,6 @@ long nExeFileSize;
 	//#define MAX_PATH 255
 	bool fExeCpcDosLoadFile(const char* _sFullPath)
 	{
-	
-
 		if(_sFullPath == 0){
 			printf("\n Error: No file to load. \n ");
 			return false;
@@ -155,7 +144,7 @@ long nExeFileSize;
 		//GetModuleFileName(0, (char*)buffer, MAX_PATH );
 
 		//  gzUTF16 _wcFile(gzStrC(_sFullPath));
-		//   FILE*  f = _wfopen((wchar_t*)(gzUInt16*)_wcFile, L"rb+");
+		//  FILE*  f = _wfopen((wchar_t*)(gzUInt16*)_wcFile, L"rb+");
 		FILE*  f = fopen((char*)_sFullPath, "rb+");
 		unsigned char *result;
 
@@ -172,18 +161,15 @@ long nExeFileSize;
 			nExeFileSize = _nSize;
 			aExeFileData = (char*)_aData;
 			fclose(f);
-			// _oRc->fSetDynamicMemData(_aData, _nSize); //Will be auto free
-			// Lib_GZ::Sys::pDebug::fConsole(gzStrL("---File Open!-- ") + _sFullPath);
 			return true;
 		}else{
 			printf("\nError: %d (%s)\n", errno, strerror(errno));
 			_EXE_LOADER_DEBUG(6, " * Impossible d'ouvrir le fichier: %s", "Error, can't open file: %s", _sFullPath );
-			// Lib_GZ::Sys::pDebug::fConsole(gzStrL("Error, can't open file : ") + _sFullPath);
 		}
 		
 		return false;
 	}
-#endif /* !!! No Cpcdos !!! */
+#endif 
 
 
 winMain dWinMain = 0;
@@ -198,11 +184,6 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "cpc_main");
 	if(dMain){return dMain;}
 	
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//// Disable standard main because of the CRT mess and Static Initialisation (Application must be compiled without this feature) ///
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Ive reactivated for tests
-	
 	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'main()'... ", "research 'main()' entry point... ");
 	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "main");
 	if(dMain){return dMain;}
@@ -215,9 +196,7 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "WinMainCRTStartup");
 	if(dMain){return dMain;}
 	
-	
-	
-	// S'il s'agit d'une version Windows 16 bits
+	// Windows 16 bits?
 	_EXE_LOADER_DEBUG(6, " * Recherche du point d'entre 'MAIN_LOOP_WINDOWS()'... ", "research 'MAIN_LOOP_WINDOWS()' entry point... ");
 	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "MAIN_LOOP_WINDOWS");
 	if(dMain){return dMain;}
@@ -234,18 +213,13 @@ mainFunc2 fFindMainFunction(MemoryModule* _oMem, HMEMORYMODULE handle) {
 	dMain = (mainFunc2)_oMem->MemoryGetProcAddress(handle, "QBMAIN");
 	if(dMain){return dMain;}
 	
-	
 	return NULL;
 }
 
 
 void GDB_Send_AddSymbolFile(char* _path, void* _text_adress, int _timeout = 1000){
-//add-symbol-file "E:/.../app.exe" 0xXXXXX
-	//fflush(stdout);fflush(stderr);//To be sure we receive the cmd
 	fprintf(stderr, "Cmd[GDB]:add-symbol-file \"%s\" 0x%p\n", _path, _text_adress);
-
 	fflush(stdout);fflush(stderr);//To be sure we receive the cmd
-
 	GDB_Func_ExecuteCmds();
 }
 
@@ -327,7 +301,6 @@ bool fMainExeLoader(const char* _sPath){
 	HMEMORYMODULE* handle = (HMEMORYMODULE*) memory_module_instance->MemoryLoadLibrary(data, filesize);
 	DLL_HANDLE[nTotalDLL - 1] = handle;
 	 
-	// Oups probleme
 	if (handle == NULL) {
 		_EXE_LOADER_DEBUG(4, "\nImpossible de charger la librairie depuis la memoire\n", "\nUnable to to load library from the memory\n");
 		return false;
@@ -363,9 +336,7 @@ bool fMainExeLoader(const char* _sPath){
 			DLL_LOADED[nTotalDLL] = (char*) _sPath;
 			nTotalDLL ++;
 			
-		}
-		else
-		{ /*** EXE ***/
+		}else{ 
 
 			#ifndef ImWin /* No Cpcdos */
 			FUNC_Version dCpcVer = (FUNC_Version)memory_module_instance->MemoryGetProcAddress(handle, "cpc_Set_Version");
@@ -375,14 +346,8 @@ bool fMainExeLoader(const char* _sPath){
 
 			#endif // ImWin
  
- 
- 
- //GDB_Func_Break();
- 
 			int boucle = 0;
-			
-
-		//	_EXE_LOADER_DEBUG(5, "Lancement[%p]: %s", "Run[%p]: %s", ((PMEMORYMODULE*)handle)->codeBase, _sPath);
+		
 			dMain = fFindMainFunction(memory_module_instance.get(), handle);
 			
 			exe_arg_nb = 0;
@@ -402,27 +367,22 @@ bool fMainExeLoader(const char* _sPath){
 					dMain(exe_arg_nb,exe_arg);
 				}
 				_EXE_LOADER_DEBUG(5, " Execution du point d'entre TERMINE!\n", "Point entry execution...FINISHED!");
-			}
-			else
+			}else
 			{ 
 				_EXE_LOADER_DEBUG(6, "Dernier essai, call Entry\n", "Last try, call Entry.");
 				memory_module_instance->MemoryCallEntryPoint(handle);
 			}
-		} /*** EXE ***/
+		}
 
 	#ifdef __cpp_exceptions
-	} catch (...) 
-	{
+	} catch (...) {
 		_EXE_LOADER_DEBUG(4, "Exception catched !\n", "Catched exception !");
 	}
 	#endif
 	
-	 
 	memory_module_instance->MemoryFreeLibrary(handle);
 	memory_module_instance->Fin_instance(); 
-	// Delete instance
-	// delete memory_module_instance.get();
-	  
+
 	return true;
 
 }
@@ -494,27 +454,14 @@ void GetLibraryExportTable(PMEMORYMODULE module){
 			_dFunc_wglSwapBuffers = (funcPtr_bool)_dFunc;
 		}
 		
-		//////////////////////////
 	}
-
-/*
-	if (idx > exports->NumberOfFunctions) {
-		// name <-> ordinal number don't match
-		SetLastError(ERROR_PROC_NOT_FOUND);
-		return;
-	}
-*/
-	// AddressOfFunctions contains the RVAs to the "real" functions
-	//return (FARPROC)(LPVOID)(codeBase + (*(DWORD *) (codeBase + exports->AddressOfFunctions + (idx*4))));
-	
 }
 
-
-//Max laoded dll: 50
-HMEMORYMODULE  aLibList[50] = {};
+#define MAX_LIB 50 //DLL or SO
+HMEMORYMODULE  aLibList[MAX_LIB] = {};
 int aLibList_size = 0;
 bool aLibList_add(HMEMORYMODULE _handle){
-	if(aLibList_size < 50){
+	if(aLibList_size < MAX_LIB){
 		aLibList[aLibList_size] = _handle;
 		aLibList_size++;
 		return true;

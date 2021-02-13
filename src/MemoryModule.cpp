@@ -505,11 +505,8 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 	return result;
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////
 
-#ifdef CustomLoader
 
 	LPVOID MyMemoryDefaultAlloc(LPVOID address, SIZE_T size, DWORD allocationType, DWORD protect, void* userdata, ManagedAlloc &AllocManager) 
 	{
@@ -555,25 +552,23 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 
 	HCUSTOMMODULE MyMemoryDefaultLoadLibrary(LPCSTR filename, void *userdata, ManagedAlloc &AllocManager) 
 	{
+		//result = LoadLibraryA(filename);
+		//return (HCUSTOMMODULE) result;
+	
 		HMODULE result;
 		UNREFERENCED_PARAMETER(userdata);
 
 		_EXE_LOADER_DEBUG(1, "\n------ [DLL] Import:%s \n", "\n------ [DLL] Import:%s \n",   filename);
 
 		MEMORYMODULE* _oModule =  (MEMORYMODULE*)AllocManager.ManagedCalloc(1, sizeof(MEMORYMODULE));
-		// MEMORYMODULE* _oModule =  (MEMORYMODULE*)calloc(1, sizeof(MEMORYMODULE));
 		_oModule->isDLL = true;
 		_oModule->codeBase = (unsigned char*)filename;
 
-		//RECURSIVE!!
-		//   _oModule->modules = ( HCUSTOMMODULE *)fMainExeLoader(filename);
-
-		//  return  fMainExeLoader(filename);
-
-		return (HCUSTOMMODULE*)_oModule;  // Temp, TODO
+		return (HCUSTOMMODULE*)_oModule;
 	}
 
 	FARPROC MyMemoryDefaultGetProcAddress(HCUSTOMMODULE module, LPCSTR name, void *userdata) {
+		//return (FARPROC) GetProcAddress((HMODULE) module, name);
 		UNREFERENCED_PARAMETER(userdata);
 
 		MEMORYMODULE* _oDll = (MEMORYMODULE*)module;
@@ -605,7 +600,6 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 		static unsigned int current = 0;
 		current++;
 
-		//_EXE_LOADER_DEBUG(3, "\nAvertissement, %s:  ---------   %s  [%d]", "\nWarning, %s:  ---------   %s [%d]",  sDllName, name, current);
 		_EXE_LOADER_DEBUG(3, "\nAvertissement, %s:  ---------   %s  ", "\nWarning, %s:  ---------   %s ",  sDllName, name);
 		
 		aDummyFunc[current].Who = name;
@@ -613,73 +607,22 @@ printf("\n New LIB[%p]: %s", handle, (LPCSTR) (codeBase + importDesc->Name));
 
 		if (current >=  sizeof(aDummyFunc) / sizeof( aDummyFunc[0] )) {current = 0;}
 
-	  //  return 0;
 	   return (FARPROC)aDummyFunc[current].dFunc;
 	}
 
 	void MyMemoryDefaultFreeLibrary(HCUSTOMMODULE module, void *userdata)
 	{
 		UNREFERENCED_PARAMETER(userdata);
-		
-		// AllocManager.
+		// AllocManager.  //TODO
 		// FreeLibrary((HMODULE) module);
 	}
 
 ///////////////////////////////////////////////////////////////////////////
 
-#else  // Im on windows
-
-	LPVOID MemoryDefaultAlloc(LPVOID address, SIZE_T size, DWORD allocationType, DWORD protect, void* userdata, ManagedAlloc &AllocManager) {
-		UNREFERENCED_PARAMETER(userdata);
-		return VirtualAlloc(address, size, allocationType, protect);
-	}
-
-	BOOL MemoryDefaultFree(LPVOID lpAddress, SIZE_T dwSize, DWORD dwFreeType, void* userdata, ManagedAlloc &AllocManager) {
-		UNREFERENCED_PARAMETER(userdata);
-		return VirtualFree(lpAddress, dwSize, dwFreeType);
-	}
-
-	HCUSTOMMODULE MemoryDefaultLoadLibrary(LPCSTR filename, void *userdata, ManagedAlloc &AllocManager) {
-		HMODULE result;
-		UNREFERENCED_PARAMETER(userdata);
-
-		_EXE_LOADER_DEBUG(1, "\n------ DLL:%s \n", "\n------ DLL:%s \n",   filename);
-
-		result = LoadLibraryA(filename);
-		if (result == NULL) {
-			return NULL;
-		}
-
-		return (HCUSTOMMODULE) result;
-	}
-	
-	FARPROC MemoryDefaultGetProcAddress(HCUSTOMMODULE module, LPCSTR name, void *userdata, ManagedAlloc &AllocManager) {
-		UNREFERENCED_PARAMETER(userdata);
-			_EXE_LOADER_DEBUG(1, "Fonction: %s \n", "Function: %s \n",   name);
-
-		return (FARPROC) GetProcAddress((HMODULE) module, name);
-	}
- 
-	void MemoryDefaultFreeLibrary(HCUSTOMMODULE module, void *userdata, ManagedAlloc &AllocManager) {
-		UNREFERENCED_PARAMETER(userdata);
-
-		FreeLibrary((HMODULE) module);
-	}
-  
-///////////////////////////////////////////////////////////////////////////
-
-#endif  // CustomLoader
 
 HMEMORYMODULE MemoryModule::MemoryLoadLibrary(const void *data, size_t size) {
-	
-	//instance_AllocManager.ManagedAlloc_(1024, (const char*) __FILE__);
-	
-	#ifdef CustomLoader
-		return MemoryLoadLibraryEx(data, size, MyMemoryDefaultAlloc, MyMemoryDefaultFree, MyMemoryDefaultLoadLibrary, MyMemoryDefaultGetProcAddress, MyMemoryDefaultFreeLibrary, NULL);
-	#else  // Windows standard
-	//typedef LPVOID (*CustomAllocFunc)(LPVOID, SIZE_T, DWORD, DWORD, void*, ManagedAlloc&);
-		return MemoryLoadLibraryEx(data, size, MemoryDefaultAlloc, 	MemoryDefaultFree,	 MemoryDefaultLoadLibrary,	 MemoryDefaultGetProcAddress,	 MemoryDefaultFreeLibrary, NULL);
-	#endif
+		
+	return MemoryLoadLibraryEx(data, size, MyMemoryDefaultAlloc, MyMemoryDefaultFree, MyMemoryDefaultLoadLibrary, MyMemoryDefaultGetProcAddress, MyMemoryDefaultFreeLibrary, NULL);
 }
  
 void MemoryModule::Fin_instance()
@@ -837,8 +780,10 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 #else
 	if (old_header->FileHeader.Machine != IMAGE_FILE_MACHINE_I386) {
 #endif
-
-		if(IMAGE_FILE_MACHINE_AMD64){
+		if(old_header->FileHeader.Machine == IMAGE_FILE_MACHINE_I386){
+			printf("\nWarning, executable is 32 bit: IMAGE_FILE_MACHINE_I386");
+			return NULL;
+		}else if (old_header->FileHeader.Machine == IMAGE_FILE_MACHINE_AMD64){
 			printf("\nWarning, executable is 64 bit: IMAGE_FILE_MACHINE_AMD64");
 			return NULL;
 		}else{
@@ -925,7 +870,6 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 	#ifdef Use_HeapAlloc
 		result = (PMEMORYMODULE)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(MEMORYMODULE));
 	#else
-		/* Corrige via FreeLibrary */
 		result = (PMEMORYMODULE)instance_AllocManager.ManagedCalloc(1, sizeof(MEMORYMODULE));
 		// result = (PMEMORYMODULE)calloc(1, sizeof(MEMORYMODULE));
 	#endif
@@ -938,7 +882,6 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 	}
 
 printf("\n-+-------------- New codeBase: %p ", (code ) );
-
 
 	result->codeBase = code;
 	result->isDLL = (old_header->FileHeader.Characteristics & IMAGE_FILE_DLL) != 0;
@@ -970,7 +913,6 @@ printf("\n-+-------------- New codeBase: %p ", (code ) );
 	// update position
 	result->headers->OptionalHeader.ImageBase = (uintptr_t)code;
 	
-	
 
 	// copy sections from DLL file block to new memory location
 	if (!CopySections((const unsigned char *) data, size, old_header, result, instance_AllocManager)) {
@@ -984,7 +926,7 @@ printf("\n-+-------------- New codeBase: %p ", (code ) );
 	if (locationDelta != 0) {
 		result->isRelocated = PerformBaseRelocation(result, locationDelta);
 	}else{
-		result->isRelocated = TRUE;
+		result->isRelocated = TRUE; //Not reloacated but already good
 	}
 	if(!result->isRelocated) {
 		printf("\nWarning, ! Not relocated (Probably no .reloc section)");
