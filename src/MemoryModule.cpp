@@ -837,9 +837,15 @@ HMEMORYMODULE MemoryModule::MemoryLoadLibraryEx(const void *data, size_t size,
 #else
 	if (old_header->FileHeader.Machine != IMAGE_FILE_MACHINE_I386) {
 #endif
-		SetLastError(ERROR_BAD_EXE_FORMAT);
-		printf("\nWarning, no IMAGE_FILE_MACHINE_I386");
-		return NULL;
+
+		if(IMAGE_FILE_MACHINE_AMD64){
+			printf("\nWarning, executable is 64 bit: IMAGE_FILE_MACHINE_AMD64");
+			return NULL;
+		}else{
+			SetLastError(ERROR_BAD_EXE_FORMAT);
+			printf("\nWarning, no IMAGE_FILE_MACHINE_I386: %p", old_header->FileHeader.Machine);
+			return NULL;
+		}
 	}
 
 	if (old_header->OptionalHeader.SectionAlignment & 1) {
@@ -977,7 +983,9 @@ printf("\n-+-------------- New codeBase: %p ", (code ) );
 	locationDelta = (ptrdiff_t)(result->headers->OptionalHeader.ImageBase - old_header->OptionalHeader.ImageBase);
 	if (locationDelta != 0) {
 		result->isRelocated = PerformBaseRelocation(result, locationDelta);
-	} 
+	}else{
+		result->isRelocated = TRUE;
+	}
 	if(!result->isRelocated) {
 		printf("\nWarning, ! Not relocated (Probably no .reloc section)");
 	}

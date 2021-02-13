@@ -385,14 +385,15 @@ bool fMainExeLoader(const char* _sPath){
 		//	_EXE_LOADER_DEBUG(5, "Lancement[%p]: %s", "Run[%p]: %s", ((PMEMORYMODULE*)handle)->codeBase, _sPath);
 			dMain = fFindMainFunction(memory_module_instance.get(), handle);
 			
-			 
+			exe_arg_nb = 0;
+			exe_arg = argument;
+				
 			// Le point d'entre a ete trouve, maintenant on l'execute
 			//if(dMain != NULL || dWinMain != NULL)
 			if(0)
 			{
 				_EXE_LOADER_DEBUG(5, " Execution du point d'entre...\n", "Point entry execution...");
-				exe_arg_nb = 1;
-				exe_arg = argument;
+				
 				if(dWinMain != NULL){
 					//int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow);
 					wchar_t* winMainArg = (wchar_t* )L"Test WinMain ARG";
@@ -568,7 +569,14 @@ HMEMORYMODULE AddLibrary(const char* _sPath) {
 	fprintf(stdout, "Adresse %p \n", module->dllEntry);
 
 	if (module == NULL || !module->isDLL || module->dllEntry == NULL || !module->isRelocated) {
-		fprintf(stdout, "ARF.....\n");
+		if(module == NULL)	{
+			fprintf(stdout, "Warning, DLL module is null\n");
+		}else{
+			if(!module->isDLL )				fprintf(stdout, "Warning, !module->isDLL \n");
+			if(module->dllEntry == NULL)	fprintf(stdout, "Warning, dllEntry is null\n");
+			if(!module->isRelocated)		fprintf(stdout, "Warning,  DLL not relocated\n");
+		}
+		fprintf(stdout, "DLL FAIL.....\n");
 		return 0;
 	}
 	

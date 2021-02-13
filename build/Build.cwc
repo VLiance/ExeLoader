@@ -14,7 +14,8 @@
 ;Change adress base to enable Virtual Alloc from 0x4000000
 -Wl,--image-base=0x8000000
 >
--#Run _out/{_sOpt}/ExeLoader.exe E:/_Project/Box2D/cwc/_out/Windows_Clang_Debug/App.exe
+-#Run _out/{_sOpt}/ExeLoader.exe  E:/_Project/Sokol/_cwc/sapp/_out/cube-sapp/Windows_Debug_wasm/cube-sapp.exe
+;-#Run _out/{_sOpt}/ExeLoader.exe E:/_Project/Box2D/cwc/_out/Windows_Clang_Debug/App.exe
 ;-#Run _out/{_sOpt}/ExeLoader.exe imgui-sapp.exe
 ;-#Run _out/{_sOpt}/ExeLoader.exe "D:/Try/Midori/Midori.exe"
 >
